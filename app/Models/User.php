@@ -47,7 +47,15 @@ class User extends Authenticatable
         return $this->hasOne(Umkm::class, 'user_id');
     }
 
-    
+    public function keranjangs()
+    {
+        return $this->hasMany(Keranjang::class);
+    }
+    public function orders()
+{
+    return $this->hasMany(Order::class);
+}
+
 
 
     /**

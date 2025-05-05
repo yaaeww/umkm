@@ -42,7 +42,7 @@
                                 </form>
 
                                 {{-- Tombol Checkout per Produk --}}
-                                <a href="{{ route('pembeli.checkout.produk', ['produk_id' => $item->produk->id, 'quantity' => $item->jumlah]) }}" class="btn btn-sm btn-success">Checkout</a>
+                                <a href="{{ route('pembeli.order', ['produk_id' => $item->produk->id, 'quantity' => $item->jumlah]) }}" class="btn btn-sm btn-success">Checkout</a>
                             </div>
                         </td>
                     </tr>
@@ -50,6 +50,8 @@
                 @endforeach
             </tbody>
         </table>
+
+    
     @endif
 </div>
 @endsection

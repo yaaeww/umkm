@@ -13,7 +13,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         @forelse($produks as $produk)
             <div class="border p-4 rounded shadow">
-                <img src="{{ asset('storage/' . $produk->gambar) }}" alt="{{ $produk->nama }}" class="w-full h-40 object-cover mb-3">
+                <img src="{{ asset('storage/' . $produk->gambar) }}" alt="Gambar Produk">
                 <h2 class="text-lg font-semibold">{{ $produk->nama }}</h2>
                 <p class="text-sm text-gray-600 mb-2">Rp {{ number_format($produk->harga, 0, ',', '.') }}</p>
                 <a href="{{ route('penjual.produk.show', $produk->id) }}" class="btn btn-info btn-sm">Detail</a>

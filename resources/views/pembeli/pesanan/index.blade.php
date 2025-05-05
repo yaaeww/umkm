@@ -1,50 +1,49 @@
 @extends('layouts.pembeli-navbar')
 
 @section('content')
-<div class="container mt-5">
-    <h1 class="mb-4 text-center">Daftar Pesanan Anda</h1>
+<div class="container">
+    <h1 class="my-4">Pesanan Saya</h1>
 
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
-    @if ($pesanans->isEmpty())
-        <div class="alert alert-warning text-center">
-            Anda belum memiliki pesanan.
-        </div>
+    @if ($pesanan->isEmpty())
+        <div class="alert alert-info">Belum ada pesanan.</div>
     @else
-        <div class="table-responsive">
-            <table class="table table-bordered align-middle text-center">
-                <thead class="table-light">
-                    <tr>
-                        <th>No</th>
-                        <th>Alamat Pengiriman</th>
-                        <th>Total Harga</th>
-                        <th>Status</th>
-                        <th>Detail</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($pesanans as $index => $pesanan)
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
                         <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $pesanan->alamat_pengiriman }}</td>
-                            <td>Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</td>
-                            <td>
-                                <span class="badge bg-success">Berhasil</span>
-                            </td>
-                            <td>
-                                <a href="{{ route('pembeli.pesanan.show', $pesanan->id) }}" class="btn btn-info btn-sm">
-                                    Lihat
-                                </a>
-                            </td>
+                            <th>Produk</th>
+                            <th>Jumlah</th>
+                            <th>Total Harga</th>
+                            <th>Status</th>
+                            <th>Tanggal</th>
+                            <th>Aksi</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($pesanan as $order)
+                            <tr>
+                                <td>{{ $order->produk->nama ?? '-' }}</td>
+                                <td>{{ $order->jumlah }}</td>
+                                <td>Rp{{ number_format($order->total_harga, 0, ',', '.') }}</td>
+                                <td>
+                                    @if ($order->status == 'complete')
+                                        <span class="badge bg-success">Lunas</span>
+                                    @elseif ($order->status == 'pending')
+                                        <span class="badge bg-warning">Menunggu</span>
+                                    @else
+                                        <span class="badge bg-secondary">{{ ucfirst($order->status) }}</span>
+                                    @endif
+                                </td>
+                                <td>{{ $order->created_at->format('d-m-Y H:i') }}</td>
+                                <td>
+                                    <a href="{{ url('/invoice/' . $order->id) }}" class="btn btn-sm btn-primary">Lihat Invoice</a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     @endif
 </div>

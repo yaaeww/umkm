@@ -14,9 +14,32 @@
 <body>
 
     {{-- Navbar Pembeli --}}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ route('pembeli.dashboard') }}">UMKM Indramayu</a>
+    <style>
+        .navbar {
+            height: 70px; /* Navbar tetap ramping */
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+    
+        .navbar-brand {
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+    
+        .navbar-logo {
+            max-height: 250px; /* Logo cukup besar tapi tetap muat di navbar */
+            width: auto; /* Biar proporsional */
+            object-fit: contain;
+        }
+        </style>
+        
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+            <div class="container">
+                <a class="navbar-brand fw-bold" href="{{ route('pembeli.dashboard') }}">
+                    <img src="{{ asset('aset/finalisasi logo.png') }}" alt="Logo UMKM Indramayu" class="navbar-logo me-2">
+                </a>
+        
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +55,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Kategori</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{route('pembeli.pesanan')}}">Pesanan</a>
+                    </li>
                 </ul>
 
                 <!-- Search form -->
@@ -45,13 +71,16 @@
                     <li class="nav-item">
                         <a class="nav-link position-relative" href="{{ route('pembeli.keranjang.index') }}">
                             <i class="bi bi-cart" style="font-size: 1.5rem;"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                {{ session('cart_count', 0) }}
-                                <span class="visually-hidden">item keranjang</span>
-                            </span>
+                            @if($totalKeranjang > 0)
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ $totalKeranjang }}
+                                    <span class="visually-hidden">item keranjang</span>
+                                </span>
+                            @endif
                         </a>
                     </li>
                 </ul>
+                
 
                 <!-- Logout -->
                 <ul class="navbar-nav ms-3">

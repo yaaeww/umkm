@@ -11,11 +11,21 @@ class DashboardPembeliController extends Controller
     /**
      * Menampilkan halaman dashboard pembeli.
      */
-    public function index()
+    public function index(Request $request)
     {
+        // Ambil kata kunci pencarian
+        $search = $request->input('search');
+
+        // Filter produk jika ada pencarian
+        $query = Produk::query();
+
+        if ($search) {
+            $query->where('nama', 'like', '%' . $search . '%');
+        }
+
+        $produks = $query->latest()->paginate(12);
         $totalProduk = Produk::count();
         $produkTerbaru = Produk::latest()->take(5)->get();
-        $produks = Produk::latest()->paginate(12); // Data untuk katalog
 
         return view('pembeli.dashboard', compact('totalProduk', 'produkTerbaru', 'produks'));
     }

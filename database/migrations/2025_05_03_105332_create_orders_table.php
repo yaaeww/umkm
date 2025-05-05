@@ -11,12 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pesanan_details', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pesanan_id')->constrained('pesanans')->onDelete('cascade');
-            $table->foreignId('produk_id')->constrained('produks')->onDelete('cascade');
-            $table->integer('harga');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('produk_id');
+            $table->string('name');
+            $table->text('alamat');
+            $table->string('phone');
             $table->integer('jumlah');
+            $table->bigInteger('total_harga');
+            $table->enum('status',(['pending','complete']));
             $table->timestamps();
         });
     }
@@ -26,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pesanan_details');
+        Schema::dropIfExists('orders');
     }
 };

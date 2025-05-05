@@ -16,8 +16,17 @@ class ProdukPembeliController extends Controller
 
     // Lihat detail produk
     public function show($id)
-    {
-        $produk = Produk::findOrFail($id);
-        return view('pembeli.produk.show', compact('produk'));
-    }
+{
+    $produk = Produk::with('user')->findOrFail($id);
+
+    // Produk terkait dari toko yang sama, kecuali produk ini sendiri
+    $produkTerkait = Produk::where('user_id', $produk->user_id)
+                        ->where('id', '!=', $produk->id)
+                        ->latest()
+                        ->take(6)
+                        ->get();
+
+    return view('pembeli.produk.show', compact('produk', 'produkTerkait'));
+}
+
 }

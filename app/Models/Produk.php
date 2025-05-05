@@ -37,6 +37,12 @@ class Produk extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    // App\Models\Produk
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
 // app/Models/Produk.php
 
 public function kategori()
@@ -75,9 +81,5 @@ public function kategori()
     {
         return $query->where('is_active', true);
     }
-    public function pesananDetails()
-{
-    return $this->hasMany(PesananDetail::class);
-}
-
+    
 }

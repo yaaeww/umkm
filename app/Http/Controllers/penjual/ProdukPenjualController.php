@@ -11,25 +11,16 @@ use Illuminate\Support\Facades\Auth;
 
 class ProdukPenjualController extends Controller
 {
-    // ✅ Dashboard Penjual
     public function dashboard()
     {
         $umkm = UMKM::where('user_id', Auth::id())->first();
-
-        $produks = $umkm
-            ? Produk::where('umkm_id', $umkm->id)->latest()->paginate(10)
-            : collect(); // kosong kalau belum punya UMKM
-
+        $produks = $umkm ? Produk::where('umkm_id', $umkm->id)->latest()->paginate(10) : collect();
         return view('penjual.dashboard', compact('produks', 'umkm'));
     }
 
-    // ✅ CRUD Produk (Penjual)
     public function index()
     {
-        if ($redirect = $this->ensureUserHasUMKM()) {
-            return $redirect;
-        }
-
+        if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
         $umkm = $this->getUserUMKM();
         $produks = Produk::where('umkm_id', $umkm->id)->latest()->paginate(10);
         return view('penjual.produk.index', compact('produks'));
@@ -37,19 +28,14 @@ class ProdukPenjualController extends Controller
 
     public function create()
     {
-        if ($redirect = $this->ensureUserHasUMKM()) {
-            return $redirect;
-        }
-
+        if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
         $kategoriProduks = KategoriProduk::all();
         return view('penjual.produk.create', compact('kategoriProduks'));
     }
 
     public function store(Request $request)
     {
-        if ($redirect = $this->ensureUserHasUMKM()) {
-            return $redirect;
-        }
+        if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
 
         $request->validate([
             'kategori_produk_id' => 'required|exists:kategori_produks,id',
@@ -74,13 +60,10 @@ class ProdukPenjualController extends Controller
 
         return redirect()->route('penjual.produk.index')->with('success', 'Produk berhasil ditambahkan.');
     }
- 
+
     public function edit($id)
     {
-        if ($redirect = $this->ensureUserHasUMKM()) {
-            return $redirect;
-        }
-
+        if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
         $produk = $this->findProdukByUser($id);
         $kategoriProduks = KategoriProduk::all();
         return view('penjual.produk.edit', compact('produk', 'kategoriProduks'));
@@ -88,10 +71,7 @@ class ProdukPenjualController extends Controller
 
     public function update(Request $request, $id)
     {
-        if ($redirect = $this->ensureUserHasUMKM()) {
-            return $redirect;
-        }
-
+        if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
         $produk = $this->findProdukByUser($id);
 
         $request->validate([
@@ -116,28 +96,19 @@ class ProdukPenjualController extends Controller
 
     public function destroy($id)
     {
-        if ($redirect = $this->ensureUserHasUMKM()) {
-            return $redirect;
-        }
-
+        if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
         $produk = $this->findProdukByUser($id);
         $produk->delete();
-
         return redirect()->route('penjual.produk.index')->with('success', 'Produk berhasil dihapus.');
     }
 
     public function show($id)
     {
-        if ($redirect = $this->ensureUserHasUMKM()) {
-            return $redirect;
-        }
-
+        if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
         $produk = $this->findProdukByUser($id);
-
         return view('penjual.produk.show', compact('produk'));
     }
 
-    // ✅ Helpers
     private function getUserUMKM()
     {
         return UMKM::where('user_id', Auth::id())->first();
@@ -155,9 +126,7 @@ class ProdukPenjualController extends Controller
     {
         $umkm = $this->getUserUMKM();
         $produk = Produk::where('id', $id)->where('umkm_id', $umkm->id)->first();
-        if (!$produk) {
-            abort(403, 'Produk tidak ditemukan atau bukan milik Anda.');
-        }
+        if (!$produk) abort(403, 'Produk tidak ditemukan atau bukan milik Anda.');
         return $produk;
     }
 }

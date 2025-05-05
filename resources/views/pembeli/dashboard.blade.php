@@ -1,17 +1,44 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Pembeli - UMKM Indramayu</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        .navbar {
+            height: 70px;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .navbar-brand {
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-logo {
+            max-height: 250px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
 </head>
 
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ route('pembeli.dashboard') }}">UMKM Indramayu</a>
+            <a class="navbar-brand fw-bold" href="{{ route('pembeli.dashboard') }}">
+                <img src="{{ asset('aset/finalisasi logo.png') }}" alt="Logo UMKM Indramayu" class="navbar-logo me-2">
+            </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,11 +54,15 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Kategori</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{route('pembeli.pesanan')}}">Pesanan</a>
+                    </li>
                 </ul>
 
                 <!-- Search form -->
                 <form class="d-flex" action="{{ route('pembeli.dashboard') }}" method="GET">
-                    <input class="form-control me-2" type="search" name="search" placeholder="Cari produk..." value="{{ request('search') }}">
+                    <input class="form-control me-2" type="search" name="search" placeholder="Cari produk..."
+                        value="{{ request('search') }}">
                     <button class="btn btn-outline-success" type="submit">Cari</button>
                 </form>
 
@@ -40,14 +71,17 @@
                     <li class="nav-item">
                         <a class="nav-link position-relative" href="{{ route('pembeli.keranjang.index') }}">
                             <i class="bi bi-cart" style="font-size: 1.5rem;"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                0
-                                <span class="visually-hidden">item keranjang</span>
-                            </span>
+                            @if($totalKeranjang > 0)
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ $totalKeranjang }}
+                                    <span class="visually-hidden">item keranjang</span>
+                                </span>
+                            @endif
                         </a>
                     </li>
                 </ul>
-                
+
                 <!-- Logout -->
                 <ul class="navbar-nav ms-3">
                     <li class="nav-item">
@@ -63,9 +97,8 @@
 
     <!-- Main Content -->
     <div class="container mt-5">
-        <h1 class="mb-4 text-center">Selamat Datang, {{ Auth::user()->name }}!</h1>
+        <h1 class="mb-4 text-center">Selamat Berbelanja {{ Auth::user()->name }}!</h1>
 
-        <!-- NOTIFIKASI SUKSES -->
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
@@ -73,7 +106,6 @@
             </div>
         @endif
 
-        <!-- Jika ada pencarian, tampilkan info -->
         @if (request('search'))
             <div class="alert alert-info">
                 Hasil pencarian untuk: <strong>{{ request('search') }}</strong>
@@ -81,12 +113,12 @@
         @endif
 
         <div class="row">
-            <!-- Loop Produk -->
             @forelse ($produks as $produk)
                 <div class="col-md-4">
                     <div class="card mb-4">
                         @if ($produk->gambar)
-                            <img src="{{ asset('storage/' . $produk->gambar) }}" class="card-img-top" alt="{{ $produk->nama }}">
+                            <img src="{{ asset('storage/' . $produk->gambar) }}" class="card-img-top"
+                                alt="{{ $produk->nama }}">
                         @else
                             <img src="{{ asset('images/default.jpg') }}" class="card-img-top" alt="Default Image">
                         @endif
@@ -100,7 +132,7 @@
                                 <input type="hidden" name="produk_id" value="{{ $produk->id }}">
                                 <input type="hidden" name="quantity" value="1">
                                 <button type="submit" class="btn btn-success w-100">Tambah ke Keranjang</button>
-                            </form>                            
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -113,13 +145,14 @@
             @endforelse
         </div>
 
-        <!-- Pagination -->
         <div class="d-flex justify-content-center mt-4">
             {{ $produks->withQueryString()->links() }}
         </div>
+        
+        
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

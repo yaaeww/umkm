@@ -23,9 +23,13 @@
     }
 
     .navbar-logo {
-        max-height: 250px; /* Logo cukup besar tapi tetap muat di navbar */
-        width: auto; /* Biar proporsional */
+        max-height: 250px; 
+        width: auto; 
         object-fit: contain;
+    }
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
     }
     </style>
     
