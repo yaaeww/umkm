@@ -53,7 +53,7 @@
                         <a class="nav-link {{ request()->routeIs('pembeli.dashboard') ? 'active' : '' }}" href="{{ route('pembeli.dashboard') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Kategori</a>
+                        <a class="nav-link" href="{{route('pembeli.produk.index')}}">Produk</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{route('pembeli.pesanan')}}">Pesanan</a>
@@ -80,17 +80,31 @@
                         </a>
                     </li>
                 </ul>
-                
-
-                <!-- Logout -->
                 <ul class="navbar-nav ms-3">
-                    <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button class="btn btn-danger btn-sm" type="submit">Logout</button>
-                        </form>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="user-name">{{ auth()->user()->name }}</span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{route('pembeli.profile.show')}}"><i class="bi bi-person-circle"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="settings.html"><i class="bi bi-bell-fill"></i> Notifikasi</a></li>
+                            <li><a class="dropdown-item" href="faq.html"><i class="bi bi-question-circle"></i> Bantuan</a></li>
+                            <ul class="navbar-nav ms-3">
+                                <li class="nav-item">
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button class="btn btn-danger btn-sm" type="submit">Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </ul>
                     </li>
                 </ul>
+            
+                
+            
+                <!-- Logout -->
+                
             </div>
         </div>
     </nav>

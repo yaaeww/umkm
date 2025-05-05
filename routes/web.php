@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Models\Produk;
+use App\Http\Controllers\LandingController;
 
 // Admin Controllers
 use App\Http\Controllers\Admin\{
@@ -32,22 +33,16 @@ use App\Http\Controllers\Pembeli\{
 };
 
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | Landing Page
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 */
-Route::get('/', function () {
-    if (auth()->check()) {
-        return redirect('/redirect-after-login');
-    }
-    $produks = Produk::latest()->get();
-    return view('landing', compact('produks'));
-})->name('landing');
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | Redirect After Login
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 */
 Route::middleware('auth')->get('/redirect-after-login', function () {
     return match (auth()->user()->role) {
@@ -59,21 +54,24 @@ Route::middleware('auth')->get('/redirect-after-login', function () {
 });
 
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | Universal Dashboard Redirect
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 */
 Route::middleware('auth')->get('/dashboard', fn() => redirect('/redirect-after-login'));
 
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | Admin Routes
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardAdminController::class, 'index'])->name('dashboard');
+
     Route::resource('produk', ProdukAdminController::class)->except(['create', 'edit', 'update', 'store', 'show']);
-    Route::resource('kategori', KategoriController::class);
+    Route::resource('kategori', KategoriController::class)->except(['edit', 'update']);
+    Route::get('/kategori/{id}/edit', [KategoriController::class, 'edit'])->name('kategori.edit');
+    Route::put('/kategori/{id}', [KategoriController::class, 'update'])->name('kategori.update');
 
     Route::prefix('umkm')->name('umkm.')->group(function () {
         Route::get('/', [AdminUmkmController::class, 'index'])->name('index');
@@ -93,15 +91,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | Penjual Routes
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')->group(function () {
     Route::get('/dashboard', [DashboardPenjualController::class, 'index'])->name('dashboard');
     Route::resource('produk', ProdukPenjualController::class);
     Route::resource('umkm', PenjualUmkmController::class)->only(['index', 'create', 'store', 'edit', 'update']);
-
 
     Route::controller(PenjualProfileController::class)->prefix('profile')->name('profile.')->group(function () {
         Route::get('/', 'show')->name('show');
@@ -112,16 +109,16 @@ Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')
 });
 
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | Pembeli Routes
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli')->name('pembeli.')->group(function () {
     Route::get('/dashboard', [DashboardPembeliController::class, 'index'])->name('dashboard');
 
     Route::controller(ProdukPembeliController::class)->prefix('produk')->name('produk.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/{id}', 'show')->name('show');
+        Route::get('/', 'index')->name('index'); // pembeli.produk.index
+        Route::get('/{id}', 'show')->name('show'); // pembeli.produk.show
     });
 
     Route::controller(KeranjangController::class)->prefix('keranjang')->name('keranjang.')->group(function () {
@@ -142,7 +139,6 @@ Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli')->name('pembeli.')
         Route::get('/produk/{produk_id}/{quantity}', 'checkoutProduk')->name('produk');
     });
 
-    // Riwayat Pesanan
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
 
     Route::controller(PembeliProfileController::class)->prefix('profile')->name('profile.')->group(function () {

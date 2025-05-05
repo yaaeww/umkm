@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Tambah Kategori')
+@section('title', 'Daftar Kategori')
 
 @section('content')
     <h4>Daftar Kategori Produk</h4>
@@ -21,15 +21,18 @@
             @foreach ($kategoris as $kategori)
                 <tr>
                     <td>
-                        @if ($kategori->gambar)
-                            <img src="{{ asset($kategori->gambar) }}" width="60" height="60" style="object-fit: cover;" alt="gambar kategori">
+                        @if ($kategori->gambar && file_exists(public_path('storage/kategori/' . $kategori->gambar)))
+                            <img src="{{ asset('storage/kategori/' . $kategori->gambar) }}" width="60" height="60" style="object-fit: cover;" alt="gambar kategori">
                         @else
-                            <span class="text-muted">-</span>
+                            <span class="text-muted">Tidak ada gambar</span>
                         @endif
                     </td>
                     <td>{{ $kategori->nama }}</td>
                     <td>
+                        <!-- Tombol Edit -->
+                        <a href="{{ route('admin.kategori.edit', $kategori->id) }}" class="btn btn-sm btn-warning">Edit</a>
                         
+                        <!-- Tombol Hapus -->
                         <form action="{{ route('admin.kategori.destroy', $kategori->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus?')">
                             @csrf
                             @method('DELETE')

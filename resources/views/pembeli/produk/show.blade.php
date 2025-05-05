@@ -64,32 +64,33 @@
 {{-- Produk Terkait --}}
 <div class="mt-5">
     <h5 class="mb-3">Produk Lain dari Toko Ini</h5>
-    <div class="product-list">
-        <ul class="row">
-            @forelse ($produkTerkait as $item)
-                <li class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                    <div class="product-box card">
-                        <div class="product-img">
-                            @if ($item->gambar)
-                                <img src="{{ asset('storage/' . $item->gambar) }}" class="card-img-top" alt="{{ $item->nama }}">
-                            @else
-                                <img src="{{ asset('vendors/images/no-image.png') }}" class="card-img-top" alt="Tidak ada gambar">
-                            @endif
-                        </div>
-                        <div class="product-caption p-3">
-                            <h6><a href="{{ route('pembeli.produk.show', $item->id) }}">{{ $item->nama }}</a></h6>
-                            <div class="price">
-                                <ins>Rp{{ number_format($item->harga, 0, ',', '.') }}</ins>
-                            </div>
-                            <a href="{{ route('pembeli.produk.show', $item->id) }}" class="btn btn-outline-primary mt-2 btn-sm">Lihat Produk</a>
-                        </div>
+    <div class="row">
+        @forelse ($produkTerkait as $item)
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                <div class="card-box shadow border-0 rounded h-100">
+                    <div class="position-relative" style="height: 200px; overflow: hidden;">
+                        @if ($item->gambar)
+                            <img src="{{ asset('storage/' . $item->gambar) }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ $item->nama }}">
+                        @else
+                            <img src="{{ asset('vendors/images/no-image.png') }}" class="w-100 h-100" style="object-fit: cover;" alt="Tidak ada gambar">
+                        @endif
                     </div>
-                </li>
-            @empty
-                <p class="text-muted px-3">Belum ada produk lain dari toko ini.</p>
-            @endforelse
-        </ul>
+                    <div class="p-3">
+                        <h6 class="fw-bold">
+                            <a href="{{ route('pembeli.produk.show', $item->id) }}" class="text-dark text-decoration-none">
+                                {{ $item->nama }}
+                            </a>
+                        </h6>
+                        <div class="price text-primary fw-semibold">
+                            Rp{{ number_format($item->harga, 0, ',', '.') }}
+                        </div>
+                        <a href="{{ route('pembeli.produk.show', $item->id) }}" class="btn btn-outline-primary mt-2 btn-sm w-100">Lihat Produk</a>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <p class="text-muted px-3">Belum ada produk lain dari toko ini.</p>
+        @endforelse
     </div>
 </div>
-
 @endsection
