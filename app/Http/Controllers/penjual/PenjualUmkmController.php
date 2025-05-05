@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\UMKM;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PenjualUmkmController extends Controller
 {
@@ -58,5 +59,63 @@ class PenjualUmkmController extends Controller
         ]);
 
         return redirect()->route('penjual.umkm.index')->with('success', 'UMKM berhasil didaftarkan. Menunggu persetujuan admin.');
+    }
+
+    /**
+     * Menampilkan form edit UMKM.
+     */
+    public function edit($id)
+    {
+        $umkm = UMKM::findOrFail($id);
+
+        // Cek apakah UMKM milik user saat ini
+        if ($umkm->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return view('penjual.umkm.edit', compact('umkm'));
+    }
+
+    /**
+     * Menyimpan perubahan data UMKM.
+     */
+    public function update(Request $request, $id)
+    {
+        $umkm = UMKM::findOrFail($id);
+
+        if ($umkm->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'nama_toko'  => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
+            'alamat'    => 'required|string|max:255',
+            'no_telp'   => 'nullable|string|max:255',
+            'logo'      => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Simpan logo baru jika ada
+        if ($request->hasFile('logo')) {
+            // Hapus logo lama jika ada
+            if ($umkm->logo && Storage::disk('public')->exists($umkm->logo)) {
+                Storage::disk('public')->delete($umkm->logo);
+            }
+
+            $logoPath = $request->file('logo')->store('logos', 'public');
+            $umkm->logo = $logoPath;
+        }
+
+        $umkm->nama_toko = $request->nama_toko;
+        $umkm->deskripsi = $request->deskripsi;
+        $umkm->alamat = $request->alamat;
+        $umkm->no_telp = $request->no_telp;
+
+        // Status direset ke pending setiap update
+        $umkm->status = 'pending';
+
+        $umkm->save();
+
+        return redirect()->route('penjual.umkm.index')->with('success', 'Data toko berhasil diperbarui. Menunggu persetujuan admin.');
     }
 }

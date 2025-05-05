@@ -6,7 +6,14 @@
 <div class="card-box pd-20 height-100-p mb-30">
     <div class="row align-items-center">
         <div class="col-md-4">
-            <img src="{{ asset('vendors/images/banner-img.png') }}" alt="Banner">
+            <div class="col-md-4 text-center">
+                @if($umkm && $umkm->logo)
+                    <img src="{{ asset('storage/' . $umkm->logo) }}" class="img-fluid" style="max-height: 150px;" alt="Logo Toko">
+                @else
+                    <img src="{{ asset('images/default-avatar.png') }}" class="img-fluid" style="max-height: 150px;" alt="Default Logo">
+                @endif
+            </div>
+            
         </div>
         <div class="col-md-8">
             @php

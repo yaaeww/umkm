@@ -46,10 +46,12 @@
     
             <div class="collapse navbar-collapse" id="navbarNav">
                 <!-- Search Form -->
-                <form action="" method="GET" class="d-flex mx-auto" style="max-width: 400px;">
-                    <input class="form-control me-2" type="search" name="query" placeholder="Cari produk..." aria-label="Search">
+                <form class="d-flex" action="{{ route('pembeli.dashboard') }}" method="GET">
+                    <input class="form-control me-2" type="search" name="search" placeholder="Cari produk..."
+                        value="{{ request('search') }}">
                     <button class="btn btn-outline-success" type="submit">Cari</button>
                 </form>
+
     
                 <!-- Menu kanan -->
                 <ul class="navbar-nav ms-auto">

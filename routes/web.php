@@ -100,7 +100,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')->group(function () {
     Route::get('/dashboard', [DashboardPenjualController::class, 'index'])->name('dashboard');
     Route::resource('produk', ProdukPenjualController::class);
-    Route::resource('umkm', PenjualUmkmController::class)->only(['index', 'create', 'store']);
+    Route::resource('umkm', PenjualUmkmController::class)->only(['index', 'create', 'store', 'edit', 'update']);
+
 
     Route::controller(PenjualProfileController::class)->prefix('profile')->name('profile.')->group(function () {
         Route::get('/', 'show')->name('show');
