@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('phone');
             $table->integer('jumlah');
             $table->bigInteger('total_harga');
-            $table->enum('status',(['pending','complete']));
+            $table->enum('status',(['pending','complete','cancel']));
             $table->timestamps();
         });
     }

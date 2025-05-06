@@ -37,8 +37,9 @@
                                 </td>
                                 <td>{{ $order->created_at->format('d-m-Y H:i') }}</td>
                                 <td>
-                                    <a href="{{ url('/invoice/' . $order->id) }}" class="btn btn-sm btn-primary">Lihat Invoice</a>
+                                    <a href="{{ route('pembeli.invoice.show', $order->id) }}" class="btn btn-sm btn-primary">Lihat Invoice</a>
                                 </td>
+                                
                             </tr>
                         @endforeach
                     </tbody>

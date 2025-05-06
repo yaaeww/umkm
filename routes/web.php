@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Models\Produk;
 use App\Http\Controllers\LandingController;
 
 // Admin Controllers
@@ -32,17 +31,20 @@ use App\Http\Controllers\Pembeli\{
     PesananController
 };
 
+// Invoice Controller (khusus agar tidak bentrok)
+use App\Http\Controllers\InvoiceController;
+
 /*
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 | Landing Page
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 */
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 /*
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 | Redirect After Login
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 */
 Route::middleware('auth')->get('/redirect-after-login', function () {
     return match (auth()->user()->role) {
@@ -54,16 +56,16 @@ Route::middleware('auth')->get('/redirect-after-login', function () {
 });
 
 /*
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 | Universal Dashboard Redirect
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 */
 Route::middleware('auth')->get('/dashboard', fn() => redirect('/redirect-after-login'));
 
 /*
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 | Admin Routes
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardAdminController::class, 'index'])->name('dashboard');
@@ -91,9 +93,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 /*
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 | Penjual Routes
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')->group(function () {
     Route::get('/dashboard', [DashboardPenjualController::class, 'index'])->name('dashboard');
@@ -109,18 +111,20 @@ Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')
 });
 
 /*
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 | Pembeli Routes
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli')->name('pembeli.')->group(function () {
     Route::get('/dashboard', [DashboardPembeliController::class, 'index'])->name('dashboard');
 
+    // Produk
     Route::controller(ProdukPembeliController::class)->prefix('produk')->name('produk.')->group(function () {
-        Route::get('/', 'index')->name('index'); // pembeli.produk.index
-        Route::get('/{id}', 'show')->name('show'); // pembeli.produk.show
+        Route::get('/', 'index')->name('index');
+        Route::get('/{id}', 'show')->name('show');
     });
 
+    // Keranjang
     Route::controller(KeranjangController::class)->prefix('keranjang')->name('keranjang.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/', 'store')->name('store');
@@ -128,25 +132,34 @@ Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli')->name('pembeli.')
         Route::delete('/{id}', 'destroy')->name('destroy');
     });
 
+    // Order & Checkout
     Route::get('/order/{produk_id}/{quantity}', [OrderController::class, 'showForm'])->name('order');
     Route::post('/checkout', [OrderController::class, 'checkout'])->name('checkout');
-    Route::get('/invoice/{id}', [OrderController::class, 'invoice']);
+    Route::get('/status/belum-bayar', [OrderController::class, 'statusBelumBayar'])->name('status.belum-bayar');
+    Route::get('/pending/{order_id_midtrans}', [OrderController::class, 'pending'])->name('pending');
+    Route::delete('/order/{id}', [OrderController::class, 'batal'])->name('order.batal');
+    Route::post('/order/cancel/{order_id}', [OrderController::class, 'cancelExpiredOrder'])->name('order.cancelExpired');
 
+    // Invoice
+    Route::get('/invoice/{id}', [InvoiceController::class, 'show'])->name('invoice.show');
+
+    // CheckoutController
     Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
-        Route::get('/', 'index')->name('index');
+        Route::get('/', 'index')->name('form');
         Route::post('/store', 'store')->name('store');
         Route::post('/midtrans', 'getMidtransToken')->name('midtrans');
-        Route::get('/produk/{produk_id}/{quantity}', 'checkoutProduk')->name('produk');
     });
 
+    // Pesanan
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
 
+    // Profile
     Route::prefix('profile')->name('profile.')->controller(PembeliProfileController::class)->group(function () {
-        Route::get('/', 'show')->name('show');           // Tampilkan profil
-        Route::get('/edit', 'edit')->name('edit');       // Form edit profil
-        Route::patch('/', 'update')->name('update');     // Update data profil
-        Route::delete('/', 'destroy')->name('destroy');  // Hapus akun (opsional)
+        Route::get('/', 'show')->name('show');
+        Route::get('/edit', 'edit')->name('edit');
+        Route::patch('/', 'update')->name('update');
+        Route::delete('/', 'destroy')->name('destroy');
     });
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

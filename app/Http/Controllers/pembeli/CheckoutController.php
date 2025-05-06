@@ -4,13 +4,12 @@ namespace App\Http\Controllers\Pembeli;
 
 use App\Http\Controllers\Controller;
 use App\Models\Keranjang;
-use App\Models\Pesanan;
-use App\Models\PesananDetail;
+use App\Models\Order;
 use App\Models\Produk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class CheckoutController extends Controller
 {
@@ -54,76 +53,58 @@ class CheckoutController extends Controller
         return view('pembeli.checkout', compact('items', 'totalHarga'));
     }
 
-    // Simpan pesanan (Checkout Semua)
-    public function store(Request $request)
+    // Simpan pesanan dan proses Midtrans
+    public function checkout(Request $request)
 {
-    $request->validate([
-        'alamat_pengiriman' => 'required|string|max:255',
-        'nomor_hp' => 'required|string|max:20',
-        'metode_pembayaran' => 'required|in:cod,transfer',
-    ]);
+    // Ambil data produk
+    $produk_id = $request->input('produk_id');
+    $produk = Produk::findOrFail($produk_id);
+    $quantity = $request->input('jumlah');
+    $total_harga = intval($quantity) * intval($produk->harga);
 
-    $keranjangs = Keranjang::where('user_id', Auth::id())->with('produk')->get()
-        ->filter(fn($item) => $item->produk !== null);
+    // Cek apakah order sudah ada atau belum
+    $order = Order::where('user_id', Auth::id())
+                ->where('produk_id', $produk_id)
+                ->whereNull('order_id_midtrans')
+                ->first();
 
-    if ($keranjangs->isEmpty()) {
-        return redirect()->back()->with('error', 'Tidak ada produk yang bisa diproses.');
-    }
-
-    DB::beginTransaction();
-
-    try {
-        $kodePesanan = 'ORD-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
-
-        $pesanan = Pesanan::create([
+    if (!$order) {
+        // Jika tidak ada order, buat order baru
+        $order = Order::create([
             'user_id' => Auth::id(),
-            'kode_pesanan' => $kodePesanan,
-            'alamat_pengiriman' => $request->alamat_pengiriman,
-            'nomor_hp' => $request->nomor_hp,
-            'total_harga' => 0,
-            'metode_pembayaran' => $request->metode_pembayaran,
+            'produk_id' => $produk_id,
+            'jumlah' => $quantity,
+            'total_harga' => $total_harga,
+            'status' => 'pending',
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'alamat' => $request->alamat,
+            'order_id_midtrans' => 'ORDER-' . uniqid(),
         ]);
-
-        $totalHarga = 0;
-
-        foreach ($keranjangs as $item) {
-            $produk = $item->produk;
-
-            if ($produk->stok < $item->jumlah) {
-                DB::rollBack();
-                return redirect()->back()->with('error', "Stok produk '{$produk->nama}' tidak mencukupi.");
-            }
-
-            $produk->stok -= $item->jumlah;
-            $produk->save();
-
-            PesananDetail::create([
-                'pesanan_id' => $pesanan->id,
-                'produk_id' => $produk->id,
-                'harga' => $produk->harga,
-                'jumlah' => $item->jumlah,
-            ]);
-
-            $totalHarga += $produk->harga * $item->jumlah;
-        }
-
-        $pesanan->update(['total_harga' => $totalHarga]);
-        Keranjang::where('user_id', Auth::id())->delete();
-
-        DB::commit();
-
-        if ($pesanan->metode_pembayaran === 'cod') {
-            return redirect()->route('pembeli.pesanan.show', $pesanan->id)
-                ->with('success', 'Checkout berhasil! Silakan siapkan pembayaran saat produk tiba.');
-        }
-
-        // Misal metode transfer: bisa redirect ke halaman instruksi pembayaran atau midtrans
-        return redirect()->route('pembeli.pesanan.index')->with('success', 'Pesanan berhasil dibuat. Silakan selesaikan pembayaran.');
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return redirect()->back()->with('error', 'Checkout gagal: ' . $e->getMessage());
     }
+
+    // Konfigurasi Midtrans
+    Config::$serverKey = config('midtrans.server_key');
+    Config::$isProduction = config('midtrans.is_production');
+    Config::$isSanitized = true;
+    Config::$is3ds = true;
+
+    $params = [
+        'transaction_details' => [
+            'order_id' => $order->order_id_midtrans,
+            'gross_amount' => $total_harga,
+        ],
+        'customer_details' => [
+            'first_name' => $request->name,
+            'last_name' => '',
+            'phone' => $request->phone,
+        ],
+    ];
+
+    $snapToken = Snap::getSnapToken($params);
+
+    // Kirim variabel order dan snapToken ke view
+    return view('pembeli.checkout', compact('snapToken', 'order'));
 }
 
 }

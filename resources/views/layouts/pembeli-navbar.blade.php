@@ -10,6 +10,12 @@
 
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- DeskApp CSS -->
+    <link rel="stylesheet" href="{{ asset('vendors/styles/core.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendors/styles/icon-font.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendors/styles/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendors/styles/responsive.css') }}">
 </head>
 <body>
 
@@ -119,5 +125,11 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- DeskApp JS -->
+    <script src="{{ asset('vendors/scripts/core.js') }}"></script>
+    <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
+    <script src="{{ asset('vendors/scripts/process.js') }}"></script>
+    <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
 </body>
 </html>
