@@ -17,27 +17,29 @@ class DashboardPenjualController extends Controller
     {
         $user = Auth::user();
 
-        // Cari UMKM milik user
+        // Ambil UMKM milik user penjual
         $umkm = UMKM::where('user_id', $user->id)->first();
 
+        // Default nilai
+        $produks = collect();
+        $totalProduk = 0;
+        $totalKategori = 0;
+
         if ($umkm) {
-            // Ambil produk-produk UMKM
-            $produks = Produk::where('umkm_id', $umkm->id)->latest()->paginate(10);
+            // Ambil produk-produk dari UMKM terkait
+            $produks = Produk::where('umkm_id', $umkm->id)
+                ->latest()
+                ->paginate(10);
 
             // Hitung total produk
             $totalProduk = $produks->total();
 
-            // Hitung total kategori unik dari produk
+            // Hitung jumlah kategori unik dari produk
             $totalKategori = Produk::where('umkm_id', $umkm->id)
                 ->distinct('kategori_produk_id')
                 ->count('kategori_produk_id');
-        } else {
-            // Kalau belum punya UMKM
-            $produks = collect();
-            $totalProduk = 0;
-            $totalKategori = 0;
         }
 
-        return view('penjual.dashboard', compact('produks', 'umkm', 'totalProduk', 'totalKategori'));
+        return view('penjual.dashboard', compact('umkm', 'produks', 'totalProduk', 'totalKategori'));
     }
 }

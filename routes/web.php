@@ -141,11 +141,11 @@ Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli')->name('pembeli.')
 
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
 
-    Route::controller(PembeliProfileController::class)->prefix('profile')->name('profile.')->group(function () {
-        Route::get('/', 'show')->name('show');
-        Route::get('/edit', 'edit')->name('edit');
-        Route::patch('/', 'update')->name('update');
-        Route::delete('/', 'destroy')->name('destroy');
+    Route::prefix('profile')->name('profile.')->controller(PembeliProfileController::class)->group(function () {
+        Route::get('/', 'show')->name('show');           // Tampilkan profil
+        Route::get('/edit', 'edit')->name('edit');       // Form edit profil
+        Route::patch('/', 'update')->name('update');     // Update data profil
+        Route::delete('/', 'destroy')->name('destroy');  // Hapus akun (opsional)
     });
 });
 

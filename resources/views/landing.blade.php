@@ -11,6 +11,9 @@
         integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
+        body {
+        background-color: #f5e6cc;
+    }
         .navbar {
             height: 70px;
             padding-top: 0;
@@ -94,7 +97,8 @@
     <!-- Main Content -->
     <div class="container mt-5">
         <div class="section-title">
-            <h1>Selamat Datang di BELANJAIN</h1>
+            <h1>============================</h1>
+            <h1>Selamat Datang </h1>
             <p class="lead">Temukan produk terbaik dari UMKM Indramayu</p>
         </div>
 
@@ -154,10 +158,7 @@
             @endforeach
         </div>
 
-        <!-- Login Prompt -->
-        <div class="text-center mt-4">
-            <a href="{{ route('login') }}" class="btn btn-outline-success">Login untuk Melihat Lebih Banyak Produk</a>
-        </div>
+        
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

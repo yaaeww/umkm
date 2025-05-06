@@ -15,6 +15,9 @@
 
     {{-- Navbar Pembeli --}}
     <style>
+        body {
+        background-color: #f5e6cc;
+    }
         .navbar {
             height: 70px; /* Navbar tetap ramping */
             padding-top: 0;

@@ -2,6 +2,9 @@
 
 @section('content')
     <style>
+        body {
+        background-color: #f5e6cc;
+    }
         .card-img-top {
             height: 200px;
             object-fit: cover;
@@ -38,7 +41,10 @@
 
     <div class="container mt-5">
         <div class="section-title">
-            <h2 class="mb-4 text-center">Mau Cari Apa {{ Auth::user()->name }}?</h2>
+            <h2>===========================</h2>
+            <h1>KATEGORI PRODUK</h1>
+            <h2>----------------------------</h2>
+
             <p class="lead">Temukan produk terbaik dari UMKM Indramayu</p>
         </div>
 
@@ -74,11 +80,15 @@
                 </div>
             @endforeach
         </div>
+        <div class="section-title">
+            <h2>==================================</h2>
+            <h2>PRODUK</h2>
+            <p class="lead">Temukan produk yang anda mau</p>
+            <h2>-------------------------------</h2>
+        </div>
 
         {{-- Produk --}}
-        <div class="section-title">
-            <p class="lead">Temukan produk yang anda mau</p>
-        </div>
+        
         <div class="row">
             @forelse ($produks as $produk)
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">

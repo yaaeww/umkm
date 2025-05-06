@@ -14,6 +14,7 @@ class DashboardAdminController extends Controller
      */
     public function index()
     {
+        
         // Jumlah UMKM yang sudah punya produk (jumlah toko aktif)
         $totalProduk = Umkm::whereHas('produks')->count();
 
