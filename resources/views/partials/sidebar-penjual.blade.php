@@ -43,6 +43,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('penjual.pesanan.index') }}" class="dropdown-toggle no-arrow">
+                        <span class="micon bi bi-cart"></span><span class="mtext">Pesanan</span>
+                    </a>
+                </li>
+                <li>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="dropdown-toggle no-arrow btn btn-link mtext" style="padding-left: 38px;">

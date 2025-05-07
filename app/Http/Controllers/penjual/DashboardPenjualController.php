@@ -24,12 +24,16 @@ class DashboardPenjualController extends Controller
         $produks = collect();
         $totalProduk = 0;
         $totalKategori = 0;
+        $totalPembeliUnik = 0;
 
         if ($umkm) {
             // Ambil produk-produk dari UMKM terkait
             $produks = Produk::where('umkm_id', $umkm->id)
                 ->latest()
                 ->paginate(10);
+
+            // Ambil semua produk ID milik UMKM ini
+            $produkIds = Produk::where('umkm_id', $umkm->id)->pluck('id');
 
             // Hitung total produk
             $totalProduk = $produks->total();
@@ -38,8 +42,14 @@ class DashboardPenjualController extends Controller
             $totalKategori = Produk::where('umkm_id', $umkm->id)
                 ->distinct('kategori_produk_id')
                 ->count('kategori_produk_id');
+
+            // Hitung jumlah pembeli unik dari pesanan produk yang statusnya "complete"
+            $totalPembeliUnik = \App\Models\Order::whereIn('produk_id', $produkIds)
+                ->where('status', 'complete')
+                ->distinct('user_id')
+                ->count('user_id');
         }
 
-        return view('penjual.dashboard', compact('umkm', 'produks', 'totalProduk', 'totalKategori'));
+        return view('penjual.dashboard', compact('umkm', 'produks', 'totalProduk', 'totalKategori', 'totalPembeliUnik'));
     }
 }

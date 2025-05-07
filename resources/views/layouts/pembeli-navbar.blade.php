@@ -65,7 +65,7 @@
                         <a class="nav-link" href="{{route('pembeli.produk.index')}}">Produk</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{route('pembeli.pesanan')}}">Pesanan</a>
+                        <a class="nav-link" href="{{route('pembeli.pesanan.index')}}">Pesanan</a>
                     </li>
                 </ul>
 

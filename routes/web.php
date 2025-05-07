@@ -17,7 +17,9 @@ use App\Http\Controllers\Penjual\{
     DashboardPenjualController,
     ProdukPenjualController,
     PenjualUmkmController,
-    PenjualProfileController
+    PenjualProfileController,
+    PenjualPesananController,
+    PenjualInvoiceController
 };
 
 // Pembeli Controllers
@@ -102,6 +104,14 @@ Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')
     Route::resource('produk', ProdukPenjualController::class);
     Route::resource('umkm', PenjualUmkmController::class)->only(['index', 'create', 'store', 'edit', 'update']);
 
+    // Rute pesanan penjual
+    Route::get('/pesanan', [PenjualPesananController::class, 'index'])->name('pesanan.index');
+    Route::get('/invoice/{id}', [PenjualInvoiceController::class, 'show'])->name('invoice.show');
+    Route::get('/pesanan/{order}/buat', [PenjualPesananController::class, 'create'])->name('pesanan.create');
+    Route::patch('pesanan/{order}/update-status', [PenjualPesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
+    
+    
+    // Profile routes
     Route::controller(PenjualProfileController::class)->prefix('profile')->name('profile.')->group(function () {
         Route::get('/', 'show')->name('show');
         Route::get('/edit', 'edit')->name('edit');
@@ -109,7 +119,6 @@ Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')
         Route::delete('/', 'destroy')->name('destroy');
     });
 });
-
 /*
 |--------------------------------------------------------------------------
 | Pembeli Routes
@@ -151,7 +160,9 @@ Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli')->name('pembeli.')
     });
 
     // Pesanan
-    Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
+    Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan.index');
+    Route::delete('pesanan/bulk-delete', [PesananController::class, 'bulkDelete'])->name('pesanan.bulkDelete');
+    Route::delete('/pesanan/{id}', [PesananController::class, 'destroy'])->name('pesanan.destroy');
 
     // Profile
     Route::prefix('profile')->name('profile.')->controller(PembeliProfileController::class)->group(function () {
@@ -161,5 +172,7 @@ Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli')->name('pembeli.')
         Route::delete('/', 'destroy')->name('destroy');
     });
 });
+
+
 
 require __DIR__.'/auth.php';
