@@ -100,18 +100,23 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')->group(function () {
+    // Dashboard Penjual
     Route::get('/dashboard', [DashboardPenjualController::class, 'index'])->name('dashboard');
+
+    // Produk & UMKM
     Route::resource('produk', ProdukPenjualController::class);
     Route::resource('umkm', PenjualUmkmController::class)->only(['index', 'create', 'store', 'edit', 'update']);
 
-    // Rute pesanan penjual
+    // Pesanan
     Route::get('/pesanan', [PenjualPesananController::class, 'index'])->name('pesanan.index');
     Route::get('/invoice/{id}', [PenjualInvoiceController::class, 'show'])->name('invoice.show');
     Route::get('/pesanan/{order}/buat', [PenjualPesananController::class, 'create'])->name('pesanan.create');
     Route::patch('pesanan/{order}/update-status', [PenjualPesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
-    
-    
-    // Profile routes
+
+    // Pendapatan Per Produk
+    Route::get('/pendapatan-per-produk', [\App\Http\Controllers\Penjual\PendapatanController::class, 'index'])->name('pendapatan.index');
+
+    // Profile
     Route::controller(PenjualProfileController::class)->prefix('profile')->name('profile.')->group(function () {
         Route::get('/', 'show')->name('show');
         Route::get('/edit', 'edit')->name('edit');
@@ -119,6 +124,7 @@ Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')
         Route::delete('/', 'destroy')->name('destroy');
     });
 });
+
 /*
 |--------------------------------------------------------------------------
 | Pembeli Routes
@@ -161,6 +167,7 @@ Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli')->name('pembeli.')
 
     // Pesanan
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan.index');
+    Route::patch('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
     Route::delete('pesanan/bulk-delete', [PesananController::class, 'bulkDelete'])->name('pesanan.bulkDelete');
     Route::delete('/pesanan/{id}', [PesananController::class, 'destroy'])->name('pesanan.destroy');
 

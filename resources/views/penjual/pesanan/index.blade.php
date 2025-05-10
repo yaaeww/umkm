@@ -20,6 +20,7 @@
                         <th>Total Harga</th>
                         <th>Status Pembayaran</th>
                         <th>Status Pesanan</th>
+                        <th>Status Penerimaan</th>
                         <th>Waktu Pesanan</th>
                         <th>Aksi</th>
                     </tr>
@@ -34,6 +35,15 @@
                             <td>Rp{{ number_format($order->total_harga, 0, ',', '.') }}</td>
                             <td><span class="badge bg-success">{{ ucfirst($order->status) }}</span></td>
                             <td><span class="badge bg-info">{{ ucfirst(str_replace('_', ' ', $order->status_pesanan)) }}</span></td>
+                            <td>
+                                @if($order->status_pesanan === 'diterima')
+                                    <span class="badge bg-success">Diterima</span>
+                                @elseif($order->status_pesanan === 'belum_diterima')
+                                    <span class="badge bg-warning text-dark">Belum Diterima</span>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
                             <td>{{ $order->created_at->format('d M Y H:i') }}</td>
                             <td>
                                 <a href="{{ route('penjual.invoice.show', $order->id) }}" class="btn btn-sm btn-primary">Detail</a>
@@ -62,6 +72,7 @@
                         <th>Total Harga</th>
                         <th>Status Pembayaran</th>
                         <th>Status Pesanan</th>
+                        <th>Status Penerimaan</th>
                         <th>Waktu Pesanan</th>
                         <th>Aksi</th>
                     </tr>
@@ -76,6 +87,15 @@
                             <td>Rp{{ number_format($order->total_harga, 0, ',', '.') }}</td>
                             <td><span class="badge bg-danger">{{ ucfirst($order->status) }}</span></td>
                             <td><span class="badge bg-secondary">{{ ucfirst(str_replace('_', ' ', $order->status_pesanan)) }}</span></td>
+                            <td>
+                                @if($order->status_pesanan === 'diterima')
+                                    <span class="badge bg-success">Diterima</span>
+                                @elseif($order->status_pesanan === 'belum_diterima')
+                                    <span class="badge bg-warning text-dark">Belum Diterima</span>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
                             <td>{{ $order->created_at->format('d M Y H:i') }}</td>
                             <td>
                                 {{-- Tidak ada aksi untuk pesanan cancel --}}

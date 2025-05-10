@@ -13,9 +13,9 @@ class PesananController extends Controller
     {
         // Ambil semua pesanan milik user yang sedang login
         $pesanan = Order::with('produk') // pastikan relasi produk ada
-                        ->where('user_id', Auth::id())
-                        ->latest()
-                        ->get();
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->get();
 
         return view('pembeli.pesanan.index', compact('pesanan'));
     }
@@ -32,6 +32,29 @@ class PesananController extends Controller
 
         return back()->with('error', 'Hanya pesanan dengan status cancel yang bisa dihapus.');
     }
+    public function updateStatus(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Validasi status yang diizinkan
+        $validated = $request->validate([
+            'status_pesanan' => 'required|in:diterima,belum_diterima',
+        ]);
+
+        if ($order->status === 'complete' && $order->status_pesanan === 'dikirim') {
+            $order->status_pesanan = $validated['status_pesanan'];
+            $order->save();
+
+            return redirect()->back()->with('success', 'Status pesanan berhasil diperbarui.');
+        }
+
+        return redirect()->back()->with('error', 'Status pesanan tidak dapat diubah.');
+    }
+
 
     public function bulkDelete(Request $request)
     {
@@ -44,8 +67,8 @@ class PesananController extends Controller
 
         // Hapus pesanan yang statusnya cancel dan ID ada di dalam array
         $deletedCount = Order::whereIn('id', $ids)
-                            ->where('status', 'cancel')
-                            ->delete();
+            ->where('status', 'cancel')
+            ->delete();
 
         if ($deletedCount > 0) {
             return back()->with('success', "$deletedCount pesanan berhasil dihapus.");

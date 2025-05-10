@@ -12,8 +12,9 @@
 
     <style>
         body {
-        background-color: #f5e6cc;
-    }
+            background-color: #f5e6cc;
+        }
+
         .navbar {
             height: 70px;
             padding-top: 0;
@@ -43,7 +44,8 @@
         }
 
         .product-card {
-            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
         }
 
         .kategori-card {
@@ -65,6 +67,36 @@
 
         .kategori-card:hover .kategori-overlay {
             opacity: 1;
+        }
+
+        .produk-card-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .produk-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .produk-card-wrapper:hover .produk-overlay {
+            opacity: 1;
+        }
+
+        .produk-overlay h5 {
+            color: white;
+            text-align: center;
+            padding: 10px;
         }
     </style>
 </head>
@@ -141,14 +173,25 @@
         <div class="row">
             @foreach($produks as $produk)
                 <div class="col-md-4 product-card">
-                    <div class="card">
+                    <div class="card position-relative overflow-hidden border-0 shadow produk-card-wrapper">
                         @if($produk->gambar)
                             <img src="{{ asset('storage/' . $produk->gambar) }}" class="card-img-top" alt="{{ $produk->nama }}">
                         @else
                             <img src="{{ asset('images/default.jpg') }}" class="card-img-top" alt="Default Image">
                         @endif
+        
+                        <!-- Overlay saat hover -->
+                        <div class="produk-overlay">
+                            <h5>{{ $produk->nama }}</h5>
+                        </div>
+        
+                        <!-- Link seluruh kartu -->
+                        <a href="{{ route('login') }}" class="stretched-link"></a>
+                    </div>
+        
+                    <!-- Card body terpisah -->
+                    <div class="card border-0 shadow">
                         <div class="card-body">
-                            <h5 class="card-title">{{ $produk->nama }}</h5>
                             <p class="card-text">{{ Str::limit($produk->deskripsi, 100) }}</p>
                             <p class="card-text"><strong>Rp {{ number_format($produk->harga, 0, ',', '.') }}</strong></p>
                             <a href="{{ route('login') }}" class="btn btn-primary">Pesan Sekarang</a>
@@ -157,8 +200,10 @@
                 </div>
             @endforeach
         </div>
-
         
+        
+
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

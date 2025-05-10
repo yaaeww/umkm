@@ -144,10 +144,10 @@
                         </td>
                         <td>
                             <h5 class="font-16">{{ $produk->nama }}</h5>
-                            oleh {{ $produk->penjual->name }}
+                            oleh {{ $produk->nama }}
                         </td>
                         <td>{{ $produk->warna ?? '-' }}</td>
-                        <td>Rp {{ number_format($produk->harga, 0, ',', '.') }}</td>
+                        <th>Total Penjualan</th>
                         <td>{{ $produk->jumlah_terjual ?? 0 }}</td>
                         <td>
                             <div class="dropdown">
