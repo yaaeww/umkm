@@ -105,14 +105,14 @@ jobs:
     - name: Deploy to server via SCP/SSH
       run: |
         # Buat direktori sementara di server
-        ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/laravel-temp-deploy"
+        ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/D4RPL2C-kelompok9-deploy"
 
         # Upload files ke server
-        scp -o StrictHostKeyChecking=no -P 64000 -r ./deploy/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/laravel-temp-deploy/
+        scp -o StrictHostKeyChecking=no -P 64000 -r ./deploy/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/D4RPL2C-kelompok9-deploy/
 
         # Jalankan deployment script di server
         ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-          cd ~/laravel-temp-deploy
+          cd ~/D4RPL2C-kelompok9-deploy
 
           # Backup existing deployment (optional)
           # tar -czf /backup/laravel-backup-$(date +"%Y%m%d%H%M%S").tar.gz /var/www/laravel-app
@@ -123,10 +123,10 @@ jobs:
             --exclude='storage' \
             --exclude='.git' \
             --exclude='.github' \
-            ~/laravel-temp-deploy/ /var/www/laravel-app/
+            ~/laravel-temp-deploy/ /var/www/D4RPL2C-kelompok9-deploy/
 
           # Set permissions
-          sudo chown -R www-data:www-data /var/www/laravel-app
+          sudo chown -R www-data:www-data /var/www/D4RPL2C-kelompok9-deploy
           sudo chmod -R 755 /var/www/laravel-app/storage
           sudo chmod -R 755 /var/www/laravel-app/bootstrap/cache
 
