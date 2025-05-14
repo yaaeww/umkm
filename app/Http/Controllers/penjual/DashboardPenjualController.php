@@ -70,7 +70,7 @@ class DashboardPenjualController extends Controller
                     'users.name as penjual_name',
                     DB::raw('SUM(orders.jumlah) as total_unit'),
                     DB::raw('SUM(orders.total_harga) as jumlah_terjual')
-                )                
+                )
                 ->where('produks.umkm_id', $umkm->id)
                 ->where('orders.status', 'complete')
                 ->groupBy('produks.id', 'produks.nama', 'produks.harga', 'produks.gambar', 'users.name')
@@ -79,6 +79,7 @@ class DashboardPenjualController extends Controller
                 ->get();
         }
 
+        // RETURN ke view selalu dijalankan, tidak peduli apakah $umkm ditemukan atau tidak
         return view('penjual.dashboard', compact(
             'umkm',
             'produks',

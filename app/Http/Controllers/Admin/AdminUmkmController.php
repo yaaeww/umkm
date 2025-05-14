@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\UMKM;
 use App\Models\Produk;
 use Illuminate\Http\Request;
+use App\Notifications\PeringatanUmkmNotification;
 
 class AdminUmkmController extends Controller
 {
@@ -44,11 +45,12 @@ class AdminUmkmController extends Controller
     }
 
     /**
-     * Menampilkan detail UMKM.
+     * Menampilkan detail UMKM dan relasinya.
      */
     public function show($id)
     {
-        $umkm = UMKM::findOrFail($id);
+        $umkm = UMKM::with(['user', 'produks'])->findOrFail($id);
+
         return view('admin.umkm.show', compact('umkm'));
     }
 
@@ -59,11 +61,12 @@ class AdminUmkmController extends Controller
     {
         $umkm = UMKM::findOrFail($id);
         $products = Produk::where('umkm_id', $id)->latest()->get();
+
         return view('admin.umkm.products', compact('umkm', 'products'));
     }
 
     /**
-     * Menghapus UMKM (khusus yang status 'rejected').
+     * Menghapus UMKM yang status-nya 'rejected' beserta produknya.
      */
     public function destroy($id)
     {
@@ -73,11 +76,54 @@ class AdminUmkmController extends Controller
             return redirect()->route('admin.umkm.index')->with('error', 'Hanya UMKM yang sudah ditolak yang bisa dihapus.');
         }
 
-        // Hapus produk terkait jika diperlukan
+        // Hapus semua produk yang dimiliki UMKM
         Produk::where('umkm_id', $id)->delete();
 
+        // Hapus UMKM
         $umkm->delete();
 
         return redirect()->route('admin.umkm.index')->with('success', 'UMKM berhasil dihapus.');
+    }
+
+    /**
+     * Menghapus satu produk berdasarkan ID.
+     */
+    public function destroyProduct($id)
+    {
+        $produk = Produk::findOrFail($id);
+
+        // Hapus gambar dari storage jika ada
+        if ($produk->gambar && \Storage::disk('public')->exists('produks/' . $produk->gambar)) {
+            \Storage::disk('public')->delete('produks/' . $produk->gambar);
+        }
+
+        $produk->delete();
+
+        return back()->with('success', 'Produk berhasil dihapus.');
+    }
+
+    /**
+     * Mengirim notifikasi kepada pemilik UMKM.
+     */
+    public function sendNotification(Request $request, $id)
+    {
+        $request->validate([
+            'message' => 'required|string|max:1000',
+        ]);
+
+        $umkm = UMKM::with('user')->findOrFail($id);
+
+        if (!$umkm->user) {
+            return back()->with('error', 'UMKM tidak memiliki pemilik user.');
+        }
+
+        $user = $umkm->user;
+        $subject = "Peringatan untuk UMKM: {$umkm->nama_toko}";
+        $message = $request->input('message');
+
+        // Kirim notifikasi
+        $user->notify(new PeringatanUmkmNotification($subject, $message));
+
+        return back()->with('success', 'Notifikasi berhasil dikirim ke pemilik UMKM.');
     }
 }

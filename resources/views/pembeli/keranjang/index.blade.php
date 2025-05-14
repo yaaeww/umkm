@@ -28,7 +28,7 @@
                                 @csrf
                                 @method('PUT')
                                 <input type="number" name="jumlah" value="{{ $item->jumlah }}" min="1" class="form-control form-control-sm text-center" style="width: 70px;">
-                                <button type="submit" class="btn btn-sm btn-secondary">Ubah</button>
+                                <button type="submit" class="btn btn-sm btn-primary">Ubah</button>
                             </form>
                         </td>
                         <td>Rp {{ number_format($item->produk->harga * $item->jumlah, 0, ',', '.') }}</td>

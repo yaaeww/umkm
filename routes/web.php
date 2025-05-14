@@ -37,16 +37,17 @@ use App\Http\Controllers\Pembeli\{
 use App\Http\Controllers\InvoiceController;
 
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | Landing Page
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 */
+
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | Redirect After Login
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 */
 Route::middleware('auth')->get('/redirect-after-login', function () {
     return match (auth()->user()->role) {
@@ -58,16 +59,16 @@ Route::middleware('auth')->get('/redirect-after-login', function () {
 });
 
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | Universal Dashboard Redirect
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 */
 Route::middleware('auth')->get('/dashboard', fn() => redirect('/redirect-after-login'));
 
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | Admin Routes
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardAdminController::class, 'index'])->name('dashboard');
@@ -84,6 +85,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::post('/{id}/approve', [AdminUmkmController::class, 'approve'])->name('approve');
         Route::post('/{id}/reject', [AdminUmkmController::class, 'reject'])->name('reject');
         Route::delete('/{id}', [AdminUmkmController::class, 'destroy'])->name('destroy');
+        Route::delete('/produk/{id}', [AdminUmkmController::class, 'destroyProduct'])->name('produk.destroy');
+        Route::delete('/umkm/{id}', [AdminUmkmController::class, 'destroy'])->name('admin.umkm.destroy');
+        Route::post('/{id}/notify', [AdminUmkmController::class, 'sendNotification'])->name('notify');
     });
 
     Route::controller(AdminProfileController::class)->prefix('profile')->name('profile.')->group(function () {
@@ -95,9 +99,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | Penjual Routes
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')->group(function () {
     // Dashboard Penjual
@@ -122,13 +126,16 @@ Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')
         Route::get('/edit', 'edit')->name('edit');
         Route::patch('/', 'update')->name('update');
         Route::delete('/', 'destroy')->name('destroy');
+
+        // Menambahkan route untuk update avatar
+        Route::post('/avatar', [PenjualProfileController::class, 'updateAvatar'])->name('avatar');
     });
 });
 
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | Pembeli Routes
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli')->name('pembeli.')->group(function () {
     Route::get('/dashboard', [DashboardPembeliController::class, 'index'])->name('dashboard');
@@ -151,6 +158,8 @@ Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli')->name('pembeli.')
     Route::get('/order/{produk_id}/{quantity}', [OrderController::class, 'showForm'])->name('order');
     Route::post('/checkout', [OrderController::class, 'checkout'])->name('checkout');
     Route::get('/status/belum-bayar', [OrderController::class, 'statusBelumBayar'])->name('status.belum-bayar');
+    Route::get('/status/dikemas', [PesananController::class, 'statusDikemas'])->name('status.dikemas');
+    Route::get('/status/dikirim', [PesananController::class, 'dikirim'])->name('status.dikirim');
     Route::get('/pending/{order_id_midtrans}', [OrderController::class, 'pending'])->name('pending');
     Route::delete('/order/{id}', [OrderController::class, 'batal'])->name('order.batal');
     Route::post('/order/cancel/{order_id}', [OrderController::class, 'cancelExpiredOrder'])->name('order.cancelExpired');
@@ -171,15 +180,13 @@ Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli')->name('pembeli.')
     Route::delete('pesanan/bulk-delete', [PesananController::class, 'bulkDelete'])->name('pesanan.bulkDelete');
     Route::delete('/pesanan/{id}', [PesananController::class, 'destroy'])->name('pesanan.destroy');
 
-    // Profile
-    Route::prefix('profile')->name('profile.')->controller(PembeliProfileController::class)->group(function () {
-        Route::get('/', 'show')->name('show');
-        Route::get('/edit', 'edit')->name('edit');
-        Route::patch('/', 'update')->name('update');
-        Route::delete('/', 'destroy')->name('destroy');
+    // Tambahkan di dalam grup route pembeli
+    // Profil Pembeli
+    Route::controller(PembeliProfileController::class)->prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', 'show')->name('show');       // pembeli.profile.show
+        Route::get('/edit', 'edit')->name('edit');   // pembeli.profile.edit
+        Route::put('/', 'update')->name('update');   // pembeli.profile.update
     });
 });
 
-
-
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -8,6 +8,7 @@ use App\Models\Umkm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 
 class PenjualProfileController extends Controller
 {
@@ -15,7 +16,7 @@ class PenjualProfileController extends Controller
     {
         $user = Auth::user();
         $umkm = Umkm::where('user_id', $user->id)->first();
-        return view('penjual.profile.show', compact('user', 'umkm'));
+        return view('profile.show', compact('user', 'umkm'));
     }
 
     public function edit()
@@ -39,6 +40,32 @@ class PenjualProfileController extends Controller
         return redirect()->route('penjual.profile.show')->with('success', 'Profil berhasil diperbarui.');
     }
 
+    public function updateAvatar(Request $request)
+    {
+        $request->validate([
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $user = Auth::user();
+
+        if ($request->hasFile('avatar')) {
+            // Hapus avatar lama jika ada
+            if ($user->avatar && Storage::exists('public/avatar/' . $user->avatar)) {
+                Storage::delete('public/avatar/' . $user->avatar);
+            }
+
+            // Menyimpan avatar baru
+            $avatarName = time() . '.' . $request->file('avatar')->extension();
+            $path = $request->file('avatar')->storeAs('public/avatar', $avatarName);
+
+            // Menyimpan nama avatar ke database
+            $user->avatar = $avatarName;
+            $user->save();
+        }
+
+        return back()->with('success', 'Avatar berhasil diperbarui.');
+    }
+
     public function destroy(Request $request)
     {
         $request->validate([
@@ -50,6 +77,11 @@ class PenjualProfileController extends Controller
         // Khusus penjual, hapus Produk + UMKM
         Produk::where('user_id', $user->id)->delete();
         Umkm::where('user_id', $user->id)->delete();
+
+        // Hapus avatar jika ada
+        if ($user->avatar && Storage::exists('public/avatar/' . $user->avatar)) {
+            Storage::delete('public/avatar/' . $user->avatar);
+        }
 
         Auth::logout();
         $user->delete();
