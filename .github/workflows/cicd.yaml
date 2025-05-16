@@ -1,4 +1,4 @@
-name: D4RPL2C_Kel7 CI/CD (MySQL)
+name: Laravel CI/CD (MySQL)
 
 on:
   push:
@@ -46,7 +46,7 @@ jobs:
         sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=mysql/' .env
         sed -i 's/DB_HOST=127.0.0.1/DB_HOST=127.0.0.1/' .env
         sed -i 's/DB_PORT=3306/DB_PORT=3306/' .env
-        sed -i 's/DB_DATABASE=D4RPL2C_Kel7/DB_DATABASE=laracicd/' .env
+        sed -i 's/DB_DATABASE=laravel/DB_DATABASE=laracicd/' .env
         sed -i 's/DB_USERNAME=root/DB_USERNAME=polindra/' .env
         sed -i 's/DB_PASSWORD=/DB_PASSWORD=polindra/' .env
 
@@ -73,7 +73,7 @@ jobs:
     - name: Upload artifact for deployment
       uses: actions/upload-artifact@v4
       with:
-        name: D4RPL2C_Kel7-app
+        name: laravel-app
         path: |
           .
           !.github/
@@ -92,7 +92,7 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v4
       with:
-        name: D4RPL2C_Kel7-app
+        name: laravel-app
         path: ./deploy
 
     - name: Install SSH key
@@ -105,17 +105,17 @@ jobs:
     - name: Deploy to server via SCP/SSH
       run: |
         # Buat direktori sementara di server
-        ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/D4RPL2C_Kel7-temp-deploy"
+        ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/laravel-temp-deploy"
 
         # Upload files ke server
-        scp -o StrictHostKeyChecking=no -P 64000 -r ./deploy/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/D4RPL2C_Kel7-temp-deploy/
+        scp -o StrictHostKeyChecking=no -P 64000 -r ./deploy/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/laravel-temp-deploy/
 
         # Jalankan deployment script di server
         ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-          cd ~/D4RPL2C_Kel7-temp-deploy
+          cd ~/laravel-temp-deploy
 
           # Backup existing deployment (optional)
-          # tar -czf /backup/D4RPL2C_Kel7-backup-$(date +"%Y%m%d%H%M%S").tar.gz /var/www/D4RPL2C_Kel7-app
+          # tar -czf /backup/laravel-backup-$(date +"%Y%m%d%H%M%S").tar.gz /var/www/laravel-app
 
           # Copy files to production directory
           sudo rsync -avz --delete \
@@ -123,15 +123,15 @@ jobs:
             --exclude='storage' \
             --exclude='.git' \
             --exclude='.github' \
-            ~/D4RPL2C_Kel7-temp-deploy/ /var/www/D4RPL2C_Kel7-app/
+            ~/laravel-temp-deploy/ /var/www/laravel-app/
 
           # Set permissions
-          sudo chown -R www-data:www-data /var/www/D4RPL2C_Kel7-app
-          sudo chmod -R 755 /var/www/D4RPL2C_Kel7-app/storage
-          sudo chmod -R 755 /var/www/D4RPL2C_Kel7-app/bootstrap/cache
+          sudo chown -R www-data:www-data /var/www/laravel-app
+          sudo chmod -R 755 /var/www/laravel-app/storage
+          sudo chmod -R 755 /var/www/laravel-app/bootstrap/cache
 
           # Run deployment commands
-          cd /var/www/D4RPL2C_Kel7-app
+          cd /var/www/laravel-app
           sudo -u www-data composer install --optimize-autoloader --no-dev
           sudo -u www-data php artisan config:cache
           sudo -u www-data php artisan route:cache
@@ -139,5 +139,5 @@ jobs:
           sudo -u www-data php artisan migrate --force
 
           # Cleanup
-          rm -rf ~/D4RPL2C_Kel7-temp-deploy
+          rm -rf ~/laravel-temp-deploy
         EOF
