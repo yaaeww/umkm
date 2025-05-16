@@ -105,14 +105,14 @@ jobs:
     - name: Deploy to server via SCP/SSH
       run: |
         # Buat direktori sementara di server
-        ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/laravel-temp-deploy"
+        ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/D4RPL2C_Kel7"
 
         # Upload files ke server
-        scp -o StrictHostKeyChecking=no -P 64000 -r ./deploy/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/laravel-temp-deploy/
+        scp -o StrictHostKeyChecking=no -P 64000 -r ./deploy/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/D4RPL2C_Kel7/
 
         # Jalankan deployment script di server
         ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-          cd ~/laravel-temp-deploy
+          cd ~/D4RPL2C_Kel7
 
           # Backup existing deployment (optional)
           # tar -czf /backup/laravel-backup-$(date +"%Y%m%d%H%M%S").tar.gz /var/www/laravel-app
@@ -123,7 +123,7 @@ jobs:
             --exclude='storage' \
             --exclude='.git' \
             --exclude='.github' \
-            ~/laravel-temp-deploy/ /var/www/laravel-app/
+            ~/D4RPL2C_Kel7/ /var/www/laravel-app/
 
           # Set permissions
           sudo chown -R www-data:www-data /var/www/laravel-app
@@ -139,5 +139,5 @@ jobs:
           sudo -u www-data php artisan migrate --force
 
           # Cleanup
-          rm -rf ~/laravel-temp-deploy
+          rm -rf ~/D4RPL2C_Kel7
         EOF
