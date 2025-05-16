@@ -15,74 +15,74 @@ class PasswordResetTest extends TestCase
     /**
      * Test halaman request reset password bisa diakses.
      */
-    // public function test_reset_password_link_screen_can_be_rendered(): void
-    // {
-    //     $response = $this->get('/forgot-password');
+    public function test_reset_password_link_screen_can_be_rendered(): void
+    {
+        $response = $this->get('/forgot-password');
 
-    //     $response->assertStatus(200);
-    //     $response->assertSee('auth.forgot-password');
-    // }
+        $response->assertStatus(200);
+        $response->assertSee('auth.forgot-password');
+    }
 
     /**
      * Test user dapat meminta tautan reset password dan notifikasi dikirim.
      */
-    // public function test_reset_password_link_can_be_requested(): void
-    // {
-    //     Notification::fake();
+    public function test_reset_password_link_can_be_requested(): void
+    {
+        Notification::fake();
 
-    //     $user = User::factory()->create();
+        $user = User::factory()->create();
 
-    //     $response = $this->post('/forgot-password', ['email' => $user->email]);
+        $response = $this->post('/forgot-password', ['email' => $user->email]);
 
-    //     $response->assertStatus(302); // Biasanya redirect setelah post
-    //     Notification::assertSentTo($user, ResetPassword::class);
-    // }
+        $response->assertStatus(302); // Biasanya redirect setelah post
+        Notification::assertSentTo($user, ResetPassword::class);
+    }
 
     /**
      * Test halaman reset password dengan token valid bisa diakses.
      */
-    // public function test_reset_password_screen_can_be_rendered(): void
-    // {
-    //     Notification::fake();
+    public function test_reset_password_screen_can_be_rendered(): void
+    {
+        Notification::fake();
 
-    //     $user = User::factory()->create();
+        $user = User::factory()->create();
 
-    //     $this->post('/forgot-password', ['email' => $user->email]);
+        $this->post('/forgot-password', ['email' => $user->email]);
 
-    //     Notification::assertSentTo($user, ResetPassword::class, function ($notification) {
-    //         $response = $this->get('/reset-password/' . $notification->token);
+        Notification::assertSentTo($user, ResetPassword::class, function ($notification) {
+            $response = $this->get('/reset-password/' . $notification->token);
 
-    //         $response->assertStatus(200);
-    //         $response->assertSee('Reset Password'); // Sesuaikan dengan isi halaman Anda
+            $response->assertStatus(200);
+            $response->assertSee('auth.reset-password'); // Sesuaikan dengan isi halaman Anda
 
-    //         return true;
-    //     });
-    // }
+            return true;
+        });
+    }
 
     /**
      * Test user dapat mereset password dengan token valid.
      */
-    // public function test_password_can_be_reset_with_valid_token(): void
-    // {
-    //     Notification::fake();
+    public function test_password_can_be_reset_with_valid_token(): void
+    {
+        Notification::fake();
 
-    //     $user = User::factory()->create();
+        $user = User::factory()->create();
 
-    //     $this->post('/forgot-password', ['email' => $user->email]);
+        $this->post('/forgot-password', ['email' => $user->email]);
 
-    //     Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
-    //         $response = $this->post('/reset-password', [
-    //             'token' => $notification->token,
-    //             'email' => $user->email,
-    //             'password' => 'password',
-    //             'password_confirmation' => 'password',
-    //         ]);
+        Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
+            $response = $this->post('/reset-password', [
+                'token' => $notification->token,
+                'email' => $user->email,
+                'password' => 'password',
+                'password_confirmation' => 'password',
+            ]);
 
-    //         $response
-    //             ->assertSessionHasNoErrors()
-    //             ->assertRedirect(route('login'));
+            $response
+                ->assertSessionHasNoErrors()
+                ->assertRedirect(route('login'));
 
-    //         return true;
-    //     });
-    // }
+            return true;
+        });
+    }
 }
