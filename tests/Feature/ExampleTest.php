@@ -2,19 +2,18 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
     /**
-     * Test halaman landing dapat diakses dan mengembalikan status 200.
+     * A basic test example.
      */
-    public function test_landing_page_returns_successful_response(): void
+    public function test_the_application_returns_a_successful_response(): void
     {
-        $response = $this->get('/landing');
+        $response = $this->get('/');
 
         $response->assertStatus(200);
-        // Optional: cek teks tertentu muncul di halaman
-        // $response->assertSee('Welcome');
     }
 }

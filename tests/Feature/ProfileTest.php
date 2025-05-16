@@ -34,14 +34,14 @@ class ProfileTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->patch('/profile', [
+            ->patch('/penjual/profile', [
                 'name' => 'Test User',
                 'email' => 'test@example.com',
             ]);
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
+            ->assertRedirect('/penjual/profile');
 
         $user->refresh();
 
@@ -59,14 +59,14 @@ class ProfileTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->patch('/profile', [
+            ->patch('/penjual/profile', [
                 'name' => 'Test User',
                 'email' => $user->email,
             ]);
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
+            ->assertRedirect('/penjual/profile');
 
         $this->assertNotNull($user->refresh()->email_verified_at);
     }
@@ -77,18 +77,18 @@ class ProfileTest extends TestCase
     public function test_user_can_delete_their_account(): void
     {
         $user = User::factory()->create([
-            'password' => bcrypt('password'),
+            'password' => Hash::make('password'),
         ]);
 
         $response = $this
             ->actingAs($user)
-            ->delete('/profile', [
+            ->delete('/penjual/profile', [
                 'password' => 'password',
             ]);
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/');
+            ->assertRedirect('/penjual/profile');
 
         $this->assertGuest();
 
@@ -106,14 +106,14 @@ class ProfileTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->from('/profile')
-            ->delete('/profile', [
+            ->from('/penjual/profile')
+            ->delete('/penjual/profile', [
                 'password' => 'wrong-password',
             ]);
 
         $response
             ->assertSessionHasErrors('password')
-            ->assertRedirect('/profile');
+            ->assertRedirect('/penjual/profile');
 
         $this->assertNotNull(User::find($user->id));
     }
