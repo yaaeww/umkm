@@ -20,7 +20,7 @@ class PasswordResetTest extends TestCase
         $response = $this->get('/forgot-password');
 
         $response->assertStatus(200);
-        $response->assertSee('Forgot Password'); // Sesuaikan dengan isi halaman Anda
+        $response->assertSee('auth.forgot-password');
     }
 
     /**
