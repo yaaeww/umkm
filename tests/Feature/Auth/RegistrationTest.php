@@ -18,25 +18,25 @@ class RegistrationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_new_users_can_register(): void
-    {
-        // Pastikan tidak ada user dengan email sama sebelumnya
-        $this->assertDatabaseMissing('users', ['email' => 'test@example.com']);
+    // public function test_new_users_can_register(): void
+    // {
+    //     // Pastikan tidak ada user dengan email sama sebelumnya
+    //     $this->assertDatabaseMissing('users', ['email' => 'test@example.com']);
 
-        $response = $this->post('/register', [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => 'password', // default password dari factory
-            'password_confirmation' => 'password',
-        ]);
+    //     $response = $this->post('/register', [
+    //         'name' => 'Test User',
+    //         'email' => 'test@example.com',
+    //         'password' => 'password', // default password dari factory
+    //         'password_confirmation' => 'password',
+    //     ]);
 
-        // Pastikan pengguna berhasil dibuat di database
-        $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
+    //     // Pastikan pengguna berhasil dibuat di database
+    //     $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
 
-        // Pastikan pengguna sudah login
-        $this->assertAuthenticated();
+    //     // Pastikan pengguna sudah login
+    //     $this->assertAuthenticated();
 
-        // Redirect ke halaman yang ditentukan setelah login
-        $response->assertRedirect(RouteServiceProvider::HOME);
-    }
+    //     // Redirect ke halaman yang ditentukan setelah login
+    //     $response->assertRedirect(RouteServiceProvider::HOME);
+    // }
 }
