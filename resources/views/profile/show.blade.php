@@ -7,14 +7,21 @@
     <!-- Sidebar Profil -->
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-30">
         <div class="pd-20 card-box height-100-p">
-            <div class="profile-photo text-center mb-3">
-                <img 
-                    src="{{ $user->avatar ? asset('storage/avatar/' . $user->avatar) : asset('vendors/images/photo1.jpg') }}" 
-                    alt="Profile Photo" 
-                    class="avatar-photo"
-                    style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%;">
-            </div>
+            <div class="col-md-4 text-center">
+                @php
+                    $avatarPath = auth()->user()->avatar; // Harusnya hanya '1747064324.jpg' atau 'avatar/1747064324.jpg'
+                    $fullPath = 'avatar/' . ltrim($avatarPath, '/'); // Pastikan path lengkap
 
+                    $avatarExists = $avatarPath && Storage::disk('public')->exists($fullPath);
+                    $avatarUrl = $avatarExists
+                        ? asset('storage/' . $fullPath)
+                        : asset('images/default-avatar.png');
+                @endphp
+                <img src="{{ $avatarUrl }}" class="rounded-circle img-fluid" style="max-height: 150px;"
+                    alt="Avatar Pengguna">
+            
+
+            </div>
             <!-- Form Ganti Avatar -->
         <form action="{{ route('penjual.profile.avatar') }}" method="POST" enctype="multipart/form-data">
     @csrf

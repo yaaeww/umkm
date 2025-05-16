@@ -10,10 +10,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Midtrans\Config;
 use Midtrans\Snap;
+use Midtrans\Notification;
 
 class CheckoutController extends Controller
 {
-    // Tampilkan checkout dari semua produk dalam keranjang
+    // Tampilkan halaman checkout dari keranjang
     public function index()
     {
         $items = Keranjang::where('user_id', Auth::id())->with('produk')->get()
@@ -53,23 +54,18 @@ class CheckoutController extends Controller
         return view('pembeli.checkout', compact('items', 'totalHarga'));
     }
 
-    // Simpan pesanan dan proses Midtrans
+    // Proses dan buat order Midtrans (tidak mengurangi stok di sini!)
     public function checkout(Request $request)
-{
-    // Ambil data produk
-    $produk_id = $request->input('produk_id');
-    $produk = Produk::findOrFail($produk_id);
-    $quantity = $request->input('jumlah');
-    $total_harga = intval($quantity) * intval($produk->harga);
+    {
+        $produk_id = $request->input('produk_id');
+        $produk = Produk::findOrFail($produk_id);
+        $quantity = intval($request->input('jumlah'));
+        $total_harga = $quantity * $produk->harga;
 
-    // Cek apakah order sudah ada atau belum
-    $order = Order::where('user_id', Auth::id())
-                ->where('produk_id', $produk_id)
-                ->whereNull('order_id_midtrans')
-                ->first();
+        if ($produk->stok < $quantity) {
+            return redirect()->back()->with('error', 'Stok produk tidak mencukupi.');
+        }
 
-    if (!$order) {
-        // Jika tidak ada order, buat order baru
         $order = Order::create([
             'user_id' => Auth::id(),
             'produk_id' => $produk_id,
@@ -81,30 +77,59 @@ class CheckoutController extends Controller
             'alamat' => $request->alamat,
             'order_id_midtrans' => 'ORDER-' . uniqid(),
         ]);
+
+        // Midtrans config
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production');
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $order->order_id_midtrans,
+                'gross_amount' => $total_harga,
+            ],
+            'customer_details' => [
+                'first_name' => $request->name,
+                'last_name' => '',
+                'phone' => $request->phone,
+            ],
+        ];
+
+        $snapToken = Snap::getSnapToken($params);
+
+        return view('pembeli.checkout', compact('snapToken', 'order'));
     }
 
-    // Konfigurasi Midtrans
-    Config::$serverKey = config('midtrans.server_key');
-    Config::$isProduction = config('midtrans.is_production');
-    Config::$isSanitized = true;
-    Config::$is3ds = true;
+    // Midtrans callback - kurangi stok saat transaksi berhasil
+    public function midtransCallback(Request $request)
+    {
+        $notif = new Notification();
 
-    $params = [
-        'transaction_details' => [
-            'order_id' => $order->order_id_midtrans,
-            'gross_amount' => $total_harga,
-        ],
-        'customer_details' => [
-            'first_name' => $request->name,
-            'last_name' => '',
-            'phone' => $request->phone,
-        ],
-    ];
+        $transaction = $notif->transaction_status;
+        $order_id = $notif->order_id;
 
-    $snapToken = Snap::getSnapToken($params);
+        $order = Order::where('order_id_midtrans', $order_id)->first();
 
-    // Kirim variabel order dan snapToken ke view
-    return view('pembeli.checkout', compact('snapToken', 'order'));
-}
+        if (!$order) {
+            return response()->json(['message' => 'Order tidak ditemukan'], 404);
+        }
 
+        if (in_array($transaction, ['capture', 'settlement']) && $order->status !== 'completed') {
+            $produk = $order->produk;
+
+            if ($produk && $produk->stok >= $order->jumlah) {
+                $produk->stok -= $order->jumlah;
+                $produk->save();
+
+                $order->status = 'completed';
+                $order->save();
+            }
+        } elseif (in_array($transaction, ['cancel', 'expire', 'deny'])) {
+            $order->status = 'failed';
+            $order->save();
+        }
+
+        return response()->json(['message' => 'Notifikasi diproses']);
+    }
 }

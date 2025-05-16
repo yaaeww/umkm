@@ -15,8 +15,8 @@
                         <img src="{{ asset('storage/' . auth()->user()->avatar) }}" class="rounded-circle mb-3" width="120"
                             alt="Avatar">
                     @else
-                        <img src="{{ asset('vendors/images/photo1.jpg') }}" class="rounded-circle mb-3" width="120"
-                            alt="Default Avatar">
+                        <img src="{{ asset('images/default-avatar.jpg') }}" class="rounded-circle mb-3" width="120" alt="Default Avatar">
+
                     @endif
 
                     <h5 class="mb-0">{{ auth()->user()->name }}</h5>

@@ -52,6 +52,6 @@ class PembeliProfileController extends Controller
             'email' => $validated['email'],
         ]);
 
-        return redirect()->route('pembeli.profile')->with('success', 'Profil berhasil diperbarui.');
+        return redirect()->route('pembeli.profile.show')->with('success', 'Profil berhasil diperbarui.');
     }
 }

@@ -185,7 +185,7 @@ Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli')->name('pembeli.')
     Route::controller(PembeliProfileController::class)->prefix('profile')->name('profile.')->group(function () {
         Route::get('/', 'show')->name('show');       // pembeli.profile.show
         Route::get('/edit', 'edit')->name('edit');   // pembeli.profile.edit
-        Route::put('/', 'update')->name('update');   // pembeli.profile.update
+        Route::patch('/', 'update')->name('update');   // pembeli.profile.update
     });
 });
 

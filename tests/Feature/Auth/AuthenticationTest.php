@@ -28,7 +28,8 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(RouteServiceProvider::HOME);
+        $response->assertRedirect('/pembeli/dashboard'); // atau sesuai route name pembeli
+
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void

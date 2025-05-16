@@ -135,30 +135,28 @@
         </div>
 
 
-        <!-- Kategori Produk -->
-        <div class="row mb-5">
-            @foreach($kategoris as $kategori)
-                <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                    <div class="card position-relative overflow-hidden border-0 shadow kategori-card">
-                        @if($kategori->gambar)
-                            <img src="{{ asset('storage/kategori/' . basename($kategori->gambar)) }}" class="card-img-top"
-                                alt="{{ $kategori->nama }}">
-                        @else
-                            <img src="{{ asset('images/default.jpg') }}" class="card-img-top" alt="Default">
-                        @endif
+        <!-- Kategori Produk (Parent Only) -->
+<div class="row mb-5">
+    @foreach($kategoris as $kategori)
+        <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+            <div class="card position-relative overflow-hidden border-0 shadow kategori-card">
+                @if($kategori->gambar)
+                    <img src="{{ asset('storage/kategori/' . basename($kategori->gambar)) }}" class="card-img-top"
+                        alt="{{ $kategori->nama }}">
+                @else
+                    <img src="{{ asset('images/default.jpg') }}" class="card-img-top" alt="Default">
+                @endif
 
-                        <!-- Overlay yang muncul saat hover -->
-                        <div class="kategori-overlay d-flex justify-content-center align-items-center">
-                            <h5 class="text-white text-center">{{ $kategori->nama }}</h5>
-                        </div>
-
-                        <!-- Link seluruh kartu -->
-                        <a href="{{ route('pembeli.dashboard', ['kategori' => $kategori->id]) }}"
-                            class="stretched-link"></a>
-                    </div>
+                <div class="kategori-overlay d-flex justify-content-center align-items-center">
+                    <h5 class="text-white text-center">{{ $kategori->nama }}</h5>
                 </div>
-            @endforeach
+
+                <a href="{{ route('pembeli.dashboard', ['kategori' => $kategori->id]) }}" class="stretched-link"></a>
+            </div>
         </div>
+    @endforeach
+</div>
+
 
 
 

@@ -3,19 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\kategoriProduk;  // Mengimpor model kategoriProduk
-use App\Models\produk;
+use App\Models\KategoriProduk; // perbaiki kapitalisasi
+use App\Models\Produk;
 
-class landingController extends Controller
+class LandingController extends Controller
 {
     public function index(Request $request)
     {
-        //ambil data kategori
-        $kategoris = KategoriProduk::latest()->get();
+        // Ambil hanya kategori parent (parent_id = null)
+        $kategoris = KategoriProduk::whereNull('parent_id')->latest()->get();
 
         // Mengambil produk berdasarkan pencarian (jika ada)
         $search = $request->query('search');
-        $produks = produk::when($search, function ($query, $search) {
+        $produks = Produk::when($search, function ($query, $search) {
             return $query->where('nama', 'like', '%' . $search . '%')
                         ->orWhere('deskripsi', 'like', '%' . $search . '%');
         })->latest()->take(6)->get();

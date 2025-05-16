@@ -96,8 +96,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="{{route('pembeli.profile.show')}}"><i class="bi bi-person-circle"></i> Profile</a></li>
-                            <li><a class="dropdown-item" href="settings.html"><i class="bi bi-bell-fill"></i> Notifikasi</a></li>
-                            <li><a class="dropdown-item" href="faq.html"><i class="bi bi-question-circle"></i> Bantuan</a></li>
+<br>
                             <ul class="navbar-nav ms-3">
                                 <li class="nav-item">
                                     <form action="{{ route('logout') }}" method="POST">

@@ -8,12 +8,13 @@ use App\Models\UMKM;
 use App\Models\KategoriProduk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProdukPenjualController extends Controller
 {
     public function dashboard()
     {
-        $umkm = UMKM::where('user_id', Auth::id())->first();
+        $umkm = $this->getUserUMKM();
         $produks = $umkm ? Produk::where('umkm_id', $umkm->id)->latest()->paginate(10) : collect();
         return view('penjual.dashboard', compact('produks', 'umkm'));
     }
@@ -21,15 +22,19 @@ class ProdukPenjualController extends Controller
     public function index()
     {
         if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
+
         $umkm = $this->getUserUMKM();
         $produks = Produk::where('umkm_id', $umkm->id)->latest()->paginate(10);
+
         return view('penjual.produk.index', compact('produks'));
     }
 
     public function create()
     {
         if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
-        $kategoriProduks = KategoriProduk::all();
+
+        $kategoriProduks = KategoriProduk::with('children')->get();
+
         return view('penjual.produk.create', compact('kategoriProduks'));
     }
 
@@ -47,6 +52,7 @@ class ProdukPenjualController extends Controller
         ]);
 
         $umkm = $this->getUserUMKM();
+
         $data = $request->only(['kategori_produk_id', 'nama', 'deskripsi', 'harga', 'stok']);
         $data['user_id'] = Auth::id();
         $data['umkm_id'] = $umkm->id;
@@ -64,14 +70,17 @@ class ProdukPenjualController extends Controller
     public function edit($id)
     {
         if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
+
         $produk = $this->findProdukByUser($id);
-        $kategoriProduks = KategoriProduk::all();
+        $kategoriProduks = KategoriProduk::with('children')->get();
+
         return view('penjual.produk.edit', compact('produk', 'kategoriProduks'));
     }
 
     public function update(Request $request, $id)
     {
         if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
+
         $produk = $this->findProdukByUser($id);
 
         $request->validate([
@@ -86,6 +95,10 @@ class ProdukPenjualController extends Controller
         $data = $request->only(['kategori_produk_id', 'nama', 'deskripsi', 'harga', 'stok']);
 
         if ($request->hasFile('gambar')) {
+            // Hapus gambar lama jika ada
+            if ($produk->gambar && Storage::disk('public')->exists($produk->gambar)) {
+                Storage::disk('public')->delete($produk->gambar);
+            }
             $data['gambar'] = $request->file('gambar')->store('produks', 'public');
         }
 
@@ -97,17 +110,28 @@ class ProdukPenjualController extends Controller
     public function destroy($id)
     {
         if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
+
         $produk = $this->findProdukByUser($id);
+
+        if ($produk->gambar && Storage::disk('public')->exists($produk->gambar)) {
+            Storage::disk('public')->delete($produk->gambar);
+        }
+
         $produk->delete();
+
         return redirect()->route('penjual.produk.index')->with('success', 'Produk berhasil dihapus.');
     }
 
     public function show($id)
     {
         if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
+
         $produk = $this->findProdukByUser($id);
+
         return view('penjual.produk.show', compact('produk'));
     }
+
+    // ======================== PRIVATE HELPERS ========================
 
     private function getUserUMKM()
     {
@@ -117,7 +141,7 @@ class ProdukPenjualController extends Controller
     private function ensureUserHasUMKM()
     {
         if (!UMKM::where('user_id', Auth::id())->exists()) {
-            return redirect()->route('penjual.umkm.index')->with('error', 'Silahkan buat UMKM terlebih dahulu.');
+            return redirect()->route('penjual.umkm.index')->with('error', 'Silakan buat UMKM terlebih dahulu.');
         }
         return null;
     }
@@ -125,8 +149,15 @@ class ProdukPenjualController extends Controller
     private function findProdukByUser($id)
     {
         $umkm = $this->getUserUMKM();
-        $produk = Produk::where('id', $id)->where('umkm_id', $umkm->id)->first();
-        if (!$produk) abort(403, 'Produk tidak ditemukan atau bukan milik Anda.');
+
+        $produk = Produk::where('id', $id)
+                        ->where('umkm_id', $umkm->id)
+                        ->first();
+
+        if (!$produk) {
+            abort(403, 'Produk tidak ditemukan atau bukan milik Anda.');
+        }
+
         return $produk;
     }
 }

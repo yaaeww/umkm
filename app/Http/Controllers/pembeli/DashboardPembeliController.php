@@ -19,24 +19,38 @@ class DashboardPembeliController extends Controller
 
         $query = Produk::query();
 
+        $kategoriAktif = null;
+        $subkategoris = collect();
+
+        // Jika ada kategori dipilih
+        if ($kategoriId) {
+            $kategoriAktif = KategoriProduk::with('children')->find($kategoriId);
+
+            if ($kategoriAktif) {
+                $subkategoris = $kategoriAktif->children;
+
+                // Ambil semua ID subkategori (anak)
+                $subkategoriIds = $subkategoris->pluck('id')->toArray();
+
+                // Tambahkan ID kategori utama juga
+                $kategoriSemuaId = array_merge([$kategoriId], $subkategoriIds);
+
+                $query->whereIn('kategori_produk_id', $kategoriSemuaId);
+            }
+        }
+
+        // Pencarian jika ada
         if ($search) {
             $query->where('nama', 'like', '%' . $search . '%');
         }
 
-        if ($kategoriId) {
-            $query->where('kategori_produk_id', $kategoriId);
-        }
-
-        $produks = $query->latest()->paginate(12);
+        // Ambil semua produk setelah filter
+        $produks = $query->with('kategori')->latest()->paginate(12);
         $totalProduk = Produk::count();
         $produkTerbaru = Produk::latest()->take(5)->get();
-        $kategoris = KategoriProduk::orderBy('nama')->get();
 
-        // Ambil nama kategori yang dipilih (jika ada)
-        $kategoriAktif = null;
-        if ($kategoriId) {
-            $kategoriAktif = KategoriProduk::find($kategoriId);
-        }
+        // Ambil hanya kategori utama (root)
+        $kategoris = KategoriProduk::whereNull('parent_id')->orderBy('nama')->get();
 
         return view('pembeli.dashboard', compact(
             'produks',
@@ -44,6 +58,7 @@ class DashboardPembeliController extends Controller
             'produkTerbaru',
             'kategoris',
             'kategoriAktif',
+            'subkategoris',
             'search'
         ));
     }
