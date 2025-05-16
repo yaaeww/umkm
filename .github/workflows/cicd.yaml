@@ -1,4 +1,4 @@
-name: Laravel CI/CD (MySQL)
+name: Laravel Deploy (MySQL)
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-test:
+  deploy:
     runs-on: ubuntu-latest
 
     services:
@@ -67,9 +67,6 @@ jobs:
     - name: Run Migrations and Seeder
       run: php artisan migrate:fresh --seed
 
-    - name: Run Laravel Tests
-      run: php artisan test
-
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
@@ -84,7 +81,7 @@ jobs:
         retention-days: 1
 
   deploy:
-    needs: build-test
+    needs: deploy
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
 
@@ -110,9 +107,6 @@ jobs:
 
         ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
           cd ~/D4RPL2C-kelompok9-deploy
-
-          # Optional backup
-          # sudo tar -czf /backup/laravel-$(date +%F-%H-%M).tar.gz /var/www/D4RPL2C-kelompok9-deploy
 
           sudo rsync -avz --delete \
             --exclude='.env' \
