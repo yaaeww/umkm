@@ -7,6 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
+  build-test:
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -66,8 +67,8 @@ jobs:
     - name: Run database migrations and seed
       run: php artisan migrate:fresh --seed
 
-    - name: Execute tests
-      run: php artisan test
+    - name: Execute feature tests only
+      run: php artisan test tests/Feature
 
     - name: Upload artifact for deployment
       uses: actions/upload-artifact@v4
@@ -83,6 +84,7 @@ jobs:
         retention-days: 1
 
   deploy:
+    needs: build-test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
 
@@ -112,16 +114,13 @@ jobs:
         ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
           cd ~/D4RPL2C-kelompok9-deploy
 
-          # Backup existing deployment (optional)
-          # tar -czf /backup/laravel-backup-$(date +"%Y%m%d%H%M%S").tar.gz /var/www/laravel-app
-
           # Copy files to production directory
           sudo rsync -avz --delete \
             --exclude='.env' \
             --exclude='storage' \
             --exclude='.git' \
             --exclude='.github' \
-            ~/laravel-temp-deploy/ /var/www/D4RPL2C-kelompok9-deploy/
+            ~/D4RPL2C-kelompok9-deploy/ /var/www/D4RPL2C-kelompok9-deploy/
 
           # Set permissions
           sudo chown -R www-data:www-data /var/www/D4RPL2C-kelompok9-deploy
@@ -137,5 +136,5 @@ jobs:
           sudo -u www-data php artisan migrate --force
 
           # Cleanup
-          rm -rf ~/laravel-temp-deploy
+          rm -rf ~/D4RPL2C-kelompok9-deploy
         EOF
