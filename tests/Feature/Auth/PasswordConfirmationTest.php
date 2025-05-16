@@ -1,10 +1,10 @@
 <?php
 
-// namespace Tests\Feature\Auth;
+namespace Tests\Feature\Auth;
 
-// use App\Models\User;
-// use Illuminate\Foundation\Testing\RefreshDatabase;
-// use Tests\TestCase;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 // class PasswordConfirmationTest extends TestCase
 // {
