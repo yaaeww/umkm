@@ -70,7 +70,7 @@ jobs:
     # - name: Execute tests
     #   run: php artisan test
 
-    - name: Upload artifact for D4RPL2C_Kel7ment
+    - name: Upload artifact for deployment
       uses: actions/upload-artifact@v4
       with:
         name: laravel-app
@@ -83,7 +83,7 @@ jobs:
           !storage/debugbar/
         retention-days: 1
 
-  D4RPL2C_Kel7:
+  deploy:
     needs: build-test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
@@ -93,7 +93,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: laravel-app
-        path: ./D4RPL2C_Kel7
+        path: ./deploy
 
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
@@ -102,19 +102,19 @@ jobs:
         known_hosts: ${{ secrets.KNOWN_HOSTS }}
         port: 64000
 
-    - name: D4RPL2C_Kel7 to server via SCP/SSH
+    - name: Deploy to server via SCP/SSH
       run: |
         # Buat direktori sementara di server
-        ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/laravel-temp-D4RPL2C_Kel7"
+        ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/laravel-temp-deploy"
 
         # Upload files ke server
-        scp -o StrictHostKeyChecking=no -P 64000 -r ./D4RPL2C_Kel7/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/laravel-temp-D4RPL2C_Kel7/
+        scp -o StrictHostKeyChecking=no -P 64000 -r ./deploy/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/laravel-temp-deploy/
 
-        # Jalankan D4RPL2C_Kel7ment script di server
+        # Jalankan deployment script di server
         ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-          cd ~/laravel-temp-D4RPL2C_Kel7
+          cd ~/laravel-temp-deploy
 
-          # Backup existing D4RPL2C_Kel7ment (optional)
+          # Backup existing deployment (optional)
           # tar -czf /backup/laravel-backup-$(date +"%Y%m%d%H%M%S").tar.gz /var/www/laravel-app
 
           # Copy files to production directory
@@ -123,14 +123,14 @@ jobs:
             --exclude='storage' \
             --exclude='.git' \
             --exclude='.github' \
-            ~/laravel-temp-D4RPL2C_Kel7/ /var/www/laravel-app/
+            ~/laravel-temp-deploy/ /var/www/laravel-app/
 
           # Set permissions
           sudo chown -R www-data:www-data /var/www/laravel-app
           sudo chmod -R 755 /var/www/laravel-app/storage
           sudo chmod -R 755 /var/www/laravel-app/bootstrap/cache
 
-          # Run D4RPL2C_Kel7ment commands
+          # Run deployment commands
           cd /var/www/laravel-app
           sudo -u www-data composer install --optimize-autoloader --no-dev
           sudo -u www-data php artisan config:cache
@@ -139,5 +139,5 @@ jobs:
           sudo -u www-data php artisan migrate --force
 
           # Cleanup
-          rm -rf ~/laravel-temp-D4RPL2C_Kel7
+          rm -rf ~/laravel-temp-deploy
         EOF
