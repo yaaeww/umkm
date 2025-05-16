@@ -15,15 +15,17 @@ class EmailVerificationTest extends TestCase
     use RefreshDatabase;
 
     public function test_email_verification_screen_can_be_rendered(): void
-    {
-        $user = User::factory()->create([
-            'email_verified_at' => null,
-        ]);
+{
+    $user = User::factory()->create(['email_verified_at' => null]);
 
-        $response = $this->actingAs($user)->get('/verify-email');
+    $response = $this->actingAs($user)->get('/verify-email');
 
-        $response->assertStatus(200);
-    }
+    // Tambah ini untuk lihat isi halaman (bisa di comment setelah dicek)
+    file_put_contents('verify-email-response.html', $response->getContent());
+
+    $response->assertStatus(200);
+}
+
 
     public function test_email_can_be_verified(): void
     {

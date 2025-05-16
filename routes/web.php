@@ -44,6 +44,10 @@ use App\Http\Controllers\InvoiceController;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
+Route::get('/verify-email', function () {
+    return view('auth.verify-email');
+})->middleware(['auth'])->name('verification.notice');
+
 /*
 |----------------------------------------------------------------------
 | Redirect After Login
