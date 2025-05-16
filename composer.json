@@ -13,16 +13,16 @@
         "midtrans/midtrans-php": "^2.6"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.9.1",
-        "laravel/breeze": "^1.29",
-        "laravel/pint": "^1.0",
-        "laravel/sail": "^1.18",
-        "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^7.0",
-        "phpstan/larastan": "^1.0",
-        "phpunit/phpunit": "^10.1",
-        "spatie/laravel-ignition": "^2.0"
-    },
+    "fakerphp/faker": "^1.9.1",
+    "laravel/breeze": "^1.29",
+    "laravel/pint": "^1.0",
+    "laravel/sail": "^1.18",
+    "mockery/mockery": "^1.4.4",
+    "nunomaduro/collision": "^7.0",
+    "nunomaduro/larastan": "^2.11",
+    "phpunit/phpunit": "^10.1",
+    "spatie/laravel-ignition": "^2.0"
+},
     "autoload": {
         "psr-4": {
             "App\\": "app/",
