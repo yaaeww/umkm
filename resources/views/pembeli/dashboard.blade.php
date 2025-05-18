@@ -154,15 +154,16 @@
         @endif
 
         <!-- Semua Produk -->
+        <!-- Produk Terlaris -->
         <div class="section-title mt-5">
             <h2>==================================</h2>
-            <h2>PRODUK</h2>
-            <p class="lead">Temukan produk yang anda mau</p>
+            <h2>PRODUK TERLARIS</h2>
+            <p class="lead">Produk dengan penjualan terbanyak</p>
             <h2>-------------------------------</h2>
         </div>
 
         <div class="row">
-            @forelse ($produks as $produk)
+            @forelse ($produkTerlaris as $produk)
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                     <div class="card shadow border-0 product-card h-100">
                         <img src="{{ $produk->gambar ? asset('storage/' . $produk->gambar) : asset('images/default.jpg') }}"
@@ -187,10 +188,11 @@
                 </div>
             @empty
                 <div class="col-12 text-center">
-                    <div class="alert alert-warning">Tidak ada produk ditemukan.</div>
+                    <div class="alert alert-info">Belum ada produk dengan Terlaris.</div>
                 </div>
             @endforelse
         </div>
+
 
         <!-- Pagination -->
         <div class="d-flex justify-content-center mt-4">

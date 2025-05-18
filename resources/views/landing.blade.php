@@ -136,26 +136,27 @@
 
 
         <!-- Kategori Produk (Parent Only) -->
-<div class="row mb-5">
-    @foreach($kategoris as $kategori)
-        <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-            <div class="card position-relative overflow-hidden border-0 shadow kategori-card">
-                @if($kategori->gambar)
-                    <img src="{{ asset('storage/kategori/' . basename($kategori->gambar)) }}" class="card-img-top"
-                        alt="{{ $kategori->nama }}">
-                @else
-                    <img src="{{ asset('images/default.jpg') }}" class="card-img-top" alt="Default">
-                @endif
+        <div class="row mb-5">
+            @foreach($kategoris as $kategori)
+                <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+                    <div class="card position-relative overflow-hidden border-0 shadow kategori-card">
+                        @if($kategori->gambar)
+                            <img src="{{ asset('storage/kategori/' . basename($kategori->gambar)) }}" class="card-img-top"
+                                alt="{{ $kategori->nama }}">
+                        @else
+                            <img src="{{ asset('images/default.jpg') }}" class="card-img-top" alt="Default">
+                        @endif
 
-                <div class="kategori-overlay d-flex justify-content-center align-items-center">
-                    <h5 class="text-white text-center">{{ $kategori->nama }}</h5>
+                        <div class="kategori-overlay d-flex justify-content-center align-items-center">
+                            <h5 class="text-white text-center">{{ $kategori->nama }}</h5>
+                        </div>
+
+                        <a href="{{ route('pembeli.dashboard', ['kategori' => $kategori->id]) }}"
+                            class="stretched-link"></a>
+                    </div>
                 </div>
-
-                <a href="{{ route('pembeli.dashboard', ['kategori' => $kategori->id]) }}" class="stretched-link"></a>
-            </div>
+            @endforeach
         </div>
-    @endforeach
-</div>
 
 
 
@@ -177,16 +178,16 @@
                         @else
                             <img src="{{ asset('images/default.jpg') }}" class="card-img-top" alt="Default Image">
                         @endif
-        
+
                         <!-- Overlay saat hover -->
                         <div class="produk-overlay">
                             <h5>{{ $produk->nama }}</h5>
                         </div>
-        
+
                         <!-- Link seluruh kartu -->
                         <a href="{{ route('login') }}" class="stretched-link"></a>
                     </div>
-        
+
                     <!-- Card body terpisah -->
                     <div class="card border-0 shadow">
                         <div class="card-body">
@@ -198,11 +199,17 @@
                 </div>
             @endforeach
         </div>
-        
+
         
 
 
     </div>
+    <footer class="bg-light text-center text-lg-start border-top py-3 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; {{ date('Y') }} UMKM Indramayu. Kelompok 7.</p>
+            <small>Powered by Laravel & Bootstrap | Designed by Belanjain</small>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

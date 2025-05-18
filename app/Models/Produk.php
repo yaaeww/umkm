@@ -18,7 +18,7 @@ class Produk extends Model
         'nama',
         'harga',
         'deskripsi',
-        'gambar', 
+        'gambar',
         'user_id',
         'stok', // tambahkan jika ada field stok
         'rating',
@@ -29,7 +29,7 @@ class Produk extends Model
     {
         return $this->belongsTo(Umkm::class, 'umkm_id');
     }
-    
+
     /**
      * Relasi ke model User (Penjual)
      */
@@ -38,36 +38,36 @@ class Produk extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
     // App\Models\Produk
-public function user()
-{
-    return $this->belongsTo(User::class);
-}
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-// app/Models/Produk.php
+    // app/Models/Produk.php
 
-public function kategori()
-{
-    return $this->belongsTo(KategoriProduk::class, 'kategori_produk_id');
-}
+    public function kategori()
+    {
+        return $this->belongsTo(KategoriProduk::class, 'kategori_produk_id');
+    }
 
-public function order()
-{
-    return $this->hasMany(Order::class);
-}
+    public function order()
+    {
+        return $this->hasMany(Order::class);
+    }
 
     /**
      * Relasi ke Kategori (jika ada)
      */
-    
+
     /**
      * Method untuk admin dashboard
      */
     public function adminIndex()
     {
         $produks = Produk::with(['penjual', 'kategori'])
-                        ->latest()
-                        ->get();
-        
+            ->latest()
+            ->get();
+
         return view('admin.dashboard', compact('produks'));
     }
 
@@ -86,5 +86,9 @@ public function order()
     {
         return $query->where('is_active', true);
     }
-    
+
+    public function orderItems()
+    {
+        return $this->hasMany(Order::class); // atau DetailOrder, tergantung nama modelmu
+    }
 }

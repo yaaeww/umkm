@@ -18,16 +18,15 @@ class KeranjangService
         return $keranjang;
     }
 
-    public function updateJumlah($id, $jumlah)
-    {
-        $keranjang = Keranjang::find($id);
-        if ($keranjang) {
-            $keranjang->jumlah = $jumlah;
-            $keranjang->save();
-            return $keranjang;
-        }
-        return null;
-    }
+    public static function updateJumlah($id, $jumlah)
+{
+    $item = Keranjang::find($id);
+    if (!$item) return false;
+
+    $item->jumlah = $jumlah;
+    return $item->save();
+}
+
 
     public function hapusKeranjang($id)
     {

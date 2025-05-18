@@ -108,21 +108,7 @@
         </div>
     </div>
 
-    <div class="col-xl-3 col-lg-3 col-md-6 mb-20">
-        <div class="card-box height-100-p widget-style3">
-            <div class="d-flex flex-wrap">
-                <div class="widget-data">
-                    <div class="weight-700 font-24 text-dark">$50,000</div>
-                    <div class="font-14 text-secondary weight-500">Pendapatan</div>
-                </div>
-                <div class="widget-icon">
-                    <div class="icon" data-color="#00eccf" style="color: rgb(0, 236, 207);">
-                        <span class="icon-copy fa fa-money"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 </div>
 
 @endsection

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Produk;
 use App\Models\KategoriProduk;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardPembeliController extends Controller
 {
@@ -22,44 +23,41 @@ class DashboardPembeliController extends Controller
         $kategoriAktif = null;
         $subkategoris = collect();
 
-        // Jika ada kategori dipilih
         if ($kategoriId) {
             $kategoriAktif = KategoriProduk::with('children')->find($kategoriId);
-
             if ($kategoriAktif) {
                 $subkategoris = $kategoriAktif->children;
-
-                // Ambil semua ID subkategori (anak)
                 $subkategoriIds = $subkategoris->pluck('id')->toArray();
-
-                // Tambahkan ID kategori utama juga
                 $kategoriSemuaId = array_merge([$kategoriId], $subkategoriIds);
-
                 $query->whereIn('kategori_produk_id', $kategoriSemuaId);
             }
         }
 
-        // Pencarian jika ada
         if ($search) {
             $query->where('nama', 'like', '%' . $search . '%');
         }
 
-        // Ambil semua produk setelah filter
         $produks = $query->with('kategori')->latest()->paginate(12);
-        $totalProduk = Produk::count();
-        $produkTerbaru = Produk::latest()->take(5)->get();
 
-        // Ambil hanya kategori utama (root)
+        // Kategori utama (root)
         $kategoris = KategoriProduk::whereNull('parent_id')->orderBy('nama')->get();
+
+        // Ambil produk terlaris yang sudah terjual lebih dari 10
+        $produkTerlaris = Produk::select('produks.*', DB::raw('COUNT(orders.id) as jumlah_pesanan'))
+            ->join('orders', 'orders.produk_id', '=', 'produks.id')
+            ->groupBy('produks.id')
+            ->having('jumlah_pesanan', '>=', 10)
+            ->orderByDesc('jumlah_pesanan')
+            ->limit(8)
+            ->get();
 
         return view('pembeli.dashboard', compact(
             'produks',
-            'totalProduk',
-            'produkTerbaru',
             'kategoris',
             'kategoriAktif',
             'subkategoris',
-            'search'
+            'search',
+            'produkTerlaris'
         ));
     }
 }
