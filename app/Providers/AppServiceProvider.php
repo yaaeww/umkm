@@ -5,7 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Keranjang;
+use App\Facades\Keranjang; // Facade Keranjang kamu, bukan model langsung
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,7 +14,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Daftarkan binding KeranjangService agar facade bisa resolve
+        $this->app->singleton('keranjangservice', function ($app) {
+            return new \App\Services\KeranjangService();
+        });
     }
 
     /**
@@ -26,7 +29,8 @@ class AppServiceProvider extends ServiceProvider
             $totalKeranjang = 0;
 
             if (Auth::check()) {
-                $totalKeranjang = Keranjang::where('user_id', Auth::id())->sum('jumlah');
+                // Panggil method dari service via facade
+                $totalKeranjang = Keranjang::getTotalJumlahByUser(Auth::id());
             }
 
             $view->with('totalKeranjang', $totalKeranjang);

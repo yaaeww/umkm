@@ -9,7 +9,7 @@ class KategoriProduk extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama', 'slug', 'gambar', 'parent_id']; // Tambahkan parent_id
+    protected $fillable = ['nama', 'slug', 'gambar', 'parent_id']; 
 
     /**
      * Relasi ke produk yang termasuk dalam kategori ini.
@@ -19,11 +19,7 @@ class KategoriProduk extends Model
         return $this->hasMany(Produk::class);
     }
 
-    /**
-     * Relasi ke kategori induk (jika ini adalah sub-kategori).
-     */
-    // app/Models/KategoriProduk.php
-
+    
     // Model: KategoriProduk.php
 public function children()
 {

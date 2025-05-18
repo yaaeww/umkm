@@ -3,29 +3,30 @@
 namespace App\Http\Controllers\Pembeli;
 
 use App\Http\Controllers\Controller;
-use App\Models\Keranjang;
+use App\Facades\Keranjang; // Facade KeranjangService
 use App\Models\Produk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class KeranjangController extends Controller
 {
-    // ✅ Tampilkan semua item keranjang user
+    /**
+     * Tampilkan semua item keranjang user yang sedang login.
+     */
     public function index()
     {
-        // Hapus item yang tidak memiliki produk (produk sudah dihapus)
-        Keranjang::where('user_id', Auth::id())
-            ->whereDoesntHave('produk')
-            ->delete();
+        // Hapus item keranjang yang produknya sudah tidak ada lagi
+        Keranjang::hapusItemTanpaProduk(Auth::id());
 
-        $keranjangs = Keranjang::with('produk')
-            ->where('user_id', Auth::id())
-            ->get();
+        // Ambil daftar keranjang user
+        $keranjangs = Keranjang::getKeranjangByUser(Auth::id());
 
         return view('pembeli.keranjang.index', compact('keranjangs'));
     }
 
-    // ✅ Tambah produk ke keranjang
+    /**
+     * Tambah produk ke keranjang user.
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -33,38 +34,57 @@ class KeranjangController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $produk = Produk::findOrFail($request->produk_id);
+        // Pastikan produk ada, kalau tidak otomatis error 404
+        Produk::findOrFail($request->produk_id);
 
-        $keranjang = Keranjang::firstOrNew([
-            'user_id' => Auth::id(),
-            'produk_id' => $request->produk_id,
-        ]);
-
-        $keranjang->jumlah += $request->quantity;
-        $keranjang->save();
+        // Tambah produk ke keranjang user
+        Keranjang::tambahKeranjang(Auth::id(), $request->produk_id, $request->quantity);
 
         return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke keranjang!');
     }
 
-    // ✅ Update jumlah produk dalam keranjang
+    /**
+     * Update jumlah produk dalam keranjang.
+     */
     public function update(Request $request, $id)
     {
         $request->validate([
             'jumlah' => 'required|integer|min:1',
         ]);
 
-        $keranjang = Keranjang::where('user_id', Auth::id())->findOrFail($id);
-        $keranjang->jumlah = $request->jumlah;
-        $keranjang->save();
+        // Update jumlah produk, return false kalau gagal
+        $keranjang = Keranjang::updateJumlah($id, $request->jumlah);
+
+        if (!$keranjang) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Keranjang tidak ditemukan atau gagal diperbarui.'
+                ], 404);
+            }
+            return redirect()->back()->with('error', 'Keranjang tidak ditemukan atau gagal diperbarui.');
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Jumlah produk diperbarui.'
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Jumlah produk diperbarui.');
     }
 
-    // ✅ Hapus produk dari keranjang
+    /**
+     * Hapus produk dari keranjang.
+     */
     public function destroy($id)
     {
-        $keranjang = Keranjang::where('user_id', Auth::id())->findOrFail($id);
-        $keranjang->delete();
+        $deleted = Keranjang::hapusKeranjang($id);
+
+        if (!$deleted) {
+            return redirect()->back()->with('error', 'Keranjang tidak ditemukan atau gagal dihapus.');
+        }
 
         return redirect()->back()->with('success', 'Produk dihapus dari keranjang.');
     }
