@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@yield('title', 'UMKM Indramayu')</title>
     @stack('style')
 
     <!-- Bootstrap & Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 
     <!-- DeskApp CSS -->
-    <link rel="stylesheet" href="{{ asset('vendors/styles/core.css') }}">
-    <link rel="stylesheet" href="{{ asset('vendors/styles/icon-font.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('vendors/styles/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('vendors/styles/responsive.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendors/styles/core.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendors/styles/icon-font.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendors/styles/style.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendors/styles/responsive.css') }}" />
 
     <!-- Custom CSS -->
     <style>
@@ -49,7 +49,7 @@
         }
 
         .navbar {
-            background-color: rgba(0,0,0,0.5) !important;
+            background-color: rgba(0, 0, 0, 0.5) !important;
             backdrop-filter: blur(6px);
         }
 
@@ -62,14 +62,14 @@
         }
 
         .main-card {
-            background-color: rgba(255,255,255,0.9);
+            background-color: rgba(255, 255, 255, 0.9);
             border-radius: 1rem;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             padding: 2rem;
         }
 
         footer {
-            background-color: #343a40;
+            background-color: #343a40; /* warna gelap */
             color: white;
             padding: 1rem 0;
             text-align: center;
@@ -85,7 +85,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-sm">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center fw-bold text-white" href="{{ route('pembeli.dashboard') }}">
-                <img src="{{ asset('aset/finalisasi logo.png') }}" alt="UMKM Logo" class="navbar-logo me-2">
+                <img src="{{ asset('aset/finalisasi logo.png') }}" alt="UMKM Logo" class="navbar-logo me-2" />
                 UMKM Indramayu
             </a>
 
@@ -107,7 +107,7 @@
                 </ul>
 
                 <form class="d-flex" method="GET" action="{{ route('pembeli.dashboard') }}">
-                    <input class="form-control me-2" type="search" name="search" placeholder="Cari produk..." value="{{ request('search') }}">
+                    <input class="form-control me-2" type="search" name="search" placeholder="Cari produk..." value="{{ request('search') }}" />
                     <button class="btn btn-outline-light" type="submit">Cari</button>
                 </form>
 
@@ -157,16 +157,13 @@
         </div>
     </main>
 
-{{-- Footer --}}
-
-<footer class="bg-gray-100 mt-5 py-4 border-top text-center text-white">
-    <div class="container">
-        <p class="mb-2">&copy; {{ date('Y') }} UMKM Indramayu - Kelompok 7</p>
-        <small>Powered by Laravel & Bootstrap | Designed by Belanjain</small>
-    </div>
-</footer>
-
-
+    {{-- Footer --}}
+    <footer>
+        <div class="container">
+            <p class="mb-2">&copy; {{ date('Y') }} UMKM Indramayu - Kelompok 7</p>
+            <small>Powered by Laravel & Bootstrap | Designed by Belanjain</small>
+        </div>
+    </footer>
 
     {{-- Scripts --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -174,7 +171,5 @@
     <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
     <script src="{{ asset('vendors/scripts/process.js') }}"></script>
     <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>
