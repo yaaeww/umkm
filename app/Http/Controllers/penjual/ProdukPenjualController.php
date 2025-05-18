@@ -68,14 +68,14 @@ class ProdukPenjualController extends Controller
     }
 
     public function edit($id)
-    {
-        if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
+{
+    $produk = Produk::findOrFail($id);
+    $kategoriUtamas = KategoriProduk::whereNull('parent_id')->get();
 
-        $produk = $this->findProdukByUser($id);
-        $kategoriProduks = KategoriProduk::with('children')->get();
+    $subkategoris = KategoriProduk::where('parent_id', $produk->kategori->parent_id ?? $produk->kategori->id)->get();
 
-        return view('penjual.produk.edit', compact('produk', 'kategoriProduks'));
-    }
+    return view('penjual.produk.edit', compact('produk', 'kategoriUtamas', 'subkategoris'));
+}
 
     public function update(Request $request, $id)
     {

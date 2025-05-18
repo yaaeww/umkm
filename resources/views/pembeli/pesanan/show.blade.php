@@ -1,6 +1,11 @@
 @extends('layouts.pembeli-navbar')
 
 @section('content')
+<style>
+    body {
+        background-color: black !important;
+    }
+</style>
 <div class="container mt-5">
     <h1 class="mb-4 text-center">Detail Pesanan</h1>
 

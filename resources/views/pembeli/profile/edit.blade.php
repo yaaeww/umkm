@@ -3,6 +3,11 @@
 @section('title', 'Edit Profil')
 
 @section('content')
+<style>
+    body {
+        background-color: black !important;
+    }
+</style>
 <div class="card-box">
     <h4 class="h4 text-blue mb-20">Edit Profil</h4>
 

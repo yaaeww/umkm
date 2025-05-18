@@ -1,8 +1,13 @@
 @extends('layouts.pembeli-navbar')
 
 @section('content')
+<style>
+    body {
+        background-color: black !important;
+    }
+</style>
     <div class="container mt-4">
-        <h3>Status Pesanan: Belum Bayar</h3>
+        <h3>Belum Bayar</h3>
 
         <p>Total pesanan belum bayar: {{ $orders->count() }}</p>
 

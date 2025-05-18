@@ -11,6 +11,9 @@
         integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
+        body {
+        background-color: black !important;
+    }
         .navbar {
             height: 70px;
             padding-top: 0;

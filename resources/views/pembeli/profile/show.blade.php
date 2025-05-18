@@ -3,6 +3,11 @@
 @section('title', 'Profil Penjual')
 
 @section('content')
+<style>
+    body {
+        background-color: black !important;
+    }
+</style>
     <!-- Tambahkan CDN Font Awesome jika belum -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 

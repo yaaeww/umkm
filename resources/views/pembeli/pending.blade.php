@@ -1,6 +1,11 @@
 @extends('layouts.pembeli-navbar')
 
 @section('content')
+<style>
+    body {
+        background-color: black !important;
+    }
+</style>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     {{-- Midtrans Snap.js --}}

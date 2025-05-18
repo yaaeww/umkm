@@ -19,15 +19,29 @@
         @method('PUT')
 
         <div class="mb-4">
-            <label for="kategori_produk_id" class="block font-semibold">Kategori</label>
-            <select name="kategori_produk_id" id="kategori_produk_id" class="form-control" required>
-                @foreach($kategoriProduks as $kategori)
-                    <option value="{{ $kategori->id }}" {{ $produk->kategori_produk_id == $kategori->id ? 'selected' : '' }}>
-                        {{ $kategori->nama }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+    <label for="kategori_utama" class="block font-semibold">Kategori Utama</label>
+    <select id="kategori_utama" class="form-control">
+        <option value="">-- Pilih Kategori Utama --</option>
+        @foreach($kategoriUtamas as $kategori)
+            <option value="{{ $kategori->id }}" {{ $produk->kategori->parent_id == $kategori->id ? 'selected' : '' }}>
+                {{ $kategori->nama }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+<div class="mb-4">
+    <label for="kategori_produk_id" class="block font-semibold">Subkategori</label>
+    <select name="kategori_produk_id" id="subkategori" class="form-control" required>
+        <option value="">-- Pilih Subkategori --</option>
+        @foreach($subkategoris as $sub)
+            <option value="{{ $sub->id }}" {{ $produk->kategori_produk_id == $sub->id ? 'selected' : '' }}>
+                {{ $sub->nama }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
 
         <div class="mb-4">
             <label for="nama" class="block font-semibold">Nama Produk</label>

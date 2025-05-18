@@ -1,6 +1,12 @@
 @extends('layouts.pembeli-navbar')
 
 @section('content')
+
+<style>
+    body {
+        background-color: black !important;
+    }
+</style>
 <div class="row">
     {{-- Gambar Produk --}}
     <div class="col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">

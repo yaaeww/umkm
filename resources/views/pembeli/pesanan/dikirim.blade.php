@@ -3,6 +3,11 @@
 @section('title', 'Pesanan Dikirim & Diterima')
 
 @section('content')
+<style>
+    body {
+        background-color: black !important;
+    }
+</style>
 <div class="container mt-4">
     <h4>Pesanan Sedang Dikirim</h4>
 

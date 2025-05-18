@@ -2,6 +2,11 @@
 @section('title', 'Pesanan Dikemas')
 
 @section('content')
+<style>
+    body {
+        background-color: black !important;
+    }
+</style>
 <div class="container mt-4">
     <h3 class="mb-3">Pesanan Sedang Dikemas</h3>
 

@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'UMKM Indramayu')</title>
+    @stack('style')
 
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- DeskApp CSS -->
@@ -17,136 +15,166 @@
     <link rel="stylesheet" href="{{ asset('vendors/styles/icon-font.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/styles/style.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/styles/responsive.css') }}">
-</head>
 
-<body>
-
-    {{-- Navbar Pembeli --}}
+    <!-- Custom CSS -->
     <style>
         body {
-            background-color: #f5e6cc;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .hero-banner {
+            background: url('{{ asset('aset/finalisasi logo.png') }}') no-repeat center center;
+            background-size: cover;
+            height: 300px;
+            position: relative;
+        }
+
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-banner-content {
+            position: relative;
+            z-index: 1;
+            color: white;
+            padding: 60px 30px;
+            text-align: center;
         }
 
         .navbar {
-            height: 70px;
-            /* Navbar tetap ramping */
-            padding-top: 0;
-            padding-bottom: 0;
+            background-color: rgba(0,0,0,0.5) !important;
+            backdrop-filter: blur(6px);
         }
 
-        .navbar-brand {
-            padding: 0;
-            display: flex;
-            align-items: center;
+        .navbar-nav .nav-link {
+            color: white !important;
+        }
+
+        .main-content {
+            margin-top: 2rem;
+        }
+
+        .main-card {
+            background-color: rgba(255,255,255,0.9);
+            border-radius: 1rem;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
         }
 
         .navbar-logo {
-            max-height: 250px;
-            /* Logo cukup besar tapi tetap muat di navbar */
-            width: auto;
-            /* Biar proporsional */
-            object-fit: contain;
+            height: 45px;
         }
     </style>
-
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+</head>
+<body>
+    {{-- Navbar --}}
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ route('pembeli.dashboard') }}">
-                <img src="{{ asset('aset/finalisasi logo.png') }}" alt="Logo UMKM Indramayu" class="navbar-logo me-2">
+            <a class="navbar-brand d-flex align-items-center fw-bold text-white" href="{{ route('pembeli.dashboard') }}">
+                <img src="{{ asset('aset/finalisasi logo.png') }}" alt="UMKM Logo" class="navbar-logo me-2">
+                UMKM Indramayu
             </a>
 
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <!-- Menu kiri -->
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('pembeli.dashboard') ? 'active' : '' }}"
-                            href="{{ route('pembeli.dashboard') }}">Home</a>
+                        <a class="nav-link {{ request()->routeIs('pembeli.dashboard') ? 'active' : '' }}" href="{{ route('pembeli.dashboard') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{route('pembeli.produk.index')}}">Produk</a>
+                        <a class="nav-link {{ request()->routeIs('pembeli.produk.index') ? 'active' : '' }}" href="{{ route('pembeli.produk.index') }}">Produk</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{route('pembeli.pesanan.index')}}">Pesanan</a>
+                        <a class="nav-link {{ request()->routeIs('pembeli.pesanan.index') ? 'active' : '' }}" href="{{ route('pembeli.pesanan.index') }}">Pesanan</a>
                     </li>
                 </ul>
 
-                <!-- Search form -->
-                <form class="d-flex" action="{{ route('pembeli.dashboard') }}" method="GET">
-                    <input class="form-control me-2" type="search" name="search" placeholder="Cari produk..."
-                        value="{{ request('search') }}">
-                    <button class="btn btn-outline-success" type="submit">Cari</button>
+                <form class="d-flex" method="GET" action="{{ route('pembeli.dashboard') }}">
+                    <input class="form-control me-2" type="search" name="search" placeholder="Cari produk..." value="{{ request('search') }}">
+                    <button class="btn btn-outline-light" type="submit">Cari</button>
                 </form>
 
-                <!-- Ikon keranjang -->
                 <ul class="navbar-nav ms-3">
                     <li class="nav-item">
                         <a class="nav-link position-relative" href="{{ route('pembeli.keranjang.index') }}">
                             <i class="bi bi-cart" style="font-size: 1.5rem;"></i>
                             @if($totalKeranjang > 0)
-                                <span
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                     {{ $totalKeranjang }}
-                                    <span class="visually-hidden">item keranjang</span>
                                 </span>
                             @endif
                         </a>
                     </li>
-                </ul>
-                <ul class="navbar-nav ms-3">
+
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <span class="user-name">{{ auth()->user()->name }}</span>
+                        <a class="nav-link dropdown-toggle text-white" href="#" data-bs-toggle="dropdown">
+                            {{ auth()->user()->name }}
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{{route('pembeli.profile.show')}}"><i
-                                        class="bi bi-person-circle"></i> Profile</a></li>
-                            <br>
-                            <ul class="navbar-nav ms-3">
-                                <li class="nav-item">
-                                    <form action="{{ route('logout') }}" method="POST">
-                                        @csrf
-                                        <button class="btn btn-danger btn-sm" type="submit">Logout</button>
-                                    </form>
-                                </li>
-                            </ul>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ route('pembeli.profile.show') }}"><i class="bi bi-person-circle me-2"></i>Profil</a></li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button class="dropdown-item text-danger" type="submit">Logout</button>
+                                </form>
+                            </li>
                         </ul>
                     </li>
                 </ul>
-
-
-
-                <!-- Logout -->
-
             </div>
         </div>
     </nav>
 
-    {{-- Konten Halaman --}}
-    <main class="container py-4">
-        @yield('content')
-    </main>
-    {{-- Footer --}}
-    <footer class="bg-light text-center text-lg-start mt-5 border-top py-3">
-        <div class="container text-center">
-            <p class="mb-0">&copy; {{ date('Y') }} UMKM Indramayu. Kelompok 7.</p>
-            <small>Powered by Laravel & Bootstrap | Designed by Belanjain</small>
+    {{-- Hero Banner --}}
+    <section class="hero-banner d-flex align-items-center justify-content-center">
+        <div class="hero-banner-content">
+            <h1 class="display-5 fw-bold">Selamat Datang di UMKM Indramayu</h1>
+            <p class="lead">Belanja Produk UMKM Lokal Lebih Mudah dan Menyenangkan!</p>
         </div>
-    </footer>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </section>
 
-    <!-- DeskApp JS -->
+    {{-- Main Content --}}
+    <main class="container main-content">
+        <div class="main-card">
+            @yield('content')
+        </div>
+    </main>
+
+{{-- Footer --}}
+
+<footer class="bg-gray-100 mt-5 py-4 border-top text-center text-white">
+    <div class="container">
+        <p class="mb-2">&copy; {{ date('Y') }} UMKM Indramayu - Kelompok 7</p>
+        <small>Powered by Laravel & Bootstrap | Designed by Belanjain</small>
+    </div>
+</footer>
+
+
+
+    {{-- Scripts --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('vendors/scripts/core.js') }}"></script>
     <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
     <script src="{{ asset('vendors/scripts/process.js') }}"></script>
     <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+</body>
 </html>

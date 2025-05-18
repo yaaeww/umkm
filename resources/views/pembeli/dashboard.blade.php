@@ -1,202 +1,362 @@
 @extends('layouts.pembeli-navbar')
 
-@section('content')
-    <style>
-        body {
-            background-color: #f5e6cc;
-        }
+@push('style')
 
-        .card-img-top {
-            height: 200px;
-            object-fit: cover;
-        }
+<style>
+    body {
+        background-color: black !important;
+        color: black !important; /* Default text color jadi hitam */
+    }
+    .carousel-container {
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+        margin-bottom: 40px;
+    }
 
-        .section-title {
-            margin-bottom: 30px;
-            text-align: center;
-        }
+    .carousel-track {
+        display: flex;
+        gap: 20px;
+        animation: scrollCarousel 30s linear infinite;
+        width: max-content;
+    }
 
-        .product-card,
-        .kategori-card {
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
+    @keyframes scrollCarousel {
+        0% {
+            transform: translateX(0);
         }
-
-        .kategori-overlay,
-        .product-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.4);
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            z-index: 1;
+        100% {
+            transform: translateX(-50%);
         }
+    }
 
-        .kategori-card:hover .kategori-overlay,
-        .product-card:hover .product-overlay {
-            opacity: 1;
-        }
+    .kategori-item {
+        flex: 0 0 auto;
+        width: 220px;
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        cursor: pointer;
+    }
 
-        .kategori-item {
-            flex: 0 0 auto;
-            width: 220px;
-        }
+    .kategori-item img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+    }
 
-        .subkategori-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: flex-start;
-        }
+    .kategori-item .kategori-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.6); /* overlay jadi terang supaya teks hitam terlihat */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1;
+    }
 
+    .kategori-item:hover .kategori-overlay {
+        opacity: 1;
+    }
+
+    .kategori-item h5 {
+        color: black; /* teks kategori overlay hitam */
+        text-align: center;
+        padding: 0 10px;
+    }
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .card-img-top:hover {
+        transform: scale(1.05);
+    }
+    .section-title {
+        margin-bottom: 30px;
+        text-align: center;
+        color: black; /* teks judul section hitam */
+    }
+    .product-card,
+    .kategori-card {
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.2s ease-in-out;
+        color: black; /* teks kartu jadi hitam */
+    }
+    .kategori-overlay,
+    .product-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.6); /* overlay terang */
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .kategori-card:hover .kategori-overlay,
+    .product-card:hover .product-overlay {
+        opacity: 1;
+    }
+    .kategori-card:hover,
+    .product-card:hover {
+        transform: scale(1.03);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    .subkategori-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: flex-start;
+    }
+    .card-subkategori {
+        width: 220px;
+        color: black; /* teks subkategori hitam */
+    }
+    .img-fixed {
+        height: 160px;
+        object-fit: cover;
+    }
+    .card-footer.bg-light strong {
+        font-size: 0.9rem;
+        color: black; /* footer teks hitam */
+    }
+    @media (max-width: 576px) {
         .card-subkategori {
-            width: 220px;
+            width: 100%;
+        }
+        .section-title h1,
+        .section-title h2,
+        .section-title h3,
+        .section-title h4 {
+            color: black;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .section-title p {
+            font-size: 1rem;
+            color: #444; /* sedikit abu-abu gelap */
+        }
+        .card-body h5 {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: black;
+        }
+        .card-body p {
+            font-size: 0.9rem;
+            color: #333;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border: none;
+            transition: background-color 0.3s ease;
+            color: white; /* tombol teks tetap putih */
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+        .carousel .carousel-item {
+            transition: transform 0.6s ease-in-out;
         }
 
-        .img-fixed {
-            height: 160px;
-            object-fit: cover;
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 50%;
         }
-    </style>
 
-    <div class="container mt-5">
-        <!-- Judul Halaman -->
-        <div class="section-title">
-            <h2>===========================</h2>
-            <h1>KATEGORI PRODUK</h1>
-            <h2>----------------------------</h2>
-            <p class="lead">Temukan produk terbaik dari UMKM Indramayu</p>
-        </div>
+        .carousel-inner .row {
+            display: flex;
+            justify-content: center;
+        }
 
-        <!-- Notifikasi -->
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
+        .carousel-item .col-md-3 {
+            display: flex;
+            justify-content: center;
+        }
+    }
 
-        @if (request('search'))
-            <div class="alert alert-info">
-                Hasil pencarian untuk: <strong>{{ request('search') }}</strong>
-            </div>
-        @endif
+</style>
+@endpush
 
-        <!-- Kategori Utama -->
-        <div class="row mb-5">
-            @forelse($kategoris as $kategori)
-                <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                    <div class="card kategori-card shadow border-0">
-                        <img src="{{ $kategori->gambar ? asset('storage/kategori/' . basename($kategori->gambar)) : asset('images/default.jpg') }}"
-                            class="card-img-top" alt="{{ $kategori->nama }}">
-                        <div class="kategori-overlay d-flex justify-content-center align-items-center">
-                            <h5 class="text-white text-center">{{ $kategori->nama }}</h5>
+@section('content')
+
+<!-- PRODUK TERLARIS SCROLL AUTO -->
+<div class="section-title">
+    <h2>🔥 Produk Teratas 🔥</h2>
+</div>
+
+@if ($produkTerlaris->count())
+    <div class="carousel-container">
+        <div class="carousel-track">
+            @foreach ($produkTerlaris as $produk)
+                <div class="kategori-item">
+                    <a href="{{ route('pembeli.produk.show', $produk->id) }}" class="text-decoration-none">
+                        <img src="{{ $produk->gambar ? asset('storage/' . $produk->gambar) : asset('images/default.jpg') }}"
+                            alt="{{ $produk->nama }}" loading="lazy">
+                        <div class="kategori-overlay">
+                            <h5>{{ $produk->nama }}</h5>
                         </div>
-                        <a href="{{ route('pembeli.dashboard', ['kategori' => $kategori->id]) }}" class="stretched-link"></a>
+                    </a>
+                </div>
+            @endforeach
+            @foreach ($produkTerlaris as $produk)
+                <div class="kategori-item">
+                    <a href="{{ route('pembeli.produk.show', $produk->id) }}" class="text-decoration-none">
+                        <img src="{{ $produk->gambar ? asset('storage/' . $produk->gambar) : asset('images/default.jpg') }}"
+                            alt="{{ $produk->nama }}" loading="lazy">
+                        <div class="kategori-overlay">
+                            <h5>{{ $produk->nama }}</h5>
+                        </div>
+                    </a>
+                </div>
+            @endforeach
+        </div>
+    </div>
+@else
+    <div class="alert alert-warning text-center">Belum ada produk terlaris tersedia.</div>
+@endif
+
+<div class="container mt-5">
+    <div class="section-title">
+        <h1>KATEGORI PRODUK</h1>
+        <p class="lead">Temukan produk terbaik dari UMKM Indramayu</p>
+    </div>
+
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if (request('search'))
+        <div class="alert alert-info">
+            Hasil pencarian untuk: <strong>{{ request('search') }}</strong>
+        </div>
+    @endif
+
+    <!-- Kategori -->
+    <div class="row mb-5">
+        @forelse($kategoris as $kategori)
+            <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+                <div class="card kategori-card shadow border-0">
+                    <img src="{{ $kategori->gambar ? asset('storage/kategori/' . basename($kategori->gambar)) : asset('images/default.jpg') }}"
+                        class="card-img-top" alt="{{ $kategori->nama }}" loading="lazy">
+                    <div class="kategori-overlay">
+                        <h5 class="text-center px-2">{{ $kategori->nama }}</h5>
                     </div>
+                    <a href="{{ route('pembeli.dashboard', ['kategori' => $kategori->id]) }}" class="stretched-link"
+                        aria-label="Lihat kategori {{ $kategori->nama }}"></a>
                 </div>
-            @empty
-                <div class="col-12 text-center">
-                    <div class="alert alert-warning">Belum ada kategori tersedia.</div>
-                </div>
-            @endforelse
+            </div>
+        @empty
+            <div class="col-12 text-center">
+                <div class="alert alert-warning">Belum ada kategori tersedia.</div>
+            </div>
+        @endforelse
+    </div>
+
+    <!-- Subkategori & Produk -->
+    @if ($kategoriAktif)
+        <div class="section-title">
+            <h3>Subkategori & Produk dari: {{ $kategoriAktif->nama }}</h3>
         </div>
 
-        <!-- Subkategori & Sub-subkategori -->
-        @if ($kategoriAktif && $subkategoris->count())
-            <div class="section-title">
-                <h3>Subkategori & Produk dari: {{ $kategoriAktif->nama }}</h3>
-            </div>
-
+        @if ($subkategoris->count())
             <div class="subkategori-grid mb-5">
                 @foreach ($subkategoris as $sub)
                     <div class="card shadow-sm card-subkategori">
                         <img src="{{ $sub->gambar ? asset('storage/kategori/' . basename($sub->gambar)) : asset('images/default.jpg') }}"
-                            class="card-img-top img-fixed" alt="{{ $sub->nama }}">
+                            class="card-img-top img-fixed" alt="{{ $sub->nama }}" loading="lazy">
                         <div class="card-body text-center">
                             <h5>{{ $sub->nama }}</h5>
-
                             @if ($sub->produks->count())
-                                <ul class="mt-2 text-start small">
+                                <ul class="mt-2 text-start small mb-0">
                                     @foreach ($sub->produks as $produk)
                                         <li>{{ $produk->nama }}</li>
                                     @endforeach
                                 </ul>
                             @else
-                                <p class="text-muted"></p>
+                                <p class="text-muted small mb-0">Belum ada produk.</p>
                             @endif
                         </div>
 
-                        {{-- Sub-subkategori --}}
                         @if ($sub->children->count())
                             <div class="card-footer bg-light">
-                                <strong class="d-block text-center">{{ $kategoriAktif->nama ?? 'Kategori' }}</strong>
-                                @foreach ($sub->children as $subchild)
-                                    <div class="card shadow-sm my-2 mx-auto" style="width: 180px;">
-                                        <a href="{{ route('pembeli.dashboard', ['kategori' => $subchild->id]) }}">
-                                            <img src="{{ $subchild->gambar ? asset('storage/kategori/' . basename($subchild->gambar)) : asset('images/default.jpg') }}"
-                                                class="card-img-top img-fixed" alt="{{ $subchild->nama }}">
-                                            <div class="card-body p-2">
-                                                <p class="text-center small">{{ $subchild->nama }}</p>
-                                            </div>
-                                        </a>
-                                    </div>
-                                @endforeach
+                                <strong class="d-block text-center mb-2">{{ $kategoriAktif->nama }}</strong>
+                                <div class="d-flex flex-wrap justify-content-center gap-3">
+                                    @foreach ($sub->children as $subchild)
+                                        <div class="card shadow-sm" style="width: 180px;">
+                                            <a href="{{ route('pembeli.dashboard', ['kategori' => $subchild->id]) }}"
+                                                class="text-decoration-none" aria-label="Lihat subkategori {{ $subchild->nama }}">
+                                                <img src="{{ $subchild->gambar ? asset('storage/kategori/' . basename($subchild->gambar)) : asset('images/default.jpg') }}"
+                                                    class="card-img-top img-fixed" alt="{{ $subchild->nama }}" loading="lazy">
+                                                <div class="card-body p-2">
+                                                    <p class="text-center small mb-0">{{ $subchild->nama }}</p>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
                             </div>
                         @endif
                     </div>
                 @endforeach
             </div>
+        @else
+            <div class="alert alert-warning text-center">
+                Tidak ada subkategori ditemukan dalam kategori ini.
+            </div>
         @endif
 
-        <!-- Semua Produk -->
-        <!-- Produk Terlaris -->
-        <div class="section-title mt-5">
-            <h2>==================================</h2>
-            <h2>PRODUK TERLARIS</h2>
-            <p class="lead">Produk dengan penjualan terbanyak</p>
-            <h2>-------------------------------</h2>
-        </div>
-
-        <div class="row">
-            @forelse ($produkTerlaris as $produk)
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="card shadow border-0 product-card h-100">
-                        <img src="{{ $produk->gambar ? asset('storage/' . $produk->gambar) : asset('images/default.jpg') }}"
-                            class="card-img-top" alt="{{ $produk->nama }}">
-                        <div class="product-overlay d-flex justify-content-center align-items-center">
-                            <a href="{{ route('pembeli.produk.show', $produk->id) }}" class="stretched-link"></a>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $produk->nama }}</h5>
-                            <p class="card-text">{{ Str::limit($produk->deskripsi, 60) }}</p>
-                            <p class="card-text"><strong>Rp {{ number_format($produk->harga, 0, ',', '.') }}</strong></p>
-                        </div>
-                        <div class="card-footer bg-transparent border-top-0">
-                            <form action="{{ route('pembeli.keranjang.store') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="produk_id" value="{{ $produk->id }}">
-                                <input type="hidden" name="quantity" value="1">
-                                <button type="submit" class="btn btn-success w-100">Tambah ke Keranjang</button>
-                            </form>
+        <!-- Produk dari semua level kategori dan subkategori -->
+        @if ($produks->count())
+            <div class="section-title">
+                <h4>Produk dalam Kategori: {{ $kategoriAktif->nama }} (dan turunannya)</h4>
+            </div>
+            <div class="row">
+                @foreach ($produks as $produk)
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+                        <div class="card product-card shadow border-0">
+                            <img src="{{ $produk->gambar ? asset('storage/' . $produk->gambar) : asset('images/default.jpg') }}"
+                                class="card-img-top" alt="{{ $produk->nama }}" loading="lazy">
+                            <div class="product-overlay">
+                                <h5 class="text-center px-2">{{ $produk->nama }}</h5>
+                            </div>
+                            <div class="card-body text-center">
+                                <p class="card-text text-truncate">{{ Str::limit($produk->deskripsi, 50) }}</p>
+                                <a href="{{ route('pembeli.produk.show', $produk->id) }}"
+                                    class="btn btn-success btn-sm">Detail</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @empty
-                <div class="col-12 text-center">
-                    <div class="alert alert-info">Belum ada produk dengan Terlaris.</div>
-                </div>
-            @endforelse
-        </div>
+                @endforeach
+            </div>
+            {{ $produks->links() }}
+        @else
+            <div class="alert alert-warning text-center">Tidak ada produk ditemukan dalam kategori ini.</div>
+        @endif
+    @endif
 
+</div>
 
-        <!-- Pagination -->
-        <div class="d-flex justify-content-center mt-4">
-            {{ $produks->withQueryString()->links() }}
-        </div>
-    </div>
 @endsection

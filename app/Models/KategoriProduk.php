@@ -9,7 +9,7 @@ class KategoriProduk extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama', 'slug', 'gambar', 'parent_id']; 
+    protected $fillable = ['nama', 'slug', 'gambar', 'parent_id'];
 
     /**
      * Relasi ke produk yang termasuk dalam kategori ini.
@@ -18,18 +18,19 @@ class KategoriProduk extends Model
     {
         return $this->hasMany(Produk::class);
     }
-
     
-    // Model: KategoriProduk.php
-public function children()
-{
-    return $this->hasMany(KategoriProduk::class, 'parent_id');
-}
 
-public function parent()
-{
-    return $this->belongsTo(KategoriProduk::class, 'parent_id');
-}
+
+    // Model: KategoriProduk.php
+    public function children()
+    {
+        return $this->hasMany(KategoriProduk::class, 'parent_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(KategoriProduk::class, 'parent_id');
+    }
 
 
     /**
@@ -38,5 +39,20 @@ public function parent()
     public function hasChildren()
     {
         return $this->children()->exists();
+    }
+    public function subkategoris()
+    {
+        return $this->hasMany(KategoriProduk::class, 'parent_id');
+    }
+    public function allChildrenIds()
+    {
+        $ids = collect();
+
+        foreach ($this->children as $child) {
+            $ids->push($child->id);
+            $ids = $ids->merge($child->allChildrenIds());
+        }
+
+        return $ids;
     }
 }

@@ -10,44 +10,57 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardPembeliController extends Controller
 {
-    /**
-     * Menampilkan halaman dashboard pembeli.
-     */
     public function index(Request $request)
     {
         $search = $request->input('search');
         $kategoriId = $request->input('kategori');
 
-        $query = Produk::query();
-
         $kategoriAktif = null;
         $subkategoris = collect();
 
-        if ($kategoriId) {
-            $kategoriAktif = KategoriProduk::with('children')->find($kategoriId);
-            if ($kategoriAktif) {
-                $subkategoris = $kategoriAktif->children;
-                $subkategoriIds = $subkategoris->pluck('id')->toArray();
-                $kategoriSemuaId = array_merge([$kategoriId], $subkategoriIds);
-                $query->whereIn('kategori_produk_id', $kategoriSemuaId);
-            }
-        }
+        $query = Produk::query();
 
-        if ($search) {
-            $query->where('nama', 'like', '%' . $search . '%');
-        }
-
-        $produks = $query->with('kategori')->latest()->paginate(12);
-
-        // Kategori utama (root)
+        // Ambil kategori root (utama)
         $kategoris = KategoriProduk::whereNull('parent_id')->orderBy('nama')->get();
 
-        // Ambil produk terlaris yang sudah terjual lebih dari 10
-        $produkTerlaris = Produk::select('produks.*', DB::raw('COUNT(orders.id) as jumlah_pesanan'))
-            ->join('orders', 'orders.produk_id', '=', 'produks.id')
+        if ($kategoriId) {
+            $kategoriAktif = KategoriProduk::with('children')->find($kategoriId);
+
+            if ($kategoriAktif) {
+                $subkategoris = $kategoriAktif->children;
+
+                // Ambil semua kategori turunannya termasuk kategori aktif (rekursif)
+                $kategoriIds = $this->getAllKategoriIds($kategoriAktif);
+
+                // Produk dari semua kategori turunannya
+                $produkQuery = Produk::whereIn('kategori_produk_id', $kategoriIds);
+
+                if ($search) {
+                    $produkQuery->where('nama', 'like', '%' . $search . '%');
+                }
+
+                $produks = $produkQuery->with('kategori')->latest()->paginate(12);
+            } else {
+                // Jika kategoriId tidak valid, beri produk kosong
+                $produks = collect();
+            }
+        } else {
+            // Jika tidak ada filter kategori
+            if ($search) {
+                $query->where('nama', 'like', '%' . $search . '%');
+            }
+            $produks = $query->with('kategori')->latest()->paginate(12);
+        }
+
+        // Produk terlaris: produk yang dipesan dengan status 'complete' dan jumlah pesanan >= 10
+        $produkTerlaris = Produk::select('produks.*', DB::raw('SUM(orders.jumlah) as total_jumlah_pesanan'))
+            ->leftJoin('orders', function ($join) {
+                $join->on('orders.produk_id', '=', 'produks.id')
+                    ->where('orders.status', '=', 'complete');
+            })
             ->groupBy('produks.id')
-            ->having('jumlah_pesanan', '>=', 10)
-            ->orderByDesc('jumlah_pesanan')
+            ->having('total_jumlah_pesanan', '>=', 10)
+            ->orderByDesc('total_jumlah_pesanan')
             ->limit(8)
             ->get();
 
@@ -59,5 +72,19 @@ class DashboardPembeliController extends Controller
             'search',
             'produkTerlaris'
         ));
+    }
+
+    /**
+     * Fungsi rekursif untuk dapatkan semua ID kategori anak termasuk kategori induknya
+     */
+    private function getAllKategoriIds(KategoriProduk $kategori)
+    {
+        $ids = [$kategori->id];
+
+        foreach ($kategori->children as $child) {
+            $ids = array_merge($ids, $this->getAllKategoriIds($child));
+        }
+
+        return $ids;
     }
 }

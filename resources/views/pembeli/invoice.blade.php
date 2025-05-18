@@ -1,6 +1,11 @@
 @extends ('layouts.pembeli-navbar')
 @section('title', 'Detail Pembayaran')
 @section('content')
+<style>
+    body {
+        background-color: black !important;
+    }
+</style>
 
 <link rel="stylesheet" href="{{ asset('vendors/styles/invoice.css') }}"> {{-- pastikan file ini ada --}}
 

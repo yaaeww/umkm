@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
         body {
-        background-color: #f5e6cc;
+        background-color: black !important;
     }
         .card-img-top {
             height: 200px;
