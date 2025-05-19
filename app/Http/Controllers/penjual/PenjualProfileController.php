@@ -22,7 +22,7 @@ class PenjualProfileController extends Controller
     public function edit()
     {
         $user = Auth::user();
-        return view('penjual.profile.edit', compact('user'));
+        return view('profile.edit-penjual', compact('user'));
     }
 
     public function update(Request $request)

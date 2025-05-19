@@ -1,10 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Produk UMKM')
+@section('title')
+    <i class="bi bi-tags-fill"></i> Daftar Produk UMKM
+@endsection
 
 @section('content')
-<div class="container mt-4">
-    <h3>Daftar Produk UMKM</h3>
+<div class="container mt-4 text-theme">
+    
 
     @if(session('success'))
         <div class="alert alert-success">
@@ -23,8 +25,8 @@
     </div>
 
     @if($produks->count() > 0)
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped">
+        <div class="table-responsive text-theme">
+            <table class="table table-bordered table-striped text-theme">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -34,7 +36,7 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="text-theme">
                     @foreach($produks as $index => $produk)
                     <tr>
                         <td>{{ $index + 1 }}</td>
@@ -48,8 +50,6 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('admin.produk.edit', $produk->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                            
                             <form action="{{ route('admin.produk.destroy', $produk->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?');">
                                 @csrf
                                 @method('DELETE')

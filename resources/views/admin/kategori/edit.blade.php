@@ -1,9 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Kategori')
+@section('title')
+    <i class="bi bi-tags-fill"></i> Edit Kategori Produk
+@endsection
 
 @section('content')
-    <h4>Edit Kategori Produk</h4>
 
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>

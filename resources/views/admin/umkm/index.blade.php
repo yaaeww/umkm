@@ -1,9 +1,11 @@
 @extends('layouts.app')
-@section('title', 'Daftar Toko')
+@section('title')
+    <i class="bi bi-tags-fill"></i> Daftar Semua Toko
+@endsection
 
 @section('content')
 <div class="container">
-    <h1 class="mb-4">Data Semua UMKM</h1>
+    
 
     {{-- Box UMKM Approved --}}
     <div class="card mb-4">

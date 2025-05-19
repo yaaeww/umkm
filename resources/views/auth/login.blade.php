@@ -7,8 +7,7 @@
     <title>Login - Belanjain</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body,
-        html {
+        body, html {
             height: 100%;
             margin: 0;
             font-family: 'Segoe UI', sans-serif;
@@ -25,7 +24,6 @@
 
         .overlay {
             background-color: rgba(0, 0, 0, 0.5);
-            /* semi-transparent dark overlay */
             position: absolute;
             top: 0;
             left: 0;
@@ -49,6 +47,10 @@
 
         .form-control::placeholder {
             color: #ddd;
+        }
+
+        .form-control.is-invalid {
+            border: 1px solid #dc3545;
         }
 
         .btn-login {
@@ -75,11 +77,6 @@
         .bottom-links {
             font-size: 13px;
         }
-
-        .login-icon {
-            width: 50px;
-            margin-bottom: 15px;
-        }
     </style>
 </head>
 
@@ -90,38 +87,56 @@
             <!-- Top Nav -->
             <div class="top-nav">
                 <a href="#">Login</a>
-                <a href="/">Home</a>
-                <a href="{{route('register')}}">Register</a>
-                
+                <a href="/">Beranda</a>
+                <a href="{{ route('register') }}">Daftar</a>
             </div>
 
             <!-- Login Form -->
             <div class="login-form text-center" style="width: 100%; max-width: 400px;">
-                <!-- Ganti bagian <img> logo di dalam .login-form -->
-<img src="{{ asset('aset/finalisasi logo.png') }}" alt="Logo"  style="width: 80px;">
+                <img src="{{ asset('aset/finalisasi logo.png') }}" alt="Logo" style="width: 80px;">
+
+                {{-- Notifikasi Error dari Session --}}
+                @if(session('error'))
+                    <div class="alert alert-danger mt-3">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
+                {{-- Validasi Error --}}
+                @if ($errors->any())
+                    <div class="alert alert-danger mt-2">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
                     <div class="mb-3 text-start">
-                        <input type="email" class="form-control" name="email" placeholder="Email" required>
+                        <input type="email" class="form-control @error('email') is-invalid @enderror"
+                               name="email" placeholder="Masukkan Email" value="{{ old('email') }}" required autofocus>
                     </div>
+
                     <div class="mb-3 text-start">
-                        <input type="password" class="form-control" name="password" placeholder="Password" required>
+                        <input type="password" class="form-control @error('password') is-invalid @enderror"
+                               name="password" placeholder="Masukkan Password" required>
                     </div>
-                    <button type="submit" class="btn btn-login text-white">GET STARTED</button>
+
+                    <button type="submit" class="btn btn-login text-white">MASUK</button>
 
                     <div class="d-flex justify-content-between mt-2 bottom-links">
                         <div>
                             <input type="checkbox" id="remember" name="remember">
-                            <label for="remember">Keep Logged In</label>
+                            <label for="remember">Tetap Masuk</label>
                         </div>
-                        <a href="{{ route('password.request') }}" class="text-white text-decoration-none">Forgot
-                            Password?</a>
+                        <a href="{{ route('password.request') }}" class="text-white text-decoration-none">Lupa Kata Sandi?</a>
                     </div>
 
                     <div class="d-flex justify-content-between mt-3 bottom-links">
-                        <a href="{{ route('register') }}" class="text-white text-decoration-none">CREATE ACCOUNT</a>
-                    
+                        <a href="{{ route('register') }}" class="text-white text-decoration-none">BELUM PUNYA AKUN? DAFTAR</a>
                     </div>
                 </form>
             </div>

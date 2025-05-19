@@ -182,15 +182,15 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content mt-10">
-            <h1>EXPLORE THE WORLD<br>WITH US.</h1>
-            <div class="mt-4">
-                <a href="#produk" class="btn btn-explore">Explore</a>
-                <a href="#" class="btn-video"><i class="fas fa-play-circle me-2"></i>Watch Video</a>
-            </div>
+<section class="hero">
+    <div class="hero-content" style="margin-right: 20px;">
+        <h1>EXPLORE THE WORLD<br>WITH US.</h1>
+        <div class="mt-4">
+            <a href="#produk" class="btn btn-explore">Explore</a>
+            <a href="#" class="btn-video"><i class="fas fa-play-circle me-2"></i>Watch Video</a>
         </div>
-    </section>
+    </div>
+</section>
 
 
     <!-- Kategori Produk -->

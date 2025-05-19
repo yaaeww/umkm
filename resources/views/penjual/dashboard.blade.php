@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard Penjual')
+@section('title')
+    <i class="bi bi-money"></i> Dashboard Penjual
+@endsection
 
 @section('content')
     <div class="card-box pd-20 height-100-p mb-30">
@@ -34,7 +36,7 @@
                         {{ auth()->user()->name }}!
                     </div>
                 </h4>
-                <p class="font-18 max-width-600">
+                <p class="font-18 max-width-600 text-dark">
                     @if(auth()->user()->isAdmin())
                         Selamat datang di dashboard Admin. Anda dapat mengelola seluruh sistem dari sini.
                     @elseif(auth()->user()->isPenjual())

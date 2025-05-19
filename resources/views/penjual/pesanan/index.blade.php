@@ -1,16 +1,16 @@
 @extends('layouts.app') {{-- Sesuaikan dengan layout penjual Anda --}}
-
+@section('title')
+    <i class="bi bi-tags-fill"></i> Daftar Pesanan pembeli
+@endsection
 @section('content')
-<div class="container mt-4">
-    <h4 class="mb-3">Daftar Pesanan dari Pembeli</h4>
-
-    {{-- Pesanan Complete --}}
-    <h5 class="mt-4">Pesanan Selesai (Complete)</h5>
+<div class="container mt-4 text-theme">
+    
+    <h5 class="mt-4 text-theme">Pesanan Selesai (Complete)</h5>
     @if($pesananComplete->isEmpty())
-        <div class="alert alert-info">Belum ada pesanan yang selesai.</div>
+        <div class="alert alert-info text-theme">Belum ada pesanan yang selesai.</div>
     @else
-        <div class="table-responsive mb-4">
-            <table class="table table-bordered">
+        <div class="table-responsive mb-4 text-theme">
+            <table class="table table-bordered text-theme">
                 <thead>
                     <tr>
                         <th>NO</th>
@@ -57,12 +57,12 @@
     @endif
 
     {{-- Pesanan Cancel --}}
-    <h5 class="mt-4">Pesanan Dibatalkan (Cancel)</h5>
+    <h5 class="mt-4 text-theme">Pesanan Dibatalkan (Cancel)</h5>
     @if($pesananCancel->isEmpty())
-        <div class="alert alert-warning">Tidak ada pesanan yang dibatalkan.</div>
+        <div class="alert alert-warning text-theme">Tidak ada pesanan yang dibatalkan.</div>
     @else
-        <div class="table-responsive">
-            <table class="table table-bordered">
+        <div class="table-responsive text-theme">
+            <table class="table table-bordered text-theme">
                 <thead>
                     <tr>
                         <th>NO</th>

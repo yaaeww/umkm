@@ -1,8 +1,10 @@
 @extends('penjual.dashboard')
-
+@section('title')
+    <i class="bi bi-tags-fill"></i> Edit Produk
+@endsection
 @section('content')
 <div class="container">
-    <h1 class="text-2xl font-bold mb-6">Edit Produk</h1>
+    
 
     @if ($errors->any())
         <div class="alert alert-danger">

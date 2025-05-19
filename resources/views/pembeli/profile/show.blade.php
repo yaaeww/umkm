@@ -79,7 +79,7 @@
                             </a>
                         </div>
                         <div>
-                            <a href="" class="text-decoration-none text-dark">
+                            <a href="{{route('pembeli.rating')}}" class="text-decoration-none text-dark">
                                 <i class="fa-solid fa-star fa-2x text-success"></i>
                                 <p class="mt-1 small">Beri Penilaian</p>
                             </a>

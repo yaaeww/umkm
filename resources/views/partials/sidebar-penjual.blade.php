@@ -2,12 +2,14 @@
 <div class="left-side-bar">
     <div class="brand-logo">
         <a href="/">
-            
-
             <div class="logo" style="margin-left: 30px;">
-                <img src="{{ asset('aset\finalisasi logo.png') }}" alt="" class="light-logo">
-            </div>            
-            
+                <!-- Logo warna gelap, selalu tampil -->
+                <img src="{{ asset('aset/finalisasi logo.png') }}" alt="Logo Gelap" class="logo-dark"
+                    style="display:block;">
+                <!-- Logo warna terang, sembunyikan -->
+                <img src="{{ asset('aset/finalisasi logo-white.png') }}" alt="Logo Terang" class="logo-light"
+                    style="display:none;">
+            </div>
         </a>
         <div class="close-sidebar" data-toggle="left-sidebar-close">
             <i class="ion-close-round"></i>
@@ -55,10 +57,12 @@
                 <li>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="dropdown-toggle no-arrow btn btn-link mtext" style="padding-left: 38px;">
-                            <span class="micon bi bi-box-arrow-left"></span> Logout
+                        <button type="submit" class="dropdown-toggle no-arrow btn btn-danger mtext"
+                            style="padding-left: 38px;">
+                            <span class="micon bi bi-box-arrow-left"></span>>Logout
                         </button>
                     </form>
+
                 </li>
             </ul>
         </div>

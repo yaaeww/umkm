@@ -1,0 +1,37 @@
+/* Tema terang */
+body.theme-light {
+    background-color: #ffffff;
+    color: #212529;
+}
+
+body.theme-light .header,
+body.theme-light .right-sidebar {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+/* Tema gelap */
+body.theme-dark {
+    background-color: #181818;
+    color: #f1f1f1;
+}
+
+body.theme-dark .header,
+body.theme-dark .right-sidebar {
+    background-color: #242424;
+    color: #f1f1f1;
+}
+
+/* Teks dalam tema gelap */
+body.theme-dark a,
+body.theme-dark h1, 
+body.theme-dark p {
+    color: #f1f1f1;
+}
+
+/* Tombol aktif */
+.sidebar-btn-group .btn.active {
+    border-color: #007bff;
+    background-color: #007bff;
+    color: white;
+}

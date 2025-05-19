@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Produk')
+@section('title')
+    <i class="bi bi-tags-fill"></i> Tambah Produk Baru
+@endsection
 
 @section('content')
-<div class="container">
-    <h1 class="text-2xl font-bold mb-6">Tambah Produk Baru</h1>
+<div class="container text-theme">
 
     @if ($errors->any())
         <div class="alert alert-danger">

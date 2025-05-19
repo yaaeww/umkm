@@ -1,8 +1,9 @@
 @extends('layouts.app')
-@section('title', 'Produk saya')
+@section('title')
+    <i class="bi bi-tags-fill"></i> Daftar Produk
+@endsection
 @section('content')
-<div class="container">
-    <h1 class="text-2xl font-bold mb-4">Daftar Produk Saya</h1>
+<div class="container text-theme">
 
     <a href="{{ route('penjual.produk.create') }}" class="btn btn-primary mb-4">+ Tambah Produk</a>
 

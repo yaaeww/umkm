@@ -1,7 +1,8 @@
 @extends('penjual.dashboard')
-
+@section('title')
+    <i class="bi bi-tags-fill"></i> Toko Saya
+@endsection
 @section('content')
-    <h4>Toko Saya</h4>
 
     @if (session('warning'))
         <div class="alert alert-warning">{{ session('warning') }}</div>

@@ -158,12 +158,13 @@
     </main>
 
     {{-- Footer --}}
-    <footer>
-        <div class="container">
-            <p class="mb-2">&copy; {{ date('Y') }} UMKM Indramayu - Kelompok 7</p>
-            <small>Powered by Laravel & Bootstrap | Designed by Belanjain</small>
-        </div>
-    </footer>
+    <footer class="bg-dark py-4 mt-5">
+    <div class="container text-center">
+        <p class="mb-2">&copy; {{ date('Y') }} UMKM Indramayu - Kelompok 7</p>
+        <small>Powered by Laravel & Bootstrap | Designed by Belanjain</small>
+    </div>
+</footer>
+
 
     {{-- Scripts --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

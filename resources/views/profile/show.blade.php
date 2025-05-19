@@ -1,81 +1,122 @@
 @extends('layouts.app')
 
-@section('title', 'Profil Penjual')
+@section('title')
+    <i class="bi bi-tags-fill"></i> <span>Akun Saya</span>
+@endsection
 
 @section('content')
 <div class="row">
     <!-- Sidebar Profil -->
-    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-30">
-        <div class="pd-20 card-box height-100-p">
-            <div class="col-md-4 text-center">
+    <div class="col-xl-4 col-lg-4 col-md-5 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center text-theme">
                 @php
-                    $avatarPath = auth()->user()->avatar; // Harusnya hanya '1747064324.jpg' atau 'avatar/1747064324.jpg'
-                    $fullPath = 'avatar/' . ltrim($avatarPath, '/'); // Pastikan path lengkap
-
+                    $avatarPath = auth()->user()->avatar;
+                    $fullPath = 'avatar/' . ltrim($avatarPath, '/');
                     $avatarExists = $avatarPath && Storage::disk('public')->exists($fullPath);
                     $avatarUrl = $avatarExists
                         ? asset('storage/' . $fullPath)
                         : asset('images/default-avatar.png');
                 @endphp
-                <img src="{{ $avatarUrl }}" class="rounded-circle img-fluid" style="max-height: 150px;"
-                    alt="Avatar Pengguna">
-            
 
-            </div>
-            <!-- Form Ganti Avatar -->
-        <form action="{{ route('penjual.profile.avatar') }}" method="POST" enctype="multipart/form-data">
-    @csrf
-    <label for="avatar">Upload Avatar</label>
-    <input type="file" name="avatar" id="avatar" accept="image/*">
-    <button type="submit" class="btn btn-primary">Update Avatar</button>
-</form>
+                <img src="{{ $avatarUrl }}" class="rounded-circle img-thumbnail mb-3" style="max-height: 150px;" alt="Avatar Pengguna">
 
+                <form action="{{ route('penjual.profile.avatar') }}" method="POST" enctype="multipart/form-data" class="mb-3 text-start">
+                    @csrf
+                    <div class="form-group">
+                        <label for="avatar" class="form-label text-theme">Ganti Avatar</label>
+                        <input type="file" name="avatar" id="avatar" accept="image/*" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-primary mt-2">Update Avatar</button>
+                </form>
 
-            <h5 class="text-center h5 mb-0">{{ $user->name }}</h5>
-            <p class="text-center text-muted font-14">Penjual Terdaftar</p>
+                <h5 class="card-title mb-0 text-theme">{{ $user->name }}</h5>
+                <div class="text-muted mb-3">Penjual Terdaftar</div>
 
-            <div class="profile-info">
-                <h5 class="mb-20 h5 text-blue">Informasi Kontak</h5>
-                <ul>
-                    <li><span>Email:</span> {{ $user->email }}</li>
-                    <li><span>No. Telepon:</span> {{ $umkm->no_telp ?? '-' }}</li>
-                    <li><span>Alamat:</span> {{ $umkm->alamat ?? '-' }}</li>
-                </ul>
+                <div class="text-start">
+                    <h6 class="text-primary">Informasi Kontak</h6>
+                    <ul class="list-unstyled mb-0 text-theme">
+                        <li><strong>Email:</strong> {{ $user->email }}</li>
+                        <li><strong>No. Telepon:</strong> {{ $umkm->no_telp ?? '-' }}</li>
+                        <li><strong>Alamat:</strong> {{ $umkm->alamat ?? '-' }}</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Konten Toko -->
-    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 mb-30">
-        <div class="card-box height-100-p overflow-hidden">
-            <div class="profile-tab height-100-p">
-                <div class="tab height-100-p">
-                    <ul class="nav nav-tabs customtab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#toko" role="tab">Toko</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content pt-3">
-                        <div class="tab-pane fade show active" id="toko" role="tabpanel">
-                            @if ($umkm)
-                                @if ($umkm->status === 'pending')
-                                    <h5 class="text-warning">Toko Anda sedang menunggu persetujuan admin.</h5>
-                                @elseif ($umkm->status === 'approved')
-                                    <h5 class="mb-3">Informasi Toko:</h5>
-                                    <p><strong>Nama :</strong> {{ $user->name }}</p>
-                                    <p><strong>Alamat:</strong> {{ $umkm->alamat }}</p>
-                                    <p><strong>No. Telepon:</strong> {{ $umkm->no_telp }}</p>
-                                @elseif ($umkm->status === 'rejected')
-                                    <h5 class="text-danger">Toko Anda ditolak oleh admin.</h5>
-                                    <p>Silakan perbaiki data Anda dan daftar ulang.</p>
-                                    <a href="{{ route('penjual.umkm.create') }}" class="btn btn-primary">Daftarkan Ulang Toko</a>
-                                @endif
-                            @else
-                                <h5 class="text-muted">Anda belum memiliki toko</h5>
-                                <p>Silakan daftar toko Anda terlebih dahulu.</p>
-                                <a href="{{ route('penjual.umkm.create') }}" class="btn btn-primary">Daftarkan Toko</a>
+    <div class="col-xl-8 col-lg-8 col-md-7 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-theme">
+                @if(session('success'))
+                    <div class="alert alert-success">{{ session('success') }}</div>
+                @endif
+
+                <ul class="nav nav-tabs mb-3" id="profileTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active text-theme" id="toko-tab" data-bs-toggle="tab" data-bs-target="#toko" type="button" role="tab">
+                            Toko
+                        </button>
+                    </li>
+                    @if($umkm && $umkm->status === 'approved')
+                    <a href="{{ route('penjual.profile.edit') }}" class="btn btn-warning text-theme">
+    Edit Toko
+</a>
+
+                    @endif
+                </ul>
+
+                <div class="tab-content" id="profileTabContent">
+                    <!-- Tab Info Toko -->
+                    <div class="tab-pane fade show active text-theme" id="toko" role="tabpanel" aria-labelledby="toko-tab">
+                        @if ($umkm)
+                            @if ($umkm->status === 'pending')
+                                <div class="alert alert-warning text-theme">
+                                    Toko Anda sedang menunggu persetujuan admin.
+                                </div>
+                            @elseif ($umkm->status === 'approved')
+                                <h5 class="mb-3 text-theme">Informasi Toko</h5>
+                                <p><strong>Nama:</strong> {{ $user->name }}</p>
+                                <p><strong>Alamat:</strong> {{ $umkm->alamat }}</p>
+                                <p><strong>No. Telepon:</strong> {{ $umkm->no_telp }}</p>
+                            @elseif ($umkm->status === 'rejected')
+                                <div class="alert alert-danger text-theme">
+                                    Toko Anda ditolak oleh admin.<br>
+                                    Silakan perbaiki data dan daftar ulang.
+                                </div>
+                                <a href="{{ route('penjual.umkm.create') }}" class="btn btn-primary">Daftarkan Ulang Toko</a>
                             @endif
-                        </div>
+                        @else
+                            <div class="alert alert-secondary text-theme">
+                                Anda belum memiliki toko. Silakan daftar toko Anda terlebih dahulu.
+                            </div>
+                            <a href="{{ route('penjual.umkm.create') }}" class="btn btn-primary">Daftarkan Toko</a>
+                        @endif
+                    </div>
+
+                    <!-- Tab Edit Toko -->
+                    <div class="tab-pane fade text-theme" id="edit-toko" role="tabpanel" aria-labelledby="edit-toko-tab">
+                        @if ($umkm && $umkm->status === 'approved')
+                            <form action="{{ route('penjual.umkm.update', $umkm->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+
+                                <div class="mb-3">
+                                    <label for="alamat" class="form-label">Alamat</label>
+                                    <textarea name="alamat" id="alamat" class="form-control" rows="3" required>{{ old('alamat', $umkm->alamat) }}</textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="no_telp" class="form-label">No. Telepon</label>
+                                    <input type="text" name="no_telp" id="no_telp" class="form-control" value="{{ old('no_telp', $umkm->no_telp) }}" required>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                            </form>
+                        @else
+                            <div class="alert alert-warning">Anda hanya bisa mengedit toko yang telah disetujui.</div>
+                        @endif
                     </div>
                 </div>
             </div>

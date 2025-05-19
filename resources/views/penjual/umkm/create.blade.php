@@ -1,8 +1,11 @@
 @extends('penjual.dashboard')
+@section('title')
+    <i class="bi bi-tags-fill"></i> Daftar Toko
+@endsection
 
 @section('content')
-<div class="container">
-    <h1>Daftar Toko UMKM</h1>
+<div class="container text-theme">
+
 
     <form action="{{ route('penjual.umkm.store') }}" method="POST" enctype="multipart/form-data">
         @csrf

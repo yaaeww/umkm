@@ -1,9 +1,11 @@
 @extends('layouts.app')
-@section('title', 'Edit Toko')
+@section('title')
+    <i class="bi bi-tags-fill"></i> Edit Toko
+@endsection
 
 @section('content')
-<div class="card-box p-4">
-    <h4 class="text-blue h4">Edit Toko Anda</h4>
+<div class="card-box p-4 text-theme">
+    
 
     <form action="{{ route('penjual.umkm.update', $umkm->id) }}" method="POST" enctype="multipart/form-data">
         @csrf

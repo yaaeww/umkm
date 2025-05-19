@@ -3,17 +3,18 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
+use App\Models\Pengguna; // Pastikan model Pengguna digunakan
+use App\Models\User;
 
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Display the login view.
+     * Tampilkan halaman login.
      */
     public function create(): View
     {
@@ -21,15 +22,34 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Proses login.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        $request->authenticate();
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->withErrors([
+                'email' => 'Email yang Anda masukkan salah.',
+            ])->onlyInput('email');
+        }
+
+        if (!Hash::check($request->password, $user->password)) {
+            return back()->withErrors([
+                'password' => 'Kata sandi yang Anda masukkan salah.',
+            ])->onlyInput('email');
+        }
+
+        Auth::login($user, $request->boolean('remember'));
 
         $request->session()->regenerate();
 
-        $role = Auth::user()->role;
+        $role = $user->role;
 
         switch ($role) {
             case 'admin':
@@ -37,14 +57,14 @@ class AuthenticatedSessionController extends Controller
             case 'penjual':
                 return redirect()->route('penjual.dashboard');
             case 'pembeli':
-                return redirect()->route('pembeli.dashboard'); // atau pembeli.dashboard jika kamu buat khusus
+                return redirect()->route('pembeli.dashboard');
             default:
                 abort(403, 'Role tidak dikenal.');
         }
     }
 
     /**
-     * Destroy an authenticated session.
+     * Logout.
      */
     public function destroy(Request $request): RedirectResponse
     {
