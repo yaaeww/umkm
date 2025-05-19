@@ -138,14 +138,17 @@ class KategoriController extends Controller
 
     public function destroy($id)
     {
-        $kategori = KategoriProduk::findOrFail($id);
+        $kategori = KategoriProduk::with('children')->findOrFail($id);
 
+        // Cek apakah kategori masih memiliki subkategori
+        if ($kategori->children->count() > 0) {
+            return redirect()->route('admin.kategori.index')->with('error', 'Tidak dapat menghapus kategori karena masih memiliki subkategori');
+        }
+
+        // Hapus gambar jika ada
         if ($kategori->gambar && Storage::disk('public')->exists('kategori/' . $kategori->gambar)) {
             Storage::disk('public')->delete('kategori/' . $kategori->gambar);
         }
-
-        // Reset parent_id untuk subkategori
-        KategoriProduk::where('parent_id', $kategori->id)->update(['parent_id' => null]);
 
         $kategori->delete();
 

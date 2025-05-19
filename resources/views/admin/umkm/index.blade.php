@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-    <i class="bi bi-tags-fill"></i> Daftar Semua Toko
+    <i class="icon-copy dw dw-groceries-store"></i> Daftar Semua Toko
 @endsection
 
 @section('content')

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-    <i class="bi bi-tags-fill"></i> Produk Toko
+    <i class="icon-copy fa fa-shopping-bag"></i> Produk Toko
 @endsection
 
 @section('content')
