@@ -4,46 +4,45 @@
 <style>
     body {
         background-color: black !important;
+        color: white;
     }
+    
 </style>
 
-<div class="container mt-4">
+<div class="container mt-4 text-color">
     <h2>Rating dan Ulasan Saya</h2>
 
-    @if (count($produkBelumDinilai) === 0)
-        <p>Semua produk yang sudah diterima telah Anda beri penilaian.</p>
+    @if(empty($produkBelumDinilai) || count($produkBelumDinilai) === 0)
+        <p>Tidak ada pesanan dengan status diterima.</p>
     @else
-        @foreach ($produkBelumDinilai as $item)
-            <div class="card my-3">
-                <div class="card-body">
-                    <h5>Produk: {{ $item->produk->nama ?? 'Produk tidak ditemukan' }}</h5>
-                    <p>Status Order: {{ ucfirst($item->status_order) }}</p>
-
-                    <form action="{{ route('pembeli.rating.store') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="orders_id" value="{{ $item->order_id }}">
-                        <input type="hidden" name="produks_id" value="{{ $item->produk->id }}">
-
-                        <div class="mb-3">
-                            <label for="bintang-{{ $item->order_id }}-{{ $item->produk->id }}" class="form-label">Rating (1-5):</label>
-                            <select id="bintang-{{ $item->order_id }}-{{ $item->produk->id }}" name="bintang" class="form-select" required>
-                                <option value="">Pilih rating</option>
-                                @for ($i = 1; $i <= 5; $i++)
-                                    <option value="{{ $i }}">{{ $i }} ⭐</option>
-                                @endfor
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="ulasan-{{ $item->order_id }}-{{ $item->produk->id }}" class="form-label">Ulasan:</label>
-                            <textarea id="ulasan-{{ $item->order_id }}-{{ $item->produk->id }}" name="ulasan" rows="3" class="form-control" placeholder="Tulis ulasan Anda..." required></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">Kirim Penilaian</button>
-                    </form>
-                </div>
-            </div>
-        @endforeach
+        <table class="table table-striped table-dark">
+            <thead>
+                <tr>
+                    <th>Nomor Pesanan</th>
+                    <th>Produk</th>
+                    <th>Status Pesanan</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($produkBelumDinilai as $item)
+                    @php
+                        $order = $item->order;
+                        $produk = $item->produk; // diasumsikan ini objek produk, bukan koleksi
+                    @endphp
+                    <tr>
+                        <td>{{ $order->invoice ?? 'INV-' . $order->id }}</td>
+                        <td>{{ $produk->nama ?? '-' }}</td>
+                        <td>{{ ucfirst(str_replace('_', ' ', $order->status_pesanan ?? 'Unknown')) }}</td>
+                        <td>
+                            <a href="{{ route('pembeli.rating.create', ['order' => $order->id, 'product' => $produk->id]) }}" class="btn btn-sm btn-primary">
+                                Beri Ulasan
+                            </a>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     @endif
 </div>
 @endsection

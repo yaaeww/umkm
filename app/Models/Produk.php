@@ -9,45 +9,47 @@ class Produk extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    // Set nama tabel eksplisit agar tidak error
+    protected $table = 'produks';
+
     protected $fillable = [
         'nama',
         'harga',
         'deskripsi',
         'gambar',
         'user_id',
-        'stok', // tambahkan jika ada field stok
+        'stok',
         'rating',
         'umkm_id',
-        'kategori_produk_id'
+        'kategori_produk_id',
     ];
+
+    // =======================
+    // RELASI
+    // =======================
+
     public function umkm()
     {
         return $this->belongsTo(Umkm::class, 'umkm_id');
     }
 
-    /**
-     * Relasi ke model User (Penjual)
-     */
+    public function kategoriProduk()
+    {
+        return $this->belongsTo(KategoriProduk::class, 'kategori_produk_id');
+    }
+    public function kategori()
+    {
+        return $this->belongsTo(KategoriProduk::class, 'kategori_produk_id');
+    }
+
     public function penjual()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-    // App\Models\Produk
+
     public function user()
     {
-        return $this->belongsTo(User::class);
-    }
-
-    // app/Models/Produk.php
-
-    public function kategori()
-    {
-        return $this->belongsTo(KategoriProduk::class, 'kategori_produk_id');
+        return $this->belongsTo(User::class); // Jika kamu memang butuh dua nama relasi berbeda
     }
 
     public function order()
@@ -55,40 +57,52 @@ class Produk extends Model
         return $this->hasMany(Order::class);
     }
 
-    /**
-     * Relasi ke Kategori (jika ada)
-     */
-
-    /**
-     * Method untuk admin dashboard
-     */
-    public function adminIndex()
+    public function orderItems()
     {
-        $produks = Produk::with(['penjual', 'kategori'])
-            ->latest()
-            ->get();
-
-        return view('admin.dashboard', compact('produks'));
+        return $this->hasMany(Order::class); // Ini sama dengan `order()`, bisa digabung
     }
 
-    /**
-     * Accessor untuk format harga
-     */
+    public function diskon()
+    {
+        return $this->hasOne(Diskon::class, 'produks_id');
+    }
+    public function ulasan()
+    {
+        return $this->hasMany(Ulasan::class, 'produks_id');
+    }
+    // =======================
+    // ACCESSORS & SCOPES
+    // =======================
+
     public function getHargaFormattedAttribute()
     {
         return 'Rp ' . number_format($this->harga, 0, ',', '.');
     }
 
-    /**
-     * Scope untuk produk aktif
-     */
+    public function getHargaSetelahDiskonAttribute()
+    {
+        if ($this->diskon && now()->between($this->diskon->tanggal_mulai, $this->diskon->tanggal_berakhir)) {
+            return round($this->harga - ($this->harga * $this->diskon->persen_diskon / 100));
+        }
+
+        return $this->harga;
+    }
+
     public function scopeAktif($query)
     {
         return $query->where('is_active', true);
     }
 
-    public function orderItems()
+    // =======================
+    // METODE TAMBAHAN (ADMIN)
+    // =======================
+
+    public function adminIndex()
     {
-        return $this->hasMany(Order::class); // atau DetailOrder, tergantung nama modelmu
+        $produks = self::with(['penjual', 'kategori'])
+            ->latest()
+            ->get();
+
+        return view('admin.dashboard', compact('produks'));
     }
 }

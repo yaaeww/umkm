@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title')
-    <i class="bi bi-money"></i> Dashboard Penjual
-@endsection
+@section('title', 'Dashboard Penjual')
+    
+
 
 @section('content')
+
     <div class="card-box pd-20 height-100-p mb-30">
         <div class="row align-items-center">
             <div class="col-md-4 text-center">

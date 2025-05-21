@@ -3,24 +3,62 @@
 namespace App\Http\Controllers\Pembeli;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
-use Illuminate\Http\Request;
 
 class PesananController extends Controller
 {
-    // Tampilkan semua pesanan user
     public function index()
     {
-        $pesanan = Order::with('produk') // Pastikan relasi produk benar
+        $orders = Order::with('produk')
             ->where('user_id', Auth::id())
             ->latest()
             ->get();
 
-        return view('pembeli.pesanan.index', compact('pesanan'));
+        return view('pembeli.pesanan.index', ['orders' => $orders]);
     }
 
-    // Hapus pesanan yang statusnya cancel
+    public function statusDikemas()
+    {
+        $orders = Order::with('produk')
+            ->where('user_id', Auth::id())
+            ->where('status_pesanan', 'dikemas')
+            ->latest()
+            ->get();
+
+        return view('pembeli.pesanan.dikemas', ['orders' => $orders]);
+    }
+
+    public function dikirim()
+    {
+        $orders = Order::with('produk')
+            ->where('user_id', Auth::id())
+            ->whereIn('status_pesanan', ['dikirim', 'diterima'])
+            ->latest()
+            ->get();
+
+        return view('pembeli.pesanan.dikirim', ['orders' => $orders]);
+    }
+
+
+    public function updateStatus(Request $request, $id)
+    {
+        $order = Order::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        if ($order->status_pesanan === 'dikirim' && $order->status === 'complete') {
+            $order->status_pesanan = 'diterima';
+            $order->save();
+
+            return redirect()->route('pembeli.status.dikirim')
+                ->with('success', 'Pesanan telah dikonfirmasi diterima.');
+        }
+
+        return back()->with('error', 'Status pesanan tidak dapat diubah.');
+    }
+
     public function destroy($id)
     {
         $order = Order::where('id', $id)
@@ -35,46 +73,6 @@ class PesananController extends Controller
         return back()->with('error', 'Hanya pesanan dengan status cancel yang bisa dihapus.');
     }
 
-    // Update status pesanan dari dikirim jadi diterima
-    public function updateStatus(Request $request, $id)
-    {
-        $order = Order::where('id', $id)
-            ->where('user_id', Auth::id())
-            ->firstOrFail();
-
-        if ($order->status_pesanan === 'dikirim' && $order->status === 'complete') {
-            $order->status_pesanan = 'diterima';
-            $order->save();
-
-            return redirect()->route('pembeli.status.dikirim')->with('success', 'Pesanan telah dikonfirmasi diterima.');
-        }
-
-        return redirect()->back()->with('error', 'Status pesanan tidak dapat diubah.');
-    }
-
-    // Pesanan dengan status dikemas
-    public function statusDikemas()
-    {
-        $pesananDikemas = Order::with('produk')
-            ->where('user_id', Auth::id())
-            ->where('status_pesanan', 'dikemas')
-            ->latest()
-            ->get();
-
-        return view('pembeli.pesanan.dikemas', compact('pesananDikemas'));
-    }
-
-    // Pesanan yang sedang dikirim dan sudah diterima
-    public function dikirim()
-    {
-        $orders = Order::with('produks')->where('user_id', auth()->id())
-            ->whereIn('status_pesanan', ['dikirim', 'diterima'])
-            ->latest()->get();
-
-        return view('pembeli.pesanan.dikirim', compact('orders'));
-    }
-
-    // Hapus banyak pesanan sekaligus dengan status cancel
     public function bulkDelete(Request $request)
     {
         $ids = $request->input('order_ids', []);
@@ -84,6 +82,7 @@ class PesananController extends Controller
         }
 
         $deletedCount = Order::whereIn('id', $ids)
+            ->where('user_id', Auth::id())
             ->where('status', 'cancel')
             ->delete();
 

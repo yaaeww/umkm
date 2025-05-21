@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\PembeliController;
 use App\Http\Controllers\Admin\PenjualController;
 use App\Http\Controllers\Pembeli\RatingController;
+use App\Http\Controllers\Penjual\PendapatanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandingController;
 
@@ -128,11 +129,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 
 /*
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 | Penjual Routes
-|----------------------------------------------------------------------
+|--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')->group(function () {
+
     // Dashboard Penjual
     Route::get('/dashboard', [DashboardPenjualController::class, 'index'])->name('dashboard');
 
@@ -142,26 +144,35 @@ Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')
 
     // Pesanan
     Route::get('/pesanan', [PenjualPesananController::class, 'index'])->name('pesanan.index');
-    Route::get('/invoice/{id}', [PenjualInvoiceController::class, 'show'])->name('invoice.show');
     Route::get('/pesanan/{order}/buat', [PenjualPesananController::class, 'create'])->name('pesanan.create');
-    Route::patch('pesanan/{order}/update-status', [PenjualPesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
-    Route::get('/pesanan/{order}/invoice/pdf', [PenjualInvoiceController::class, 'generatePdf'])->name('pesanan.invoice.pdf');
-    // Pendapatan Per Produk
-    Route::get('/pendapatan-per-produk', [\App\Http\Controllers\Penjual\PendapatanController::class, 'index'])->name('pendapatan.index');
+    Route::patch('/pesanan/{order}/update-status', [PenjualPesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
 
-    // Profile
+    // Invoice
+    Route::get('/invoice/{id}', [PenjualInvoiceController::class, 'show'])->name('invoice.show');
+    Route::get('/pesanan/{order}/invoice/pdf', [PenjualInvoiceController::class, 'generatePdf'])->name('pesanan.invoice.pdf');
+
+    // Pendapatan Per Produk
+    Route::get('/pendapatan-per-produk', [PendapatanController::class, 'index'])->name('pendapatan.index');
+    Route::get('/pendapatan/produk/{id}', [PendapatanController::class, 'show'])->name('pendapatan.detail');
+    Route::get('/export/excel', [PendapatanController::class, 'exportSummaryExcel'])->name('export.excel');
+    Route::get('/export/pdf', [PendapatanController::class, 'exportSummaryPdf'])->name('export.pdf');
+
+    // Export Detail
+    Route::get('/{id}/detail/export/excel', [PendapatanController::class, 'exportDetailExcel'])->name('detail.export.excel');
+    Route::get('/{id}/detail/export/pdf', [PendapatanController::class, 'exportDetailPdf'])->name('detail.export.pdf');
+
+    // Profil Penjual
     Route::controller(PenjualProfileController::class)->prefix('profile')->name('profile.')->group(function () {
         Route::get('/', 'show')->name('show');
         Route::get('/edit', 'edit')->name('edit');
         Route::patch('/', 'update')->name('update');
         Route::delete('/', 'destroy')->name('destroy');
 
-        // Menambahkan route untuk update avatar
-        Route::post('/avatar', [PenjualProfileController::class, 'updateAvatar'])->name('avatar');
+        // Update avatar
+        Route::post('/avatar', 'updateAvatar')->name('avatar');
     });
-    // Tambahkan route ini di dalam group penjual (di kode kamu)
-
 });
+
 
 /*
 |----------------------------------------------------------------------
@@ -220,8 +231,10 @@ Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli')->name('pembeli.')
 
     });
     // Rating & Ulasan
-    Route::get('/rating', [RatingController::class, 'index'])->name('rating'); // pembeli.rating
+    Route::get('/rating', [RatingController::class, 'index'])->name('rating.index');
+    Route::get('/rating/create', [RatingController::class, 'create'])->name('rating.create');
     Route::post('/rating', [RatingController::class, 'store'])->name('rating.store');
 });
+
 
 require __DIR__ . '/auth.php';

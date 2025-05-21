@@ -5,12 +5,24 @@
 <style>
     body {
         background-color: black !important;
+        color: white;
+    }
+    a.text-dark {
+        color: white !important;
+    }
+    .card-box {
+        background-color: #1a1a1a;
+        color: white;
+    }
+    .review-star {
+        color: #f0ad4e;
     }
 </style>
+
 <div class="row">
     {{-- Gambar Produk --}}
-    <div class="col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
-        <div class="product-slider slider-arrow">
+    <div class="col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center mb-4 mb-lg-0">
+        <div class="product-slider slider-arrow w-100" style="max-width: 400px;">
             <div class="product-slide">
                 @if ($produk->gambar)
                     <img src="{{ asset('storage/' . $produk->gambar) }}" class="img-fluid rounded" alt="{{ $produk->nama }}">
@@ -24,10 +36,10 @@
     {{-- Detail Produk --}}
     <div class="col-lg-6 col-md-12 col-sm-12">
         <div class="product-detail-desc pd-20 card-box height-100-p">
-            <h4 class="mb-20 pt-20">{{ $produk->nama }}</h4>
+            <h4 class="mb-3 pt-3 text-center">{{ $produk->nama }}</h4>
             <p>{{ $produk->deskripsi }}</p>
 
-            <div class="price">
+            <div class="price mb-3">
                 <ins class="fs-4 fw-bold text-primary">Rp{{ number_format($produk->harga, 0, ',', '.') }}</ins>
             </div>
 
@@ -38,9 +50,12 @@
             {{-- Rating Produk --}}
             <div class="mb-3">
                 <label class="text-blue fw-bold">Rating:</label>
+                @php
+                    $roundedRating = round($produk->rating ?? 0);
+                @endphp
                 @for ($i = 1; $i <= 5; $i++)
-                    @if ($i <= round($produk->rating ?? 0))
-                        <i class="text-warning fa fa-star"></i>
+                    @if ($i <= $roundedRating)
+                        <i class="review-star fa fa-star"></i>
                     @else
                         <i class="text-secondary fa fa-star-o"></i>
                     @endif
@@ -60,15 +75,65 @@
             <hr class="mt-4 mb-3">
             <div class="mt-2">
                 <h6 class="fw-bold">Dijual oleh:</h6>
-                <p class="mb-0">{{ $produk->user->name }}</p>
-                <p class="text-muted">{{ $produk->user->email }}</p>
+                <p class="mb-0">{{ $produk->user->name ?? 'Penjual' }}</p>
+                <p class="text-muted">{{ $produk->user->email ?? '-' }}</p>
             </div>
         </div>
     </div>
 </div>
 
+
+<div class="mt-5 text-color">
+    <h5 class="mb-3">Ulasan Produk</h5>
+
+    {{-- Tampilkan rating rata-rata dari setiap user --}}
+    <div class="mb-4">
+        <label class="fw-bold">Rating Rata-rata:</label>
+        @php
+            $roundedRating = round($produk->rating ?? 0);
+            $jumlahUserUnik = $ulasan->groupBy('user_id')->count();
+        @endphp
+        <div class="mb-1">
+            @for ($i = 1; $i <= 5; $i++)
+                @if ($i <= $roundedRating)
+                    <i class="review-star fa fa-star"></i>
+                @else
+                    <i class="text-secondary fa fa-star-o"></i>
+                @endif
+            @endfor
+            <small>({{ number_format($produk->rating ?? 0, 1) }}/5 dari {{ $jumlahUserUnik }} pengguna)</small>
+        </div>
+    </div>
+
+    @if($ulasan->isEmpty())
+        <p class="text-muted">Belum ada ulasan untuk produk ini.</p>
+    @else
+        <div class="list-group">
+            @foreach($ulasan as $review)
+                <div class="list-group-item list-group-item-dark mb-3 rounded">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <strong>{{ $review->user->name ?? 'Pengguna' }}</strong>
+                        <small class="text-muted">{{ $review->created_at->format('d M Y') }}</small>
+                    </div>
+                    <div class="mb-1">
+                        @for ($i = 1; $i <= 5; $i++)
+                            @if ($i <= $review->rating)
+                                <i class="review-star fa fa-star"></i>
+                            @else
+                                <i class="text-secondary fa fa-star-o"></i>
+                            @endif
+                        @endfor
+                    </div>
+                    <p>{{ $review->ulasan }}</p>
+                </div>
+            @endforeach
+        </div>
+    @endif
+</div>
+
+
 {{-- Produk Terkait --}}
-<div class="mt-5">
+<div class="mt-5 text-color">
     <h5 class="mb-3">Produk Lain dari Toko Ini</h5>
     <div class="row">
         @forelse ($produkTerkait as $item)
@@ -99,4 +164,5 @@
         @endforelse
     </div>
 </div>
+
 @endsection

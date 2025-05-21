@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Penjual;
 
 use App\Http\Controllers\Controller;
 use App\Models\Produk;
+use App\Models\Diskon; // import model Diskon
 use App\Models\UMKM;
 use App\Models\KategoriProduk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProdukPenjualController extends Controller
@@ -15,7 +17,7 @@ class ProdukPenjualController extends Controller
     public function dashboard()
     {
         $umkm = $this->getUserUMKM();
-        $produks = $umkm ? Produk::where('umkm_id', $umkm->id)->latest()->paginate(10) : collect();
+        $produks = $umkm ? Produk::with('diskon')->where('umkm_id', $umkm->id)->latest()->paginate(10) : collect();
         return view('penjual.dashboard', compact('produks', 'umkm'));
     }
 
@@ -24,7 +26,7 @@ class ProdukPenjualController extends Controller
         if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
 
         $umkm = $this->getUserUMKM();
-        $produks = Produk::where('umkm_id', $umkm->id)->latest()->paginate(10);
+        $produks = Produk::with('diskon')->where('umkm_id', $umkm->id)->latest()->paginate(10);
 
         return view('penjual.produk.index', compact('produks'));
     }
@@ -49,6 +51,10 @@ class ProdukPenjualController extends Controller
             'harga' => 'required|numeric|min:0',
             'stok' => 'required|integer|min:0',
             'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            // Validasi diskon opsional, jika salah satu field diskon diisi maka wajib lengkap
+            'persen_diskon' => 'nullable|integer|min:0|max:100|required_with:tanggal_mulai,tanggal_berakhir',
+            'tanggal_mulai' => 'nullable|date|required_with:persen_diskon,tanggal_berakhir',
+            'tanggal_berakhir' => 'nullable|date|after_or_equal:tanggal_mulai|required_with:persen_diskon,tanggal_mulai',
         ]);
 
         $umkm = $this->getUserUMKM();
@@ -62,20 +68,29 @@ class ProdukPenjualController extends Controller
             $data['gambar'] = $request->file('gambar')->store('produks', 'public');
         }
 
-        Produk::create($data);
+        $produk = Produk::create($data);
+
+        // Simpan diskon jika ada
+        if ($request->filled('persen_diskon') && $request->filled('tanggal_mulai') && $request->filled('tanggal_berakhir')) {
+            $produk->diskon()->create([
+                'persen_diskon' => $request->persen_diskon,
+                'tanggal_mulai' => $request->tanggal_mulai,
+                'tanggal_berakhir' => $request->tanggal_berakhir,
+            ]);
+        }
 
         return redirect()->route('penjual.produk.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
     public function edit($id)
-{
-    $produk = Produk::findOrFail($id);
-    $kategoriUtamas = KategoriProduk::whereNull('parent_id')->get();
+    {
+        $produk = Produk::with('diskon')->findOrFail($id);
+        $kategoriUtamas = KategoriProduk::whereNull('parent_id')->get();
 
-    $subkategoris = KategoriProduk::where('parent_id', $produk->kategori->parent_id ?? $produk->kategori->id)->get();
+        $subkategoris = KategoriProduk::where('parent_id', $produk->kategori->parent_id ?? $produk->kategori->id)->get();
 
-    return view('penjual.produk.edit', compact('produk', 'kategoriUtamas', 'subkategoris'));
-}
+        return view('penjual.produk.edit', compact('produk', 'kategoriUtamas', 'subkategoris'));
+    }
 
     public function update(Request $request, $id)
     {
@@ -90,12 +105,15 @@ class ProdukPenjualController extends Controller
             'harga' => 'required|numeric|min:0',
             'stok' => 'required|integer|min:0',
             'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            // Validasi diskon opsional
+            'persen_diskon' => 'nullable|integer|min:0|max:100|required_with:tanggal_mulai,tanggal_berakhir',
+            'tanggal_mulai' => 'nullable|date|required_with:persen_diskon,tanggal_berakhir',
+            'tanggal_berakhir' => 'nullable|date|after_or_equal:tanggal_mulai|required_with:persen_diskon,tanggal_mulai',
         ]);
 
         $data = $request->only(['kategori_produk_id', 'nama', 'deskripsi', 'harga', 'stok']);
 
         if ($request->hasFile('gambar')) {
-            // Hapus gambar lama jika ada
             if ($produk->gambar && Storage::disk('public')->exists($produk->gambar)) {
                 Storage::disk('public')->delete($produk->gambar);
             }
@@ -103,6 +121,29 @@ class ProdukPenjualController extends Controller
         }
 
         $produk->update($data);
+
+        // Update atau hapus diskon
+        if ($request->filled('persen_diskon') && $request->filled('tanggal_mulai') && $request->filled('tanggal_berakhir')) {
+            // Update jika sudah ada, atau buat baru
+            if ($produk->diskon) {
+                $produk->diskon->update([
+                    'persen_diskon' => $request->persen_diskon,
+                    'tanggal_mulai' => $request->tanggal_mulai,
+                    'tanggal_berakhir' => $request->tanggal_berakhir,
+                ]);
+            } else {
+                $produk->diskon()->create([
+                    'persen_diskon' => $request->persen_diskon,
+                    'tanggal_mulai' => $request->tanggal_mulai,
+                    'tanggal_berakhir' => $request->tanggal_berakhir,
+                ]);
+            }
+        } else {
+            // Jika data diskon tidak lengkap, hapus diskon yang ada (jika ada)
+            if ($produk->diskon) {
+                $produk->diskon->delete();
+            }
+        }
 
         return redirect()->route('penjual.produk.index')->with('success', 'Produk berhasil diperbarui.');
     }
@@ -117,6 +158,11 @@ class ProdukPenjualController extends Controller
             Storage::disk('public')->delete($produk->gambar);
         }
 
+        // Hapus diskon jika ada
+        if ($produk->diskon) {
+            $produk->diskon->delete();
+        }
+
         $produk->delete();
 
         return redirect()->route('penjual.produk.index')->with('success', 'Produk berhasil dihapus.');
@@ -126,10 +172,31 @@ class ProdukPenjualController extends Controller
     {
         if ($redirect = $this->ensureUserHasUMKM()) return $redirect;
 
-        $produk = $this->findProdukByUser($id);
+        $produk = Produk::with(['kategoriProduk', 'ulasan.user'])->where('id', $id)->firstOrFail();
 
-        return view('penjual.produk.show', compact('produk'));
+        // Pastikan produk milik UMKM user yang sedang login
+        $umkm = $this->getUserUMKM();
+        if ($produk->umkm_id !== $umkm->id) {
+            abort(403, 'Produk tidak ditemukan atau bukan milik Anda.');
+        }
+
+        // Hitung rating rata-rata dari user (rata-rata per user lalu ambil rata-rata global)
+        $avgBintang = DB::table(function ($query) use ($produk) {
+            $query->from('ulasan')
+                ->select('users_id', DB::raw('AVG(bintang) as user_avg'))
+                ->where('produks_id', $produk->id)
+                ->groupBy('users_id');
+        }, 'subquery')
+            ->select(DB::raw('AVG(user_avg) as rata_rata'))
+            ->value('rata_rata');
+
+        $produk->rating = $avgBintang ?? 0;
+
+        $ulasan = $produk->ulasan;
+
+        return view('penjual.produk.show', compact('produk', 'ulasan'));
     }
+
 
     // ======================== PRIVATE HELPERS ========================
 
@@ -151,8 +218,8 @@ class ProdukPenjualController extends Controller
         $umkm = $this->getUserUMKM();
 
         $produk = Produk::where('id', $id)
-                        ->where('umkm_id', $umkm->id)
-                        ->first();
+            ->where('umkm_id', $umkm->id)
+            ->first();
 
         if (!$produk) {
             abort(403, 'Produk tidak ditemukan atau bukan milik Anda.');
