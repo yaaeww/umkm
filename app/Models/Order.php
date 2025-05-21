@@ -37,10 +37,9 @@ class Order extends Model
     }
     public function produk()
     {
-        // Jika tiap order punya satu produk:
+        
         return $this->belongsTo(Produk::class, 'produk_id');
 
-        // Jika order bisa punya banyak produk melalui pivot atau detail pesanan, sesuaikan:
-        // return $this->belongsToMany(Produk::class, 'order_details', 'order_id', 'produk_id');
+        
     }
 }

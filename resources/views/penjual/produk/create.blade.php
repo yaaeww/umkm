@@ -51,13 +51,13 @@
         {{-- Harga Produk --}}
         <div class="mb-4">
             <label for="harga" class="block font-semibold">Harga</label>
-            <input type="number" name="harga" id="harga" class="form-control" required>
+            <input type="number" name="harga" id="harga" class="form-control" min="0" required>
         </div>
 
         {{-- Stok Produk --}}
         <div class="mb-4">
             <label for="stok" class="block font-semibold">Stok</label>
-            <input type="number" name="stok" id="stok" class="form-control" required>
+            <input type="number" name="stok" id="stok" class="form-control" min="0" required>
         </div>
 
         {{-- Gambar Produk --}}
@@ -68,6 +68,27 @@
                 <img id="preview" src="#" alt="Preview Gambar" style="display: none; max-height: 200px;">
             </div>
         </div>
+
+        {{-- Diskon Produk --}}
+        <fieldset class="mb-4 border p-3 rounded">
+            <legend class="font-semibold text-theme mb-2">Diskon (Opsional)</legend>
+
+            <div class="mb-3">
+                <label for="persen_diskon" class="block font-semibold">Persen Diskon (%)</label>
+                <input type="number" name="persen_diskon" id="persen_diskon" class="form-control" min="0" max="100" placeholder="Contoh: 10">
+            </div>
+
+            <div class="mb-3">
+                <label for="tanggal_mulai" class="block font-semibold">Tanggal Mulai Diskon</label>
+                <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label for="tanggal_berakhir" class="block font-semibold">Tanggal Berakhir Diskon</label>
+                <input type="date" name="tanggal_berakhir" id="tanggal_berakhir" class="form-control">
+            </div>
+            <small class="text-muted">Isi semua field diskon jika ingin memberikan diskon pada produk ini.</small>
+        </fieldset>
 
         <button type="submit" class="btn btn-success">Simpan Produk</button>
     </form>

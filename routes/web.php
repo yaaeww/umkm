@@ -100,9 +100,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 /*
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 | Penjual Routes
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')->group(function () {
     Route::get('/dashboard', [DashboardPenjualController::class, 'index'])->name('dashboard');
@@ -112,28 +112,22 @@ Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')
 
     Route::get('/pesanan', [PenjualPesananController::class, 'index'])->name('pesanan.index');
     Route::get('/pesanan/{order}/buat', [PenjualPesananController::class, 'create'])->name('pesanan.create');
-    Route::patch('pesanan/{order}/update-status', [PenjualPesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
+    Route::patch('/pesanan/{order}/update-status', [PenjualPesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
     Route::get('/pesanan/{order}/invoice/pdf', [PenjualInvoiceController::class, 'generatePdf'])->name('pesanan.invoice.pdf');
     Route::get('/invoice/{id}', [PenjualInvoiceController::class, 'show'])->name('invoice.show');
 
-    // Routes Pendapatan - tanpa nested prefix penjual
+    // Pendapatan
     Route::get('/pendapatan', [PendapatanController::class, 'index'])->name('pendapatan.index');
     Route::get('/pendapatan-per-produk', [PendapatanController::class, 'index'])->name('pendapatan.per-produk');
-
     Route::get('/pendapatan/{id}/detail', [PendapatanController::class, 'show'])->name('pendapatan.detail');
 
-    // Route export excel detail pendapatan
     Route::get('/pendapatan/{id}/export-excel', [PendapatanController::class, 'exportDetailExcel'])->name('pendapatan.detail.export.excel');
-
-    // Route export pdf detail pendapatan
     Route::get('/pendapatan/{id}/export-pdf', [PendapatanController::class, 'exportDetailPdf'])->name('pendapatan.detail.export.pdf');
 
-    // Route export summary excel
     Route::get('/pendapatan/export/excel', [PendapatanController::class, 'exportSummaryExcel'])->name('pendapatan.export.summary.excel');
-
-    // Route export summary pdf
     Route::get('/pendapatan/export/pdf', [PendapatanController::class, 'exportSummaryPdf'])->name('pendapatan.export.summary.pdf');
 
+    // Profil Penjual
     Route::controller(PenjualProfileController::class)->prefix('profile')->name('profile.')->group(function () {
         Route::get('/', 'show')->name('show');
         Route::get('/edit', 'edit')->name('edit');
@@ -191,9 +185,10 @@ Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli')->name('pembeli.')
         Route::patch('/', 'update')->name('update');
     });
 
-    Route::get('/rating', [RatingController::class, 'index'])->name('rating');
+    Route::get('/rating', [RatingController::class, 'index'])->name('rating.index');
+    Route::get('/rating/create', [RatingController::class, 'create'])->name('rating.create');
     Route::post('/rating', [RatingController::class, 'store'])->name('rating.store');
 });
 
-// Auth Routes (Laravel default)
+// Auth Routes
 require __DIR__ . '/auth.php';

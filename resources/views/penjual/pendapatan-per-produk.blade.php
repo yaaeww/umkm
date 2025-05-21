@@ -19,7 +19,11 @@
                 <div class="col-auto">
                     <select name="filter" id="filter" class="form-select" onchange="this.form.submit()">
                         <option value="minggu" {{ request('filter') == 'minggu' ? 'selected' : '' }}>Minggu Ini</option>
+<<<<<<< HEAD
                         <option value="bulan" {{ request('filter', 'bulan') == 'bulan' ? 'selected' : '' }}>Bulan Ini</option>
+=======
+                        <option value="bulan" {{ request('filter') == 'bulan' ? 'selected' : '' }}>Bulan Ini</option>
+>>>>>>> c9ebaddcc84b4264992a384deace3d2d35119ecd
                         <option value="tahun" {{ request('filter') == 'tahun' ? 'selected' : '' }}>Tahun Ini</option>
                     </select>
                 </div>
@@ -34,10 +38,17 @@
 
         {{-- Tombol Export --}}
         <div class="mb-3">
+<<<<<<< HEAD
             <a href="{{ route('penjual.pendapatan.export.summary.excel', request()->all()) }}" class="btn btn-success btn-sm">
                 <i class="bi bi-file-earmark-excel"></i> Export Excel
             </a>
             <a href="{{ route('penjual.pendapatan.export.summary.pdf', request()->all()) }}" class="btn btn-danger btn-sm">
+=======
+            <a href="{{ route('penjual.export.excel', request()->all()) }}" class="btn btn-success btn-sm">
+                <i class="bi bi-file-earmark-excel"></i> Export Excel
+            </a>
+            <a href="{{ route('penjual.export.pdf', request()->all()) }}" class="btn btn-danger btn-sm">
+>>>>>>> c9ebaddcc84b4264992a384deace3d2d35119ecd
                 <i class="bi bi-file-earmark-pdf"></i> Export PDF
             </a>
         </div>
@@ -63,7 +74,11 @@
                         @foreach($pendapatanPerProduk as $index => $item)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
+<<<<<<< HEAD
                                 <td>{{ $item->nama }}</td> {{-- disini nama bukan nama_produk --}}
+=======
+                                <td>{{ $item->nama_produk }}</td>
+>>>>>>> c9ebaddcc84b4264992a384deace3d2d35119ecd
                                 <td>{{ $item->total_terjual }}</td>
                                 <td>{{ Number::currency($item->total_pendapatan, 'IDR', locale: 'id_ID') }}</td>
                                 <td>

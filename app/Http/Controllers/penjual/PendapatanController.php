@@ -3,156 +3,164 @@
 namespace App\Http\Controllers\Penjual;
 
 use App\Http\Controllers\Controller;
-use App\Models\Produk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+
+use App\Models\Produk;
+use App\Models\UMKM;
+
+use App\Exports\PendapatanSummaryExport;
+use App\Exports\PendapatanDetailExport;
+
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Exports\PendapatanSummaryExport;
-use App\Exports\DetailPendapatanExport;
 
 class PendapatanController extends Controller
 {
-    // Ganti perProduk jadi index supaya cocok dengan routing
+    // Menampilkan rekap pendapatan per produk dengan filter waktu
     public function index(Request $request)
     {
         $user = Auth::user();
+        $umkm = UMKM::where('user_id', $user->id)->first();
+        $pendapatanPerProduk = collect();
         $filter = $request->input('filter', 'bulan');
+        $totalPendapatanBulanLalu = 0;
 
-        $query = DB::table('orders')
-            ->join('produks', 'orders.produk_id', '=', 'produks.id')
-            ->where('produks.user_id', $user->id)
-            ->where('orders.status', 'complete')
-            ->select(
-                'produks.id',
-                'produks.nama',
-                DB::raw('SUM(orders.jumlah) as total_terjual'),
-                DB::raw('SUM(orders.total_harga) as total_pendapatan')
-            );
+        if ($umkm) {
+            $pendapatanPerProduk = $this->getPendapatanQuery($umkm, $request)->get();
 
-        if ($filter === 'minggu') {
-            $query->whereBetween('orders.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
-        } elseif ($filter === 'bulan') {
-            $query->whereMonth('orders.created_at', Carbon::now()->month)
-                ->whereYear('orders.created_at', Carbon::now()->year);
-        } elseif ($filter === 'tahun') {
-            $query->whereYear('orders.created_at', Carbon::now()->year);
+            $startLastMonth = Carbon::now()->subMonthNoOverflow()->startOfMonth();
+            $endLastMonth = Carbon::now()->subMonthNoOverflow()->endOfMonth();
+
+            $totalPendapatanBulanLalu = DB::table('orders')
+                ->join('produks', 'orders.produk_id', '=', 'produks.id')
+                ->where('produks.umkm_id', $umkm->id)
+                ->where('orders.status', 'complete')
+                ->whereBetween('orders.created_at', [$startLastMonth, $endLastMonth])
+                ->sum('orders.total_harga');
         }
 
-        $pendapatanPerProduk = $query->groupBy('produks.id', 'produks.nama')->get();
-
-        return view('penjual.pendapatan-per-produk', compact('pendapatanPerProduk', 'filter'));
+        return view('penjual.pendapatan-per-produk', compact(
+            'pendapatanPerProduk',
+            'filter',
+            'totalPendapatanBulanLalu'
+        ));
     }
 
+    // Menampilkan detail pendapatan untuk satu produk
     public function show($id)
     {
         $user = Auth::user();
-        $produk = Produk::where('id', $id)->where('user_id', $user->id)->firstOrFail();
+        $umkm = UMKM::where('user_id', $user->id)->first();
+
+        $produk = DB::table('produks')
+            ->where('id', $id)
+            ->where('umkm_id', $umkm->id)
+            ->first();
+
+        if (!$produk) {
+            abort(404);
+        }
 
         $detail = DB::table('orders')
             ->join('users', 'orders.user_id', '=', 'users.id')
             ->where('orders.produk_id', $id)
             ->where('orders.status', 'complete')
             ->select('orders.id', 'orders.jumlah', 'orders.total_harga', 'orders.created_at', 'users.name as nama_pemesan')
-            ->orderByDesc('orders.created_at')
+            ->orderBy('orders.created_at', 'desc')
             ->get();
 
         return view('penjual.pendapatan-detail', compact('produk', 'detail'));
     }
 
+    // Ekspor ringkasan ke Excel
     public function exportSummaryExcel(Request $request)
     {
         $user = Auth::user();
-        $filter = $request->input('filter', 'bulan');
+        $umkm = UMKM::where('user_id', $user->id)->firstOrFail();
 
-        $query = DB::table('orders')
-            ->join('produks', 'orders.produk_id', '=', 'produks.id')
-            ->where('produks.user_id', $user->id)
-            ->where('orders.status', 'complete')
-            ->select(
-                'produks.id',
-                'produks.nama',
-                DB::raw('SUM(orders.jumlah) as total_terjual'),
-                DB::raw('SUM(orders.total_harga) as total_pendapatan')
-            );
-
-        if ($filter === 'minggu') {
-            $query->whereBetween('orders.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
-        } elseif ($filter === 'bulan') {
-            $query->whereMonth('orders.created_at', Carbon::now()->month)
-                ->whereYear('orders.created_at', Carbon::now()->year);
-        } elseif ($filter === 'tahun') {
-            $query->whereYear('orders.created_at', Carbon::now()->year);
-        }
-
-        $pendapatanPerProduk = $query->groupBy('produks.id', 'produks.nama')->get();
-
+        $pendapatanPerProduk = $this->getPendapatanQuery($umkm, $request)->get();
         return Excel::download(new PendapatanSummaryExport($pendapatanPerProduk), 'pendapatan_summary.xlsx');
     }
 
+    // Ekspor detail ke Excel
     public function exportDetailExcel($id)
     {
         $user = Auth::user();
-        $produk = Produk::where('id', $id)->where('user_id', $user->id)->firstOrFail();
+        $umkm = UMKM::where('user_id', $user->id)->firstOrFail();
+
+        $produk = Produk::where('id', $id)->where('umkm_id', $umkm->id)->firstOrFail();
 
         $detail = DB::table('orders')
             ->join('users', 'orders.user_id', '=', 'users.id')
             ->where('orders.produk_id', $id)
             ->where('orders.status', 'complete')
             ->select('orders.id', 'orders.jumlah', 'orders.total_harga', 'orders.created_at', 'users.name as nama_pemesan')
-            ->orderByDesc('orders.created_at')
+            ->orderBy('orders.created_at', 'desc')
             ->get();
 
-        return Excel::download(new DetailPendapatanExport($produk, $detail), 'detail_pendapatan_produk_' . $id . '.xlsx');
+        return Excel::download(new PendapatanDetailExport($detail), 'pendapatan_detail_produk_' . $id . '.xlsx');
     }
 
+    // Ekspor ringkasan ke PDF
     public function exportSummaryPdf(Request $request)
     {
         $user = Auth::user();
-        $filter = $request->input('filter', 'bulan');
+        $umkm = UMKM::where('user_id', $user->id)->firstOrFail();
 
-        $query = DB::table('orders')
-            ->join('produks', 'orders.produk_id', '=', 'produks.id')
-            ->where('produks.user_id', $user->id)
-            ->where('orders.status', 'complete')
-            ->select(
-                'produks.id',
-                'produks.nama',
-                DB::raw('SUM(orders.jumlah) as total_terjual'),
-                DB::raw('SUM(orders.total_harga) as total_pendapatan')
-            );
-
-        if ($filter === 'minggu') {
-            $query->whereBetween('orders.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
-        } elseif ($filter === 'bulan') {
-            $query->whereMonth('orders.created_at', Carbon::now()->month)
-                ->whereYear('orders.created_at', Carbon::now()->year);
-        } elseif ($filter === 'tahun') {
-            $query->whereYear('orders.created_at', Carbon::now()->year);
-        }
-
-        $pendapatanPerProduk = $query->groupBy('produks.id', 'produks.nama')->get();
+        $pendapatanPerProduk = $this->getPendapatanQuery($umkm, $request)->get();
 
         $pdf = Pdf::loadView('penjual.exports.pendapatan-summary-pdf', compact('pendapatanPerProduk'));
         return $pdf->download('pendapatan_summary.pdf');
     }
 
+    // Ekspor detail ke PDF
     public function exportDetailPdf($id)
     {
         $user = Auth::user();
-        $produk = Produk::where('id', $id)->where('user_id', $user->id)->firstOrFail();
+        $umkm = UMKM::where('user_id', $user->id)->firstOrFail();
+
+        $produk = Produk::where('id', $id)->where('umkm_id', $umkm->id)->firstOrFail();
 
         $detail = DB::table('orders')
             ->join('users', 'orders.user_id', '=', 'users.id')
             ->where('orders.produk_id', $id)
             ->where('orders.status', 'complete')
             ->select('orders.id', 'orders.jumlah', 'orders.total_harga', 'orders.created_at', 'users.name as nama_pemesan')
-            ->orderByDesc('orders.created_at')
+            ->orderBy('orders.created_at', 'desc')
             ->get();
 
         $pdf = Pdf::loadView('penjual.exports.pendapatan-detail-pdf', compact('produk', 'detail'));
         return $pdf->download('pendapatan_detail_produk_' . $produk->nama . '.pdf');
+    }
+
+    // Fungsi reusable untuk query pendapatan
+    private function getPendapatanQuery($umkm, Request $request)
+    {
+        $filter = $request->input('filter', 'bulan');
+
+        $query = DB::table('orders')
+            ->join('produks', 'orders.produk_id', '=', 'produks.id')
+            ->where('produks.umkm_id', $umkm->id)
+            ->where('orders.status', 'complete')
+            ->select(
+                'produks.id',
+                'produks.nama as nama_produk',
+                DB::raw('SUM(orders.jumlah) as total_terjual'),
+                DB::raw('SUM(orders.total_harga) as total_pendapatan')
+            );
+
+        if ($filter === 'minggu') {
+            $query->whereBetween('orders.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+        } elseif ($filter === 'bulan') {
+            $query->whereMonth('orders.created_at', Carbon::now()->month)
+                ->whereYear('orders.created_at', Carbon::now()->year);
+        } elseif ($filter === 'tahun') {
+            $query->whereYear('orders.created_at', Carbon::now()->year);
+        }
+
+        return $query->groupBy('produks.id', 'produks.nama');
     }
 }

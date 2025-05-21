@@ -22,22 +22,40 @@
                 <p class="mb-2"><strong>Kategori:</strong> {{ $produk->kategoriProduk->nama ?? '-' }}</p>
                 <p class="mb-2"><strong>Harga:</strong> Rp{{ number_format($produk->harga, 0, ',', '.') }}</p>
                 <p class="mb-2"><strong>Stok:</strong> {{ $produk->stok }}</p>
-                <p class="mb-2"><strong>Rating:</strong> ⭐ {{ $produk->rating ?? '0' }}</p>
+                <p class="mb-2"><strong>Rating:</strong> ⭐ {{ number_format($produk->rating ?? 0, 1) }} / 5</p>
                 <h4 class="text-lg font-semibold mb-2 text-theme">Deskripsi:</h4>
-                <p class="whitespace-pre-line text-theme">{{ $produk->deskripsi ?? 'Tidak ada deskripsi.' }} </p>
+                <p class="whitespace-pre-line text-theme">{{ $produk->deskripsi ?? 'Tidak ada deskripsi.' }}</p>
             </div>
+        </div>
+
+        {{-- Ulasan Produk --}}
+        <div class="mt-8">
+            <h4 class="text-lg font-semibold mb-4 text-theme">Ulasan Pelanggan</h4>
+
+            @if($ulasan->count())
+                @foreach($ulasan as $u)
+                    <div class="border-t border-gray-300 pt-4 mt-4">
+                        <p class="font-semibold">{{ $u->user->name ?? 'User' }}</p>
+                        <p class="text-sm text-gray-600">Rating: ⭐ {{ $u->bintang }}</p>
+                        <p class="mt-1">{{ $u->komentar ?? '-' }}</p>
+                        <p class="text-xs text-gray-400 mt-1">Diulas pada {{ $u->created_at->format('d M Y') }}</p>
+                    </div>
+                @endforeach
+            @else
+                <p class="text-gray-500">Belum ada ulasan untuk produk ini.</p>
+            @endif
         </div>
 
         {{-- Aksi Edit dan Hapus --}}
         <div class="mt-6 flex flex-wrap gap-3">
-            <a href="{{ route('penjual.produk.edit', $produk->id) }}" class="btn btn-warning ">
+            <a href="{{ route('penjual.produk.edit', $produk->id) }}" class="btn btn-warning">
                 <i class="bi bi-pencil-square"></i> Edit Produk
             </a>
             <form action="{{ route('penjual.produk.destroy', $produk->id) }}" method="POST"
                 onsubmit="return confirm('Yakin ingin menghapus produk ini?');">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-danger ">
+                <button type="submit" class="btn btn-danger">
                     <i class="bi bi-trash-fill"></i> Hapus Produk
                 </button>
             </form>
@@ -45,7 +63,7 @@
 
         {{-- Tombol Kembali --}}
         <div class="mt-4">
-            <a href="{{ route('penjual.produk.index') }}" class="btn btn-secondary ">
+            <a href="{{ route('penjual.produk.index') }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i> Kembali
             </a>
         </div>

@@ -78,6 +78,10 @@
         .navbar-logo {
             height: 45px;
         }
+
+        .text-color{
+            color: black;
+        }
     </style>
 </head>
 <body>

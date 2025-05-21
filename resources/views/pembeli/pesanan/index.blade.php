@@ -10,9 +10,9 @@
     <h1 class="my-4">Pesanan Saya</h1>
 
     @php
-        $pesananLunas = $pesanan->where('status', 'complete');
-        $pesananPending = $pesanan->where('status', 'pending');
-        $pesananCancel = $pesanan->where('status', 'cancel');
+        $pesananLunas = $orders->where('status', 'complete');
+        $pesananPending = $orders->where('status', 'pending');
+        $pesananCancel = $orders->where('status', 'cancel');
     @endphp
 
     {{-- PESANAN LUNAS --}}
