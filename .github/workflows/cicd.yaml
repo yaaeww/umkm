@@ -73,7 +73,7 @@ jobs:
     - name: Upload artifact for deployment
       uses: actions/upload-artifact@v4
       with:
-        name: laravel-app
+        name: kelompok7_rpl2c
         path: |
           .
           !.github/
@@ -92,7 +92,7 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v4
       with:
-        name: laravel-app
+        name: kelompok7_rpl2c
         path: ./deploy
 
     - name: Install SSH key
@@ -115,7 +115,7 @@ jobs:
           cd ~/D4RPL2C_Kel7
 
           # Backup existing deployment (optional)
-          # tar -czf /backup/laravel-backup-$(date +"%Y%m%d%H%M%S").tar.gz /var/www/laravel-app
+          # tar -czf /backup/laravel-backup-$(date +"%Y%m%d%H%M%S").tar.gz /var/www/kelompok7_rpl2c
 
           # Copy files to production directory
           sudo rsync -avz --delete \
@@ -123,15 +123,15 @@ jobs:
             --exclude='storage' \
             --exclude='.git' \
             --exclude='.github' \
-            ~/D4RPL2C_Kel7/ /var/www/laravel-app/
+            ~/D4RPL2C_Kel7/ /var/www/kelompok7_rpl2c/
 
           # Set permissions
-          sudo chown -R www-data:www-data /var/www/laravel-app
-          sudo chmod -R 755 /var/www/laravel-app/storage
-          sudo chmod -R 755 /var/www/laravel-app/bootstrap/cache
+          sudo chown -R www-data:www-data /var/www/kelompok7_rpl2c
+          sudo chmod -R 755 /var/www/kelompok7_rpl2c/storage
+          sudo chmod -R 755 /var/www/kelompok7_rpl2c/bootstrap/cache
 
           # Run deployment commands
-          cd /var/www/laravel-app
+          cd /var/www/kelompok7_rpl2c
           sudo -u www-data composer install --optimize-autoloader --no-dev
           sudo -u www-data php artisan config:cache
           sudo -u www-data php artisan route:cache
