@@ -180,7 +180,7 @@ class ProdukPenjualController extends Controller
             abort(403, 'Produk tidak ditemukan atau bukan milik Anda.');
         }
 
-        // Hitung rating rata-rata dari user (rata-rata per user lalu ambil rata-rata global)
+        // Hitung rating rata-rata per user, lalu hitung rata-rata global
         $avgBintang = DB::table(function ($query) use ($produk) {
             $query->from('ulasan')
                 ->select('users_id', DB::raw('AVG(bintang) as user_avg'))
@@ -190,12 +190,14 @@ class ProdukPenjualController extends Controller
             ->select(DB::raw('AVG(user_avg) as rata_rata'))
             ->value('rata_rata');
 
-        $produk->rating = $avgBintang ?? 0;
+        $produk->rating = round($avgBintang ?? 0, 2); // dibulatkan 2 angka di belakang koma
 
-        $ulasan = $produk->ulasan;
+        // Ambil semua ulasan produk + user yang memberikan ulasan
+        $ulasan = $produk->ulasan()->with('user')->latest()->get();
 
         return view('penjual.produk.show', compact('produk', 'ulasan'));
     }
+
 
 
     // ======================== PRIVATE HELPERS ========================

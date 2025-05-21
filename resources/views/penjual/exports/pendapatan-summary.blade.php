@@ -9,7 +9,7 @@
     <tbody>
         @foreach($pendapatanPerProduk as $item)
         <tr>
-            <td>{{ $item->nama }}</td>
+            <td>{{ $item->nama_produk }}</td>
             <td>{{ $item->total_terjual }}</td>
             <td>{{ $item->total_pendapatan }}</td>
         </tr>

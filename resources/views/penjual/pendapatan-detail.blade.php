@@ -11,17 +11,10 @@
     @else
         {{-- Tombol Export --}}
         <div class="mb-3">
-<<<<<<< HEAD
             <a href="{{ route('penjual.pendapatan.detail.export.excel', $produk->id) }}" class="btn btn-success btn-sm">
                 <i class="bi bi-file-earmark-excel"></i> Export Excel
             </a>
             <a href="{{ route('penjual.pendapatan.detail.export.pdf', $produk->id) }}" class="btn btn-danger btn-sm">
-=======
-            <a href="{{ route('penjual.detail.export.excel', $produk->id) }}" class="btn btn-success btn-sm">
-                <i class="bi bi-file-earmark-excel"></i> Export Excel
-            </a>
-            <a href="{{ route('penjual.detail.export.pdf', $produk->id) }}" class="btn btn-danger btn-sm">
->>>>>>> c9ebaddcc84b4264992a384deace3d2d35119ecd
                 <i class="bi bi-file-earmark-pdf"></i> Export PDF
             </a>
         </div>
@@ -42,11 +35,7 @@
                     @foreach($detail as $item)
                         <tr>
                             <td>{{ $item->id }}</td>
-<<<<<<< HEAD
-                            <td>{{ $item->users->nama ?? '-' }}</td> {{-- asumsi relasi ke model Pengguna --}}
-=======
                             <td>{{ $item->nama_pemesan ?? '-' }}</td>
->>>>>>> c9ebaddcc84b4264992a384deace3d2d35119ecd
                             <td>{{ $item->jumlah }}</td>
                             <td>{{ Number::currency($item->total_harga, 'IDR', locale: 'id_ID') }}</td>
                             <td>{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('d F Y') }}</td>
