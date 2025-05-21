@@ -55,6 +55,13 @@ class User extends Authenticatable
 {
     return $this->hasMany(Order::class);
 }
+public function ulasans()
+{
+    return $this->hasMany(Ulasan::class, 'users_id');
+}
+
+
+
 
 
 

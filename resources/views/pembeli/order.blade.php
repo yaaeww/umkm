@@ -41,17 +41,17 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Nama Lengkap</label>
-                                <input type="text" name="name" class="form-control" placeholder="Masukkan Nama Lengkap Anda!">
+                                <input type="username" name="name" class="form-control"x     placeholder="Masukkan Nama Lengkap Anda!" required>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Nomor HP</label>
-                                <input type="text" name="phone" class="form-control" placeholder="Masukkan Nomor HP/WA!">
+                                <input type="text" name="phone" class="form-control" placeholder="Masukkan Nomor HP/WA!" required>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Alamat Pengiriman</label>
-                                <textarea name="alamat" class="form-control" rows="4" placeholder="Masukkan Alamat Lengkap Anda!"></textarea>
+                                <textarea name="alamat" class="form-control" rows="4" placeholder="Masukkan Alamat Lengkap Anda!" required></textarea>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100">Pesan Sekarang</button>

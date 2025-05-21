@@ -7,6 +7,20 @@
     <style>
         body {
             background-color: black !important;
+            color: white;
+        }
+        .card {
+            background-color: #222;
+            color: white;
+        }
+        .badge.bg-primary {
+            background-color: #007bff !important;
+        }
+        .badge.bg-success {
+            background-color: #28a745 !important;
+        }
+        table {
+            color: white;
         }
     </style>
     <div class="container mt-4">
@@ -17,6 +31,7 @@
             $diterimaOrders = $orders->where('status_pesanan', 'diterima');
         @endphp
 
+        {{-- Pesanan Dikirim --}}
         @if($dikirimOrders->count())
             @foreach($dikirimOrders as $order)
                 <div class="card mb-3">
@@ -27,7 +42,7 @@
                         <p><strong>Tanggal:</strong> {{ $order->created_at->format('d-m-Y') }}</p>
 
                         <form action="{{ route('pembeli.pesanan.updateStatus', $order->id) }}" method="POST"
-                            onsubmit="return confirm('Yakin ingin mengonfirmasi pesanan ini sudah diterima?')">
+                              onsubmit="return confirm('Yakin ingin mengonfirmasi pesanan ini sudah diterima?')">
                             @csrf
                             @method('PATCH')
                             <button type="submit" class="btn btn-success btn-sm mt-2">Konfirmasi Diterima</button>
@@ -41,71 +56,49 @@
 
         <hr class="my-4">
 
+        {{-- Pesanan Diterima --}}
         <h4>Pesanan Diterima</h4>
 
         @if($diterimaOrders->count())
-            @foreach($diterimaOrders as $order)
-                <div class="card mb-3 border-success">
-                    <div class="card-body">
-                        <p><strong>Nomor Pesanan:</strong> {{ $order->invoice ?? 'INV-' . $order->id }}</p>
-                        <p><strong>Status:</strong> <span class="badge bg-success">{{ ucfirst($order->status_pesanan) }}</span></p>
-                        <p><strong>Total:</strong> Rp{{ number_format($order->total_harga, 0, ',', '.') }}</p>
-                        <p><strong>Tanggal Diterima:</strong> {{ $order->updated_at->format('d-m-Y') }}</p>
-
-                        <hr>
-                        <p><strong>Produk dalam Pesanan:</strong></p>
-
-                        @if($order->produks && $order->produks->count() > 0)
-                            @foreach($order->produks as $produk)
-                                @php
-                                    $sudahDinilai = Ulasan::where('users_id', auth()->id())
-                                        ->where('orders_id', $order->id)
-                                        ->where('produks_id', $produk->id)
-                                        ->exists();
-                                @endphp
-
-                                <div class="border p-2 mb-2">
-                                    <p>🛍️ {{ $produk->nama }}</p>
-
-                                    @if(!$sudahDinilai)
-                                        <form action="{{ route('pembeli.rating.store') }}" method="POST" class="mt-2">
-                                            @csrf
-                                            <input type="hidden" name="orders_id" value="{{ $order->id }}">
-                                            <input type="hidden" name="produks_id" value="{{ $produk->id }}">
-
-                                            <div class="mb-2">
-                                                <label class="form-label">Rating:</label>
-                                                <select name="bintang" class="form-select form-select-sm" required>
-                                                    <option value="">Pilih rating</option>
-                                                    @for($i = 1; $i <= 5; $i++)
-                                                        <option value="{{ $i }}">{{ $i }} ⭐</option>
-                                                    @endfor
-                                                </select>
-                                            </div>
-
-                                            <div class="mb-2">
-                                                <label class="form-label">Ulasan:</label>
-                                                <textarea name="ulasan" class="form-control form-control-sm" rows="2" required
-                                                    placeholder="Tulis ulasan singkat..."></textarea>
-                                            </div>
-
-                                            <button type="submit" class="btn btn-sm btn-primary">Kirim Ulasan</button>
-                                        </form>
-                                    @else
-                                        <div class="alert alert-success p-2 mt-2 mb-0">
-                                            Anda sudah memberi ulasan untuk produk ini.
-                                        </div>
-                                    @endif
-                                </div>
-                            @endforeach
-                        @else
-                            <div class="alert alert-warning">Tidak ada produk terkait dengan pesanan ini.</div>
-                        @endif
-
-
-                    </div>
-                </div>
-            @endforeach
+            <table class="table table-striped table-dark">
+                <thead>
+                    <tr>
+                        <th>Nomor Pesanan</th>
+                        <th>Status</th>
+                        <th>Total Harga</th>
+                        <th>Tanggal Diterima</th>
+                        <th>Produk</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($diterimaOrders as $order)
+                        @php
+                            $produk = $order->produk; // pastikan relasi ada
+                            $sudahDinilai = Ulasan::where('users_id', auth()->id())
+                                ->where('orders_id', $order->id)
+                                ->where('produks_id', $produk->id)
+                                ->exists();
+                        @endphp
+                        <tr>
+                            <td>{{ $order->invoice ?? 'INV-' . $order->id }}</td>
+                            <td><span class="badge bg-success">{{ ucfirst($order->status_pesanan) }}</span></td>
+                            <td>Rp{{ number_format($order->total_harga, 0, ',', '.') }}</td>
+                            <td>{{ $order->updated_at->format('d-m-Y') }}</td>
+                            <td>{{ $produk->nama }}</td>
+                            <td>
+                                @if(!$sudahDinilai)
+                                    <a href="{{ route('pembeli.rating.create', ['order' => $order->id, 'product' => $produk->id]) }}" class="btn btn-sm btn-primary">
+                                        Beri Ulasan
+                                    </a>
+                                @else
+                                    <span class="badge bg-secondary">Sudah Dinilai</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         @else
             <div class="alert alert-info">Tidak ada pesanan yang sudah diterima.</div>
         @endif
