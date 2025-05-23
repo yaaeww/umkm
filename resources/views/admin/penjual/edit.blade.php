@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('page_title', 'Edit Akun Penjual')
+
 @section('title', 'Edit Akun Penjual')
 
 @section('content')

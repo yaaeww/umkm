@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -35,8 +36,10 @@
         .hero-banner::after {
             content: '';
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-color: rgba(0, 0, 0, 0.4);
         }
 
@@ -69,7 +72,8 @@
         }
 
         footer {
-            background-color: #343a40; /* warna gelap */
+            background-color: #343a40;
+            /* warna gelap */
             color: white;
             padding: 1rem 0;
             text-align: center;
@@ -79,16 +83,18 @@
             height: 45px;
         }
 
-        .text-color{
+        .text-color {
             color: black;
         }
     </style>
 </head>
+
 <body>
     {{-- Navbar --}}
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-sm">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center fw-bold text-white" href="{{ route('pembeli.dashboard') }}">
+            <a class="navbar-brand d-flex align-items-center fw-bold text-white"
+                href="{{ route('pembeli.dashboard') }}">
                 <img src="{{ asset('aset/finalisasi logo.png') }}" alt="UMKM Logo" class="navbar-logo me-2" />
                 UMKM Indramayu
             </a>
@@ -100,18 +106,22 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('pembeli.dashboard') ? 'active' : '' }}" href="{{ route('pembeli.dashboard') }}">Home</a>
+                        <a class="nav-link {{ request()->routeIs('pembeli.dashboard') ? 'active' : '' }}"
+                            href="{{ route('pembeli.dashboard') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('pembeli.produk.index') ? 'active' : '' }}" href="{{ route('pembeli.produk.index') }}">Produk</a>
+                        <a class="nav-link {{ request()->routeIs('pembeli.produk.index') ? 'active' : '' }}"
+                            href="{{ route('pembeli.produk.index') }}">Produk</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('pembeli.pesanan.index') ? 'active' : '' }}" href="{{ route('pembeli.pesanan.index') }}">Pesanan</a>
+                        <a class="nav-link {{ request()->routeIs('pembeli.pesanan.index') ? 'active' : '' }}"
+                            href="{{ route('pembeli.pesanan.index') }}">Pesanan</a>
                     </li>
                 </ul>
 
                 <form class="d-flex" method="GET" action="{{ route('pembeli.dashboard') }}">
-                    <input class="form-control me-2" type="search" name="search" placeholder="Cari produk..." value="{{ request('search') }}" />
+                    <input class="form-control me-2" type="search" name="search" placeholder="Cari produk..."
+                        value="{{ request('search') }}" />
                     <button class="btn btn-outline-light" type="submit">Cari</button>
                 </form>
 
@@ -120,19 +130,55 @@
                         <a class="nav-link position-relative" href="{{ route('pembeli.keranjang.index') }}">
                             <i class="bi bi-cart" style="font-size: 1.5rem;"></i>
                             @if($totalKeranjang > 0)
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                     {{ $totalKeranjang }}
                                 </span>
                             @endif
                         </a>
                     </li>
+                    {{-- Notifikasi Pesanan Dikirim --}}
+                    <li class="nav-item dropdown me-2">
+                        <a class="nav-link position-relative dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown">
+                            <i class="bi bi-truck" style="font-size: 1.5rem;"></i>
+                            @if($notifikasiDikirim->count() > 0)
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                                    {{ $notifikasiDikirim->count() }}
+                                </span>
+                            @endif
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            @if($notifikasiDikirim->count() > 0)
+                                @foreach($notifikasiDikirim as $notif)
+                                    <li>
+                                        <a class="dropdown-item small" href="{{ route('pembeli.pesanan.index') }}">
+                                            📦 Pesanan "{{ $notif->produk->nama }}" sedang dikirim
+                                        </a>
+                                    </li>
+                                @endforeach
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-center" href="{{ route('pembeli.pesanan.index') }}">Lihat
+                                        Semua</a>
+                                </li>
+                            @else
+                                <li><span class="dropdown-item text-muted">Tidak ada notifikasi</span></li>
+                            @endif
+                        </ul>
+                    </li>
+
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-white" href="#" data-bs-toggle="dropdown">
                             {{ auth()->user()->name }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ route('pembeli.profile.show') }}"><i class="bi bi-person-circle me-2"></i>Profil</a></li>
+                            <li><a class="dropdown-item" href="{{ route('pembeli.profile.show') }}"><i
+                                        class="bi bi-person-circle me-2"></i>Profil</a></li>
                             <li>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
@@ -163,11 +209,11 @@
 
     {{-- Footer --}}
     <footer class="bg-dark py-4 mt-5">
-    <div class="container text-center">
-        <p class="mb-2">&copy; {{ date('Y') }} UMKM Indramayu - Kelompok 7</p>
-        <small>Powered by Laravel & Bootstrap | Designed by Belanjain</small>
-    </div>
-</footer>
+        <div class="container text-center">
+            <p class="mb-2">&copy; {{ date('Y') }} UMKM Indramayu - Kelompok 7</p>
+            <small>Powered by Laravel & Bootstrap | Designed by Belanjain</small>
+        </div>
+    </footer>
 
 
     {{-- Scripts --}}
@@ -177,4 +223,5 @@
     <script src="{{ asset('vendors/scripts/process.js') }}"></script>
     <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
 </body>
+
 </html>

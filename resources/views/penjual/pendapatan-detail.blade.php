@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Pendapatan')
+@section('page_title', 'Pendapatan')
+
+@section('title')
+
+    <i class="icon-copy bi bi-cash-coin"></i> Detail Pendapatan
+@endsection
 
 @section('content')
 <div class="container mt-4 text-theme">

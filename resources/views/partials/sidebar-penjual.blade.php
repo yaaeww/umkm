@@ -44,6 +44,43 @@
                         <span class="micon bi bi-person"></span><span class="mtext">Profil</span>
                     </a>
                 </li>
+                {{-- Notifikasi Pesanan Baru --}}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle no-arrow">
+                        <span class="micon bi bi-bell"></span>
+                        <span class="mtext">Notifikasi</span>
+                        @php
+                            $jumlahNotif = ($notifPesananComplete->count() ?? 0) + ($notifStatusPesanan->count() ?? 0);
+                        @endphp
+                        @if($jumlahNotif > 0)
+                            <span class="badge bg-danger ms-1">{{ $jumlahNotif }}</span>
+                        @endif
+                    </a>
+                    <ul class="submenu">
+                        @if($notifPesananComplete->count())
+                            <li class="text-success px-3 fw-bold">✅ Pesanan Baru</li>
+                            @foreach($notifPesananComplete as $order)
+                                <li><a href="{{ route('penjual.pesanan.index') }}" class="small">
+                                        {{ $order->name }} memesan {{ $order->jumlah }}x produk
+                                    </a></li>
+                            @endforeach
+                        @endif
+
+                        @if($notifStatusPesanan->count())
+                            <li class="text-info px-3 fw-bold mt-2">📦 Status Pesanan</li>
+                            @foreach($notifStatusPesanan as $order)
+                                <li><a href="{{ route('penjual.pesanan.index') }}" class="small">
+                                        Pesanan oleh {{ $order->name }}: <strong>{{ $order->status_pesanan }}</strong>
+                                    </a></li>
+                            @endforeach
+                        @endif
+
+                        @if($jumlahNotif === 0)
+                            <li><span class="dropdown-item text-muted">Tidak ada notifikasi</span></li>
+                        @endif
+                    </ul>
+                </li>
+
                 <li>
                     <a href="{{ route('penjual.pesanan.index') }}" class="dropdown-toggle no-arrow">
                         <span class="micon bi bi-cart"></span><span class="mtext">Pesanan</span>

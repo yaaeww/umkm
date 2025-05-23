@@ -1,4 +1,6 @@
-@extends('admin.dashboard') <!-- Ganti sesuai layout yang kamu pakai -->
+@extends('layouts.app') <!-- Ganti sesuai layout yang kamu pakai -->
+@section('page_title', 'Tambah Kategori')
+
 @section('title')
     <i class="bi bi-tags-fill"></i> tambah kategori
 @endsection

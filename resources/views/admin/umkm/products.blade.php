@@ -1,4 +1,6 @@
 @extends('layouts.app')
+@section('page_title', 'Produk Toko')
+
 @section('title')
     <i class="icon-copy fa fa-shopping-bag"></i> Produk Toko
 @endsection

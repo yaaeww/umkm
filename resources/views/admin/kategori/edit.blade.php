@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('page_title', 'Kategori')
 
 @section('title')
     <i class="bi bi-tags-fill"></i> Edit Kategori Produk

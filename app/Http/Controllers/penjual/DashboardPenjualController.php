@@ -37,7 +37,7 @@ class DashboardPenjualController extends Controller
                 ->paginate(10);
 
             // Ambil semua ID produk dari UMKM
-            $produkIds = Produk::where('umkm_id', $umkm->id)->pluck('id');
+            $produkIds = $produks->pluck('id');
 
             // Hitung total produk
             $totalProduk = $produks->total();
@@ -58,6 +58,18 @@ class DashboardPenjualController extends Controller
                 ->where('status', 'complete')
                 ->sum('total_harga');
 
+            // Hitung jumlah_terjual per produk
+            $orderTerjual = Order::select('produk_id', DB::raw('SUM(jumlah) as jumlah_terjual'))
+                ->whereIn('produk_id', $produkIds)
+                ->where('status', 'complete')
+                ->groupBy('produk_id')
+                ->pluck('jumlah_terjual', 'produk_id'); // hasil: [produk_id => jumlah_terjual]
+
+            // Masukkan ke masing-masing produk
+            foreach ($produks as $produk) {
+                $produk->jumlah_terjual = $orderTerjual[$produk->id] ?? 0;
+            }
+
             // Ambil produk terlaris berdasarkan total_harga dari pesanan yang complete
             $produkTerlaris = DB::table('orders')
                 ->join('produks', 'orders.produk_id', '=', 'produks.id')
@@ -68,18 +80,17 @@ class DashboardPenjualController extends Controller
                     'produks.harga',
                     'produks.gambar',
                     'users.name as penjual_name',
-                    DB::raw('SUM(orders.jumlah) as total_unit'),
-                    DB::raw('SUM(orders.total_harga) as jumlah_terjual')
+                    DB::raw('SUM(orders.jumlah) as total_unit'), // UNIT terjual
+                    DB::raw('SUM(orders.total_harga) as total_penjualan') // Total UANG
                 )
                 ->where('produks.umkm_id', $umkm->id)
                 ->where('orders.status', 'complete')
                 ->groupBy('produks.id', 'produks.nama', 'produks.harga', 'produks.gambar', 'users.name')
-                ->orderByDesc('jumlah_terjual')
+                ->orderByDesc('total_unit')
                 ->limit(5)
                 ->get();
         }
 
-        // RETURN ke view selalu dijalankan, tidak peduli apakah $umkm ditemukan atau tidak
         return view('penjual.dashboard', compact(
             'umkm',
             'produks',

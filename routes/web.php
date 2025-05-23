@@ -11,7 +11,8 @@ use App\Http\Controllers\Admin\{
     AdminUmkmController,
     AdminProfileController,
     PenjualController,
-    PembeliController
+    PembeliController,
+    PendapatanController as AdminPendapatanController
 };
 
 // Penjual Controllers
@@ -94,6 +95,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::patch('/', 'update')->name('update');
         Route::delete('/', 'destroy')->name('destroy');
     });
+    Route::get('pendapatan', [AdminPendapatanController::class, 'index'])->name('pendapatan.index');
 
     Route::resource('penjual', PenjualController::class)->only(['index', 'edit', 'update', 'destroy']);
     Route::resource('pembeli', PembeliController::class)->only(['index', 'edit', 'update', 'destroy']);

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Pembeli;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Models\Produk;
 use App\Models\KategoriProduk;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DashboardPembeliController extends Controller
@@ -61,13 +63,22 @@ class DashboardPembeliController extends Controller
             ->limit(8)
             ->get();
 
+        $notifikasiDikirim = collect();
+        if (Auth::check()) {
+            $notifikasiDikirim = Order::where('user_id', Auth::id())
+                ->where('status_pesanan', 'dikirim')
+                ->latest()
+                ->get();
+        }
+
         return view('pembeli.dashboard', compact(
             'produks',
             'kategoris',
             'kategoriAktif',
             'subkategoris',
             'search',
-            'produkTerlaris'
+            'produkTerlaris',
+            'notifikasiDikirim'
         ));
     }
 

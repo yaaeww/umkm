@@ -1,5 +1,9 @@
 @extends('layouts.app')
+@section('page_title', 'Invoice')
 
+@section('title')
+    <i class="icon-copy bi bi-cash-stack"></i> Detail Pesanan
+@endsection
 @section('content')
 @php
     use Illuminate\Support\Number;

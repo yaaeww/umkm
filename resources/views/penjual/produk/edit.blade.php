@@ -1,7 +1,11 @@
-@extends('penjual.dashboard')
+@extends('layouts.app')
+@section('page_title', 'Edit produk')
+
 @section('title')
+
     <i class="bi bi-tags-fill"></i> Edit Produk
 @endsection
+
 @section('content')
 <div class="container">
     

@@ -1,4 +1,6 @@
-@extends('admin.dashboard')
+@extends('layouts.app')
+@section('page_title', 'pending')
+
 @section('content')
 <div class="container">
     <h1>UMKM Menunggu Persetujuan</h1>

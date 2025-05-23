@@ -1,7 +1,10 @@
 @extends('layouts.app')
 
+@section('page_title', 'Detail Pesanan')
+
+
 @section('title')
-    <i class="bi bi-tags-fill"></i> Detail pesanan
+    <i class="icon-copy bi bi-cart-fill"></i> Detail Pesanan
 @endsection
 
 @section('content')

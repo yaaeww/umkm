@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('page_title', 'Detail Toko')
 
 @section('title')
     <i class="icon-copy dw dw-groceries-store"></i> Detail Toko

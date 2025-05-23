@@ -1,6 +1,8 @@
 @extends('layouts.app') {{-- Sesuaikan dengan layout penjual Anda --}}
+@section('page_title', 'Pesanan')
+
 @section('title')
-    <i class="bi bi-tags-fill"></i> Daftar Pesanan pembeli
+    <i class="icon-copy bi bi-cart-check-fill"></i> Daftar Pesanan 
 @endsection
 @section('content')
 <div class="container mt-4 text-theme">

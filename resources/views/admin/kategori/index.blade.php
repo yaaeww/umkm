@@ -1,6 +1,9 @@
 @extends('layouts.app')
+@section('page_title', 'Kategori')
+
 @section('title')
-    <i class="bi bi-tags-fill"></i> Daftar Kategori Produk
+
+    <i class="bi bi-tags-fill"></i> Kategori
 @endsection
 
 @section('content')

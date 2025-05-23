@@ -1,6 +1,9 @@
 @extends('layouts.app')
+
+@section('title', 'Toko Saya')
+
 @section('title')
-    <i class="bi bi-tags-fill"></i> Edit Toko
+    <i class="bi bi-shop"></i> Toko Saya
 @endsection
 
 @section('content')

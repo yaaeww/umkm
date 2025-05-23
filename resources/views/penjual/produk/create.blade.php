@@ -1,8 +1,13 @@
 @extends('layouts.app')
 
+
+@section('page_title', 'Tambah produk')
+
 @section('title')
-    <i class="bi bi-tags-fill"></i> Tambah Produk Baru
+
+    <i class="bi bi-tags-fill"></i> Tambah Produk
 @endsection
+
 
 @section('content')
 <div class="container text-theme">

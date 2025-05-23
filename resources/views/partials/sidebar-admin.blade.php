@@ -35,6 +35,11 @@
                         <span class="micon fa fa-university"></span><span class="mtext">Toko</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('admin.pendapatan.index') }}" class="dropdown-toggle no-arrow">
+                        <span class="micon fa fa-money"></span><span class="mtext">Pendapatan</span>
+                    </a>
+                </li>
 
                 <li>
                     <div class="sidebar-small-cap">Extra</div>

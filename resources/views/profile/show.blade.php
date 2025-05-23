@@ -1,7 +1,10 @@
 @extends('layouts.app')
 
+@section('page_title', 'Profile Toko')
+
 @section('title')
-    <i class="bi bi-tags-fill"></i> <span>Akun Saya</span>
+
+    <i class="icon-copy bi bi-bank"></i> Profile saya
 @endsection
 
 @section('content')

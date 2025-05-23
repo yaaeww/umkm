@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'Dashboard')</title>
+    <title>@yield('page_title', 'Dashboard')</title>
     <link rel="stylesheet" href="{{ asset('deskapp/vendors/styles/core.css') }}">
     <link rel="stylesheet" href="{{ asset('deskapp/vendors/styles/icon-font.min.css') }}">
     <link rel="stylesheet" href="{{ asset('deskapp/vendors/styles/style.css') }}">

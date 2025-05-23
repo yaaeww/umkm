@@ -6,8 +6,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
         body {
-        background-color: black !important;
-    }
+            background-color: black !important;
+            color: white;
+        }
+
         .card-img-top {
             height: 200px;
             object-fit: cover;
@@ -33,18 +35,33 @@
             position: relative;
             overflow: hidden;
         }
+
+        /* Harga diskon */
+        .price-original {
+            text-decoration: line-through;
+            color: #dc3545; /* bootstrap danger */
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+        }
+
+        .badge-discount {
+            background-color: #dc3545;
+            font-size: 0.75rem;
+            margin-left: 0.3rem;
+        }
+        
     </style>
 
     <div class="container mt-5">
-        <div class="section-title text-center mb-4">
+        <div class="section-title text-center mb-4 text-dark">
             <h2>Semua Produk</h2>
-            <p class="lead">Lihat produk dari berbagai UMKM di Indramayu</p>
+            <p class="lead text-dark">Lihat produk dari berbagai UMKM di Indramayu</p>
         </div>
 
         <div class="row">
             @forelse ($produks as $produk)
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="card shadow border-0 product-card h-100">
+                    <div class="card shadow border-0 product-card h-100 bg-dark text-white">
                         @if ($produk->gambar)
                             <img src="{{ asset('storage/' . $produk->gambar) }}" class="card-img-top" alt="{{ $produk->nama }}">
                         @else
@@ -58,7 +75,24 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ $produk->nama }}</h5>
                             <p class="card-text">{{ Str::limit($produk->deskripsi, 60) }}</p>
-                            <p class="card-text"><strong>Rp {{ number_format($produk->harga, 0, ',', '.') }}</strong></p>
+                            <p class="card-text">
+                                @if(isset($produk->harga_setelah_diskon) && $produk->harga_setelah_diskon < $produk->harga)
+                                    @php
+                                        $diskon = 100 - round(($produk->harga_setelah_diskon / $produk->harga) * 100);
+                                    @endphp
+                                    <span class="price-original">
+                                        Rp{{ number_format($produk->harga, 0, ',', '.') }}
+                                        <span class="badge badge-discount text-white">{{ $diskon }}% OFF</span>
+                                    </span><br>
+                                    <span class="fs-5 fw-bold text-warning">
+                                        Rp{{ number_format($produk->harga_setelah_diskon, 0, ',', '.') }}
+                                    </span>
+                                @else
+                                    <span class="fs-5 fw-bold text-primary">
+                                        Rp{{ number_format($produk->harga, 0, ',', '.') }}
+                                    </span>
+                                @endif
+                            </p>
                         </div>
                         <div class="card-footer bg-transparent border-top-0">
                             <form action="{{ route('pembeli.keranjang.store') }}" method="POST">
