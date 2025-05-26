@@ -6,90 +6,76 @@
         background-color: black !important;
     }
 </style>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    {{-- Midtrans Snap.js --}}
-    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
-        data-client-key="{{ config('midtrans.client_key') }}"></script>
+<div class="container py-5">
+    <h2 class="mb-4 text-center text-light">Status Pembayaran</h2>
 
-    <div class="container">
-        <h1 class="my-4">Detail Pesanan</h1>
+    <div class="card shadow-lg border-0 rounded-4 mx-auto" style="max-width: 600px;">
+        <div class="card-body p-4">
+            <h5 class="card-title mb-4 text-warning">
+                <i class="bi bi-clock-history"></i> Menunggu Pembayaran
+            </h5>
 
-        {{-- Card Produk --}}
-        <div class="card shadow rounded border-0 mb-4" style="max-width: 500px">
-            <div class="card-body">
-                <table class="table">
-                    <tr>
-                        <td>Nama</td>
-                        <td>: {{ $order->name }}</td>
-                    </tr>
-                    <tr>
-                        <td>Nomor Hp</td>
-                        <td>: {{ $order->phone }}</td>
-                    </tr>
-                    <tr>
-                        <td>Alamat</td>
-                        <td>: {{ $order->alamat }}</td>
-                    </tr>
-                    <tr>
-                        <td>Jumlah</td>
-                        <td>: {{ $order->jumlah }}</td>
-                    </tr>
-                    <tr>
-                        <td>Total Harga</td>
-                        <td>: Rp {{ number_format($order->total_harga, 0, ',', '.') }}</td>
-                    </tr>
-                </table>
-                <button class="btn btn-primary" id="pay-button">Bayar Sekarang</button>
+            <p class="text-muted">Silakan lanjutkan pembayaran Anda melalui Midtrans.</p>
+
+            <table class="table table-borderless mt-4">
+                <tr>
+                    <td><strong>Nama</strong></td>
+                    <td>: {{ $order->name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Nomor HP</strong></td>
+                    <td>: {{ $order->phone }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Alamat</strong></td>
+                    <td>: {{ $order->alamat }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Jumlah Barang</strong></td>
+                    <td>: {{ $order->jumlah }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Total Harga</strong></td>
+                    <td class="text-success fw-bold">: Rp {{ number_format($order->total_harga, 0, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Status</strong></td>
+                    <td><span class="badge bg-warning text-dark">Pending</span></td>
+                </tr>
+            </table>
+
+            <div class="text-center mt-4">
+                <button class="btn btn-success btn-lg rounded-pill px-5" id="pay-button">
+                    <i class="bi bi-credit-card"></i> Lanjutkan Pembayaran
+                </button>
             </div>
         </div>
     </div>
+</div>
 
-    {{-- Midtrans Trigger --}}
-    <script type="text/javascript">
+<!-- Midtrans Snap Script -->
+<script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
+    data-client-key="{{ config('midtrans.client_key') }}"></script>
+
+<script type="text/javascript">
         var payButton = document.getElementById('pay-button');
         payButton.addEventListener('click', function () {
-            window.snap.pay('{{ $snapToken }}', {
+            window.snap.pay('{{$snapToken}}', {
                 onSuccess: function (result) {
+                    console.log('Payment success result:', result);
+                    // Pastikan order_id yang dipakai benar
                     window.location.href = '/pembeli/invoice/{{ $order->id }}';
-                    console.log(result);
                 },
+
                 onPending: function (result) {
-                    alert("Menunggu pembayaran...");
-                    console.log(result);
+                    alert("Menunggu pembayaran Anda.");
                 },
                 onError: function (result) {
-                    alert("Pembayaran gagal!");
-                    console.log(result);
-
-                    // Cek status error
-                    if (result.status_code === "400" && result.error_message === "Transaction expired") {
-                        alert("Token transaksi kadaluarsa, pesanan akan dibatalkan.");
-
-                        // Kirim request ke server untuk membatalkan pesanan
-                        fetch('/pembeli/order/cancel/{{ $order->id }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            },
-                            body: JSON.stringify({})
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log(data);
-                            alert("Pesanan telah dibatalkan.");
-                            window.location.reload();
-                        })
-                        .catch(error => console.error('Error:', error));
-                    } else if (result.status_code === "400" && result.error_message === "Payment failed") {
-                        alert("Pembayaran ditolak, coba gunakan metode pembayaran lain.");
-                    } else {
-                        alert("Terjadi kesalahan dalam proses pembayaran. Coba lagi.");
-                    }
+                    alert("Pembayaran gagal. Coba lagi.");
                 },
                 onClose: function () {
-                    alert('Kamu menutup popup tanpa menyelesaikan pembayaran');
+                    alert('Anda menutup popup sebelum menyelesaikan pembayaran.');
                 }
             });
         });

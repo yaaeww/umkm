@@ -19,4 +19,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 //midtrans
-route::post('/midtrans-callback',[OrderController::class ,'callback']);
+Route::post('/midtrans-callback', [OrderController::class, 'callback'])->name('midtrans.callback');
+

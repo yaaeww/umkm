@@ -24,11 +24,14 @@
                 <h6>Informasi Pesanan</h6>
                 <p>No. Pesanan: <strong>{{ $order->order_id_midtrans }}</strong></p>
                 <p>Tanggal: <strong>{{ $order->created_at->format('d M Y') }}</strong></p>
-                <p>Status Pembayaran:
-                    <span
-                        class="badge bg-{{ $order->status == 'complete' ? 'success' : ($order->status == 'pending' ? 'warning' : 'danger') }}">
-                        {{ ucfirst($order->status) }}
-                    </span>
+                <p>Status Pembayaran: 
+                    @if ($order->status === 'complete')
+                        <span class="badge bg-success">Lunas</span>
+                    @elseif ($order->status === 'cancel')
+                        <span class="badge bg-danger">Dibatalkan</span>
+                    @elseif ($order->status === 'pending')
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    @endif
                 </p>
                 <p>Status Pesanan:
                     <span class="badge bg-info">{{ ucfirst(str_replace('_', ' ', $order->status_pesanan)) }}</span>
