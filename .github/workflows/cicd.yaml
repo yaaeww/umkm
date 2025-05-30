@@ -102,42 +102,42 @@ jobs:
         known_hosts: ${{ secrets.KNOWN_HOSTS }}
         port: 64000
 
-    - name: Deploy to server via SCP/SSH
-      run: |
-        # Buat direktori sementara di server
-        ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/D4RPL2C_Kel7"
+    # - name: Deploy to server via SCP/SSH
+    #   run: |
+    #     # Buat direktori sementara di server
+    #     ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/D4RPL2C_Kel7"
 
-        # Upload files ke server
-        scp -o StrictHostKeyChecking=no -P 64000 -r ./deploy/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/D4RPL2C_Kel7/
+    #     # Upload files ke server
+    #     scp -o StrictHostKeyChecking=no -P 64000 -r ./deploy/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/D4RPL2C_Kel7/
 
-        # Jalankan deployment script di server
-        ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-          cd ~/D4RPL2C_Kel7
+    #     # Jalankan deployment script di server
+    #     ssh -o StrictHostKeyChecking=no -p 64000 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+    #       cd ~/D4RPL2C_Kel7
 
-          # Backup existing deployment (optional)
-          # tar -czf /backup/laravel-backup-$(date +"%Y%m%d%H%M%S").tar.gz /var/www/kelompok7_rpl2c
+    #       # Backup existing deployment (optional)
+    #       # tar -czf /backup/laravel-backup-$(date +"%Y%m%d%H%M%S").tar.gz /var/www/kelompok7_rpl2c
 
-          # Copy files to production directory
-          sudo rsync -avz --delete \
-            --exclude='.env' \
-            --exclude='storage' \
-            --exclude='.git' \
-            --exclude='.github' \
-            ~/D4RPL2C_Kel7/ /var/www/kelompok7_rpl2c/
+    #       # Copy files to production directory
+    #       sudo rsync -avz --delete \
+    #         --exclude='.env' \
+    #         --exclude='storage' \
+    #         --exclude='.git' \
+    #         --exclude='.github' \
+    #         ~/D4RPL2C_Kel7/ /var/www/kelompok7_rpl2c/
 
-          # Set permissions
-          sudo chown -R www-data:www-data /var/www/kelompok7_rpl2c
-          sudo chmod -R 755 /var/www/kelompok7_rpl2c/storage
-          sudo chmod -R 755 /var/www/kelompok7_rpl2c/bootstrap/cache
+    #       # Set permissions
+    #       sudo chown -R www-data:www-data /var/www/kelompok7_rpl2c
+    #       sudo chmod -R 755 /var/www/kelompok7_rpl2c/storage
+    #       sudo chmod -R 755 /var/www/kelompok7_rpl2c/bootstrap/cache
 
-          # Run deployment commands
-          cd /var/www/kelompok7_rpl2c
-          sudo -u www-data composer install --optimize-autoloader --no-dev
-          sudo -u www-data php artisan config:cache
-          sudo -u www-data php artisan route:cache
-          sudo -u www-data php artisan view:cache
-          sudo -u www-data php artisan migrate --force
+    #       # Run deployment commands
+    #       cd /var/www/kelompok7_rpl2c
+    #       sudo -u www-data composer install --optimize-autoloader --no-dev
+    #       sudo -u www-data php artisan config:cache
+    #       sudo -u www-data php artisan route:cache
+    #       sudo -u www-data php artisan view:cache
+    #       sudo -u www-data php artisan migrate --force
 
-          # Cleanup
-          rm -rf ~/D4RPL2C_Kel7
-        EOF
+    #       # Cleanup
+    #       rm -rf ~/D4RPL2C_Kel7
+    #     EOF
