@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('page_title', 'Pendapatan')
+@section('page_title', 'Dashboard')
 
 @section('title')
 
-    <i class="icon-copy bi bi-house-fill"></i> Home
+    <i class="icon-copy bi bi-house-fill"></i> Home Admin
 @endsection
 
 @section('content')

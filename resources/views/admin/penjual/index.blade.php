@@ -5,9 +5,9 @@
 
 @section('content')
     <div class="container">
-        <h1 class="mb-4">Kelola Akun Penjual</h1>
+        
 
-        <table class="table table-bordered">
+        <table class="table table-bordered text-theme">
             <thead>
                 <tr>
                     <th>Nama</th>

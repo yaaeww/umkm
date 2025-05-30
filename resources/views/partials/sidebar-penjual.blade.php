@@ -41,7 +41,7 @@
                 </li>
                 <li>
                     <a href="{{ route('penjual.profile.show') }}" class="dropdown-toggle no-arrow">
-                        <span class="micon bi bi-person"></span><span class="mtext">Profil</span>
+                        <span class="micon bi bi-person"></span><span class="mtext">Profil Pribadi</span>
                     </a>
                 </li>
                 {{-- Notifikasi Pesanan Baru --}}

@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Toko Saya')
+@section('page_title', 'Toko Saya')
 
 @section('title')
-    <i class="bi bi-shop"></i> Toko Saya
+    <i class="icon-copy bi bi-shop"></i> Toko Saya
 @endsection
 
 @section('content')

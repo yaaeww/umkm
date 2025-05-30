@@ -5,7 +5,7 @@
 
 @section('title')
 
-    <i class="bi bi-tags-fill"></i> Tambah Produk
+    <i class="icon-copy bi bi-journal-plus"></i> Tambah Produk
 @endsection
 
 

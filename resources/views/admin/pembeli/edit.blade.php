@@ -4,8 +4,7 @@
 
 @section('content')
 <div class="container">
-    <h1>Edit Akun Pembeli</h1>
-
+    
     <form action="{{ route('admin.pembeli.update', $pembeli->id) }}" method="POST">
         @csrf
         @method('PUT')

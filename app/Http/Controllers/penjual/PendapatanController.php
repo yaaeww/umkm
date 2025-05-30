@@ -138,7 +138,7 @@ class PendapatanController extends Controller
 
     // Fungsi reusable untuk query pendapatan
     private function getPendapatanQuery($umkm, Request $request)
-    {
+    { 
         $filter = $request->input('filter', 'bulan');
 
         $query = DB::table('orders')
@@ -148,6 +148,7 @@ class PendapatanController extends Controller
             ->select(
                 'produks.id',
                 'produks.nama as nama_produk',
+                'produks.stok', // Tambahkan stok saat ini
                 DB::raw('SUM(orders.jumlah) as total_terjual'),
                 DB::raw('SUM(orders.total_harga) as total_pendapatan')
             );
@@ -161,6 +162,6 @@ class PendapatanController extends Controller
             $query->whereYear('orders.created_at', Carbon::now()->year);
         }
 
-        return $query->groupBy('produks.id', 'produks.nama');
+        return $query->groupBy('produks.id', 'produks.nama', 'produks.stok');
     }
 }

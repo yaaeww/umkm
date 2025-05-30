@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="container">
-    <h1>Edit Akun Penjual</h1>
+    
 
     <form action="{{ route('admin.penjual.update', $penjual->id) }}" method="POST">
         @csrf

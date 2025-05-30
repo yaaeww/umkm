@@ -3,8 +3,8 @@
 @section('page_title', 'Profile Toko')
 
 @section('title')
-
-    <i class="icon-copy bi bi-bank"></i> Profile saya
+<i class="icon-copy bi bi-person-circle"></i> Profile saya
+    
 @endsection
 
 @section('content')

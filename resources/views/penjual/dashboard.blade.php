@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard Penjual')
+@section('page_title', 'Dasboard Penjual')
+
+@section('title')
+
+    <i class="icon-copy bi bi-house-door-fill"></i> Dashboard Penjual
+@endsection
+
+
 
 @section('content')
     <style>
