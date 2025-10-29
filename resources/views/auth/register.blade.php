@@ -6,7 +6,7 @@
 <style>
     body {
         font-family: 'Inter', sans-serif;
-        background: url('{{ asset('aset/bckk.png') }}') no-repeat center center fixed;
+        background: url('{{ asset('aset/belanjain.jpg') }}') no-repeat center center fixed;
         background-size: cover;
         min-height: 100vh;
     }
@@ -35,13 +35,25 @@
 
     .card {
         border-radius: 20px;
-        background-color: rgba(255, 255, 255, 0.95); /* semi transparan */
+        background-color: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(5px);
     }
 
     .btn-primary {
         background-color: #0d6efd;
         border: none;
+    }
+
+    .btn-google {
+        border: 1px solid #ddd;
+        background-color: #fff;
+        color: #555;
+        transition: all 0.3s;
+    }
+
+    .btn-google:hover {
+        background-color: #f8f9fa;
+        border-color: #bbb;
     }
 </style>
 
@@ -89,11 +101,24 @@
                 <x-input-error :messages="$errors->get('password_confirmation')" class="text-danger small mt-1" />
             </div>
 
-            <button type="submit" class="btn btn-primary w-100">
+            <button type="submit" class="btn btn-primary w-100 mb-3">
                 Daftar
             </button>
 
-            <p class="text-center mt-3 small">Sudah punya akun?
+            <!-- Divider -->
+            <div class="d-flex align-items-center my-3">
+                <hr class="flex-grow-1">
+                <span class="mx-2 text-muted small">atau</span>
+                <hr class="flex-grow-1">
+            </div>
+
+            <!-- Tombol Login dengan Google -->
+            <a href="{{ route('auth.google') }}" class="btn btn-google w-100 mb-3 d-flex align-items-center justify-content-center">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" class="me-2" alt="Google Logo">
+                <span>Daftar / Login dengan Google</span>
+            </a>
+
+            <p class="text-center mt-2 small">Sudah punya akun?
                 <a href="{{ route('login') }}" class="text-decoration-none">Login</a>
             </p>
         </form>
@@ -105,10 +130,7 @@
 <script>
     function selectRole(role) {
         document.getElementById('roleInput').value = role;
-
-        document.querySelectorAll('.role-option').forEach(el => {
-            el.classList.remove('active');
-        });
+        document.querySelectorAll('.role-option').forEach(el => el.classList.remove('active'));
 
         if (role === 'penjual') {
             document.querySelectorAll('.role-option')[0].classList.add('active');

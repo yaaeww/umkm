@@ -34,8 +34,31 @@
                         <td>: {{ $order->produk->nama }}</td>
                     </tr>
                     <tr>
+                        <td><strong>Harga Satuan</strong></td>
+                        <td>
+                            @php
+                                $hargaAsli = $order->produk->harga;
+                                $diskon = $order->produk->diskon;
+                                $hargaSetelahDiskon = $hargaAsli;
+
+                                // Cek apakah diskon aktif sekarang
+                                if ($diskon && now()->between($diskon->tanggal_mulai, $diskon->tanggal_berakhir)) {
+                                    $hargaSetelahDiskon = $hargaAsli - ($hargaAsli * $diskon->persen_diskon / 100);
+                                }
+                            @endphp
+                            @if ($hargaSetelahDiskon < $hargaAsli)
+                                <span style="text-decoration: line-through; color:#999;">Rp {{ number_format($hargaAsli, 0, ',', '.') }}</span>
+                                <span class="text-success fw-semibold ms-2">Rp {{ number_format($hargaSetelahDiskon, 0, ',', '.') }}</span>
+                            @else
+                                Rp {{ number_format($hargaAsli, 0, ',', '.') }}
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
                         <td><strong>Total Harga</strong></td>
-                        <td class="text-success fw-bold">: Rp {{ number_format($order->total_harga, 0, ',', '.') }}</td>
+                        <td class="text-success fw-bold">
+                            : Rp {{ number_format($hargaSetelahDiskon * $order->jumlah, 0, ',', '.') }}
+                        </td>
                     </tr>
                 </table>
 
@@ -58,10 +81,8 @@
             window.snap.pay('{{$snapToken}}', {
                 onSuccess: function (result) {
                     console.log('Payment success result:', result);
-                    // Pastikan order_id yang dipakai benar
                     window.location.href = '/pembeli/invoice/{{ $order->id }}';
                 },
-
                 onPending: function (result) {
                     alert("Menunggu pembayaran Anda.");
                 },

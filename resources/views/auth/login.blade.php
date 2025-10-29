@@ -14,7 +14,7 @@
         }
 
         .bg-cover {
-            background-image: url('{{ asset('aset/bckk.png') }}');
+            background-image: url('{{ asset('aset/belanjain.jpg') }}');
             background-size: cover;
             background-position: center;
             height: 100vh;
@@ -77,6 +77,30 @@
         .bottom-links {
             font-size: 13px;
         }
+
+        /* Tombol Google */
+        .btn-google {
+            background-color: white;
+            color: #444;
+            border: 1px solid #ddd;
+            width: 100%;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.6rem;
+            transition: all 0.3s;
+        }
+
+        .btn-google:hover {
+            background-color: #f1f1f1;
+        }
+
+        .btn-google img {
+            width: 20px;
+            height: 20px;
+        }
     </style>
 </head>
 
@@ -127,6 +151,15 @@
 
                     <button type="submit" class="btn btn-login text-white">MASUK</button>
 
+                    <!-- LOGIN GOOGLE -->
+                    <div class="mt-3">
+                        <a href="{{ route('auth.google') }}" class="btn btn-google">
+                            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo">
+                            <span>Masuk dengan Google</span>
+                        </a>
+                    </div>
+                    <!-- END LOGIN GOOGLE -->
+
                     <div class="d-flex justify-content-between mt-2 bottom-links">
                         <div>
                             <input type="checkbox" id="remember" name="remember">
@@ -143,5 +176,4 @@
         </div>
     </div>
 </body>
-
 </html>

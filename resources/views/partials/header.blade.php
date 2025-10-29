@@ -49,6 +49,7 @@
     </div>
 
     <!-- User Dropdown -->
+    @if(Auth::check())
     <div class="user-info-dropdown">
         <div class="dropdown">
             <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown">
@@ -64,4 +65,5 @@
             </div>
         </div>
     </div>
+    @endif
 </div>

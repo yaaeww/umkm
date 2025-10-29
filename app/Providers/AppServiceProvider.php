@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
+use App\Facades\Keranjang;
 use App\Models\Order;
 use App\Models\Produk;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
-use App\Facades\Keranjang;
 
 class AppServiceProvider extends ServiceProvider
 {

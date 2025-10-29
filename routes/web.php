@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\ChatBotController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandingController;
+
 
 // Admin Controllers
 use App\Http\Controllers\Admin\{
@@ -48,10 +51,22 @@ use App\Http\Controllers\InvoiceController;
 */
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::get('/chatbot', [ChatBotController::class, 'index'])->name('chatbot.index');
+Route::post('/chatbot', [ChatBotController::class, 'chat'])
+    ->name('chatbot.chat')
+    ->middleware('auth');
 
 Route::get('/verify-email', function () {
     return view('auth.verify-email');
 })->middleware(['auth'])->name('verification.notice');
+
+// Google Auth Routes
+
+Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
+Route::get('/auth/google/role', [GoogleController::class, 'chooseRole'])->name('auth.google.role');
+Route::post('/auth/google/save-role', [GoogleController::class, 'saveRole'])->name('auth.google.saveRole');
+
 
 Route::middleware('auth')->get('/redirect-after-login', function () {
     return match (auth()->user()->role) {

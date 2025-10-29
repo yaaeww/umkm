@@ -52,13 +52,17 @@ class User extends Authenticatable
         return $this->hasMany(Keranjang::class);
     }
     public function orders()
-{
-    return $this->hasMany(Order::class);
-}
-public function ulasans()
-{
-    return $this->hasMany(Ulasan::class, 'users_id');
-}
+    {
+        return $this->hasMany(Order::class);
+    }
+    public function ulasans()
+    {
+        return $this->hasMany(Ulasan::class, 'users_id');
+    }
+    public function chats()
+    {
+        return $this->hasMany(\App\Models\Chat::class);
+    }
 
 
 

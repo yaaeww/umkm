@@ -14,7 +14,7 @@
         }
 
         .bg-cover {
-            background-image: url('{{ asset('aset/bckk.png') }}');
+            background-image: url('{{ asset('aset/belanjain.jpg') }}');
             background-size: cover;
             background-position: center;
             height: 100vh;
