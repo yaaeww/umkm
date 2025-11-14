@@ -294,7 +294,7 @@
                         @if(auth()->user()->avatar && Storage::disk('public')->exists(auth()->user()->avatar))
                             <img src="{{ asset('storage/' . auth()->user()->avatar) }}" class="profile-avatar" alt="Avatar">
                         @else
-                            <img src="{{ asset('images/default-avatar.jpg') }}" class="profile-avatar" alt="Default Avatar">
+                            <img src="{{ asset('aset/iconpembeli.jpg') }}" class="profile-avatar" alt="Default Avatar">
                         @endif
 
                         <h1 class="profile-name">{{ auth()->user()->name }}</h1>
