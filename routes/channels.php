@@ -7,12 +7,18 @@ use Illuminate\Support\Facades\Broadcast;
 | Broadcast Channels
 |--------------------------------------------------------------------------
 |
-| Here you may register all of the event broadcasting channels that your
-| application supports. The given channel authorization callbacks are
-| used to check if an authenticated user can listen to the channel.
+| Di sini kita mendaftarkan semua channel broadcast.
+| Setiap user hanya boleh mendengarkan channel-nya sendiri.
 |
 */
 
+// Default channel user (biarkan saja)
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
+});
+
+// Channel untuk chat real-time antar user
+Broadcast::channel('chat.{id}', function ($user, $id) {
+    // Izinkan hanya jika user sedang login & id channel = id user
     return (int) $user->id === (int) $id;
 });

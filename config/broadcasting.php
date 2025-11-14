@@ -7,61 +7,71 @@ return [
     | Default Broadcaster
     |--------------------------------------------------------------------------
     |
-    | This option controls the default broadcaster that will be used by the
-    | framework when an event needs to be broadcast. You may set this to
-    | any of the connections defined in the "connections" array below.
+    | Tentukan driver broadcast default untuk event real-time kamu.
+    | Gunakan "pusher" untuk real-time chat, atau "null" saat development offline.
     |
     | Supported: "pusher", "ably", "redis", "log", "null"
     |
     */
 
-    'default' => env('BROADCAST_DRIVER', 'null'),
+    'default' => env('BROADCAST_DRIVER', 'pusher'),
 
     /*
     |--------------------------------------------------------------------------
     | Broadcast Connections
     |--------------------------------------------------------------------------
     |
-    | Here you may define all of the broadcast connections that will be used
-    | to broadcast events to other systems or over websockets. Samples of
-    | each available type of connection are provided inside this array.
+    | Di sini kamu bisa mendefinisikan semua koneksi broadcast yang akan
+    | digunakan oleh Laravel untuk mengirim event ke WebSocket / layanan lain.
     |
     */
 
     'connections' => [
 
+        // 🔹 Pusher / Laravel WebSockets (default)
         'pusher' => [
             'driver' => 'pusher',
             'key' => env('PUSHER_APP_KEY'),
             'secret' => env('PUSHER_APP_SECRET'),
             'app_id' => env('PUSHER_APP_ID'),
             'options' => [
-                'cluster' => env('PUSHER_APP_CLUSTER'),
-                'host' => env('PUSHER_HOST') ?: 'api-'.env('PUSHER_APP_CLUSTER', 'mt1').'.pusher.com',
-                'port' => env('PUSHER_PORT', 443),
-                'scheme' => env('PUSHER_SCHEME', 'https'),
-                'encrypted' => true,
+                // Jika pakai Pusher (online)
+                'cluster' => env('PUSHER_APP_CLUSTER', 'ap1'),
                 'useTLS' => env('PUSHER_SCHEME', 'https') === 'https',
+                'encrypted' => true,
+                'scheme' => env('PUSHER_SCHEME', 'https'),
+                'host' => env('PUSHER_HOST', 'api-' . env('PUSHER_APP_CLUSTER', 'ap1') . '.pusher.com'),
+                'port' => env('PUSHER_PORT', 443),
+
+                // Jika pakai Laravel WebSockets, aktifkan baris berikut 👇
+                // 'host' => env('PUSHER_HOST', '127.0.0.1'),
+                // 'port' => env('PUSHER_PORT', 6001),
+                // 'scheme' => 'http',
+                // 'useTLS' => false,
             ],
             'client_options' => [
-                // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
+                // Opsi tambahan Guzzle client (jika diperlukan)
             ],
         ],
 
+        // 🔹 Ably
         'ably' => [
             'driver' => 'ably',
             'key' => env('ABLY_KEY'),
         ],
 
+        // 🔹 Redis Broadcasting
         'redis' => [
             'driver' => 'redis',
             'connection' => 'default',
         ],
 
+        // 🔹 Log broadcasting (debug)
         'log' => [
             'driver' => 'log',
         ],
 
+        // 🔹 Null broadcasting (nonaktif)
         'null' => [
             'driver' => 'null',
         ],

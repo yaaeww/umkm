@@ -70,7 +70,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'UTC', // Anda mungkin ingin mengganti ini ke 'Asia/Jakarta'
 
     /*
     |--------------------------------------------------------------------------
@@ -83,7 +83,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'id', // Ganti ke 'id' untuk Bahasa Indonesia
 
     /*
     |--------------------------------------------------------------------------
@@ -109,7 +109,7 @@ return [
     |
     */
 
-    'faker_locale' => 'en_US',
+    'faker_locale' => 'id_ID', // Ganti ke 'id_ID' untuk data palsu Indonesia
 
     /*
     |--------------------------------------------------------------------------
@@ -165,7 +165,10 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
+
+        // 🚀 PERUBAHAN DI SINI: Hapus tanda '//' di baris berikut
+        App\Providers\BroadcastServiceProvider::class,
+
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
     ])->toArray(),

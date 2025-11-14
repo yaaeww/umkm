@@ -1,4 +1,5 @@
 import './bootstrap';
+import '../css/app.css'; // ✅ Tambahkan ini!
 
 import Alpine from 'alpinejs';
 

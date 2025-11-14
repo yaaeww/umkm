@@ -2,71 +2,310 @@
 
 @section('content')
     <style>
+        :root {
+            --dark-blue: #0a1628;
+            --medium-blue: #1a3a5f;
+            --light-blue: #2a4a7f;
+            --gold: #ffd700;
+            --gold-light: #ffed4e;
+            --gold-dark: #d4af37;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --secondary-color: #6c757d;
+        }
+
         body {
-            background-color: black !important;
+            background-color: #000 !important;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .container {
+            padding-top: 20px;
+            max-width: relative;
+        }
+
+        .page-title {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .order-card {
+            background: rgba(30, 30, 46, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            margin: 0 auto;
+            max-width: 600px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .info-table tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .info-table td {
+            padding: 1rem 0.5rem;
+            vertical-align: top;
+        }
+
+        .info-table td:first-child {
+            color: var(--gold);
+            font-weight: 600;
+            width: 40%;
+            padding-left: 0;
+        }
+
+        .info-table td:last-child {
+            padding-right: 0;
+        }
+
+        .price-original {
+            text-decoration: line-through;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            display: block;
+        }
+
+        .price-discounted {
+            color: var(--success-color);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .price-normal {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+        }
+
+        .total-price {
+            color: var(--gold-light);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            font-size: 1.1rem;
+            min-width: 200px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            color: var(--dark-blue);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+        }
+
+        .payment-section {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .payment-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .payment-info p {
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .payment-info .highlight {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding-top: 70px;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .order-card {
+                padding: 2rem;
+                margin: 0 1rem;
+            }
+
+            .info-table td:first-child {
+                width: 35%;
+            }
+
+            .btn {
+                width: 100%;
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding-top: 60px;
+            }
+
+            .page-title {
+                font-size: 1.6rem;
+            }
+
+            .order-card {
+                padding: 1.5rem;
+            }
+
+            .info-table td {
+                padding: 0.75rem 0.25rem;
+                display: block;
+                width: 100%;
+                border-bottom: none;
+            }
+
+            .info-table td:first-child {
+                width: 100%;
+                padding-bottom: 0.25rem;
+                border-bottom: none;
+            }
+
+            .info-table tr {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 0.5rem 0;
+                display: block;
+            }
+
+            .info-table tr:last-child {
+                border-bottom: none;
+            }
         }
     </style>
-    <div class="container py-5">
-        <h2 class="mb-4 text-center">Detail Pesanan Anda</h2>
 
-        <div class="card shadow-lg border-0 rounded-4 mx-auto" style="max-width: 600px;">
-            <div class="card-body p-4">
-                <h5 class="card-title mb-4 text-primary">Informasi Pemesanan</h5>
-                <table class="table table-borderless">
-                    <tr>
-                        <td><strong>Nama</strong></td>
-                        <td>: {{ $order->name }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Nomor HP</strong></td>
-                        <td>: {{ $order->phone }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Alamat</strong></td>
-                        <td>: {{ $order->alamat }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Jumlah Barang</strong></td>
-                        <td>: {{ $order->jumlah }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Produk</strong></td>
-                        <td>: {{ $order->produk->nama }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Harga Satuan</strong></td>
-                        <td>
-                            @php
-                                $hargaAsli = $order->produk->harga;
-                                $diskon = $order->produk->diskon;
-                                $hargaSetelahDiskon = $hargaAsli;
+    <div class="container">
+        <!-- Page Header -->
+        <h1 class="page-title">
+            <i class="fas fa-receipt me-2"></i>Detail Pesanan Anda
+        </h1>
 
-                                // Cek apakah diskon aktif sekarang
-                                if ($diskon && now()->between($diskon->tanggal_mulai, $diskon->tanggal_berakhir)) {
-                                    $hargaSetelahDiskon = $hargaAsli - ($hargaAsli * $diskon->persen_diskon / 100);
-                                }
-                            @endphp
-                            @if ($hargaSetelahDiskon < $hargaAsli)
-                                <span style="text-decoration: line-through; color:#999;">Rp {{ number_format($hargaAsli, 0, ',', '.') }}</span>
-                                <span class="text-success fw-semibold ms-2">Rp {{ number_format($hargaSetelahDiskon, 0, ',', '.') }}</span>
-                            @else
+        <!-- Order Card -->
+        <div class="order-card">
+            <h3 class="card-title">
+                <i class="fas fa-info-circle me-2"></i>Informasi Pemesanan
+            </h3>
+
+            <table class="info-table">
+                <tr>
+                    <td>Nama</td>
+                    <td>{{ $order->name }}</td>
+                </tr>
+                <tr>
+                    <td>Nomor HP</td>
+                    <td>{{ $order->phone }}</td>
+                </tr>
+                <tr>
+                    <td>Alamat</td>
+                    <td>{{ $order->alamat }}</td>
+                </tr>
+                <tr>
+                    <td>Jumlah Barang</td>
+                    <td>{{ $order->jumlah }}</td>
+                </tr>
+                <tr>
+                    <td>Produk</td>
+                    <td>{{ $order->produk->nama }}</td>
+                </tr>
+                <tr>
+                    <td>Harga Satuan</td>
+                    <td>
+                        @php
+                            $hargaAsli = $order->produk->harga;
+                            $diskon = $order->produk->diskon;
+                            $hargaSetelahDiskon = $hargaAsli;
+
+                            // Cek apakah diskon aktif sekarang
+                            if ($diskon && now()->between($diskon->tanggal_mulai, $diskon->tanggal_berakhir)) {
+                                $hargaSetelahDiskon = $hargaAsli - ($hargaAsli * $diskon->persen_diskon / 100);
+                            }
+                        @endphp
+                        @if ($hargaSetelahDiskon < $hargaAsli)
+                            <span class="price-original">
                                 Rp {{ number_format($hargaAsli, 0, ',', '.') }}
-                            @endif
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Total Harga</strong></td>
-                        <td class="text-success fw-bold">
-                            : Rp {{ number_format($hargaSetelahDiskon * $order->jumlah, 0, ',', '.') }}
-                        </td>
-                    </tr>
-                </table>
+                            </span>
+                            <span class="price-discounted">
+                                Rp {{ number_format($hargaSetelahDiskon, 0, ',', '.') }}
+                            </span>
+                        @else
+                            <span class="price-normal">
+                                Rp {{ number_format($hargaAsli, 0, ',', '.') }}
+                            </span>
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <td>Total Harga</td>
+                    <td class="total-price">
+                        Rp {{ number_format($hargaSetelahDiskon * $order->jumlah, 0, ',', '.') }}
+                    </td>
+                </tr>
+            </table>
 
-                <div class="text-center mt-4">
-                    <button class="btn btn-lg btn-success rounded-pill px-5" id="pay-button">
-                        <i class="bi bi-credit-card"></i> Bayar Sekarang
-                    </button>
+            <!-- Payment Section -->
+            <div class="payment-section">
+                <div class="payment-info">
+                    <p><span class="highlight">Langkah selanjutnya:</span> Klik tombol di bawah untuk melanjutkan pembayaran
+                    </p>
+                    <p><i class="fas fa-shield-alt me-2"></i>Pembayaran diproses dengan aman oleh Midtrans</p>
                 </div>
+
+                <button class="btn btn-primary" id="pay-button">
+                    <i class="fas fa-credit-card me-2"></i> Bayar Sekarang
+                </button>
             </div>
         </div>
     </div>
@@ -78,6 +317,10 @@
     <script type="text/javascript">
         var payButton = document.getElementById('pay-button');
         payButton.addEventListener('click', function () {
+            // Show loading state
+            payButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Memproses...';
+            payButton.disabled = true;
+
             window.snap.pay('{{$snapToken}}', {
                 onSuccess: function (result) {
                     console.log('Payment success result:', result);
@@ -85,12 +328,21 @@
                 },
                 onPending: function (result) {
                     alert("Menunggu pembayaran Anda.");
+                    // Reset button
+                    payButton.innerHTML = '<i class="fas fa-credit-card me-2"></i> Bayar Sekarang';
+                    payButton.disabled = false;
                 },
                 onError: function (result) {
                     alert("Pembayaran gagal. Coba lagi.");
+                    // Reset button
+                    payButton.innerHTML = '<i class="fas fa-credit-card me-2"></i> Bayar Sekarang';
+                    payButton.disabled = false;
                 },
                 onClose: function () {
                     alert('Anda menutup popup sebelum menyelesaikan pembayaran.');
+                    // Reset button
+                    payButton.innerHTML = '<i class="fas fa-credit-card me-2"></i> Bayar Sekarang';
+                    payButton.disabled = false;
                 }
             });
         });

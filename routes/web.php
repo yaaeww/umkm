@@ -1,12 +1,16 @@
 <?php
 
-use App\Http\Controllers\Auth\GoogleController;
-use App\Http\Controllers\ChatBotController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\ChatBotController;
 
+// 🔹 Chat per Role
+use App\Http\Controllers\Admin\AdminChatController;
+use App\Http\Controllers\Penjual\PenjualChatController;
+use App\Http\Controllers\User\UserChatController;
 
-// Admin Controllers
+// 🔹 Admin Controllers
 use App\Http\Controllers\Admin\{
     DashboardAdminController,
     ProdukAdminController,
@@ -18,7 +22,7 @@ use App\Http\Controllers\Admin\{
     PendapatanController as AdminPendapatanController
 };
 
-// Penjual Controllers
+// 🔹 Penjual Controllers
 use App\Http\Controllers\Penjual\{
     DashboardPenjualController,
     ProdukPenjualController,
@@ -29,7 +33,7 @@ use App\Http\Controllers\Penjual\{
     PendapatanController
 };
 
-// Pembeli Controllers
+// 🔹 Pembeli Controllers
 use App\Http\Controllers\Pembeli\{
     DashboardPembeliController,
     ProdukPembeliController,
@@ -41,33 +45,76 @@ use App\Http\Controllers\Pembeli\{
     RatingController
 };
 
-// Invoice Controller (umum)
+// 🔹 Invoice Controller (umum)
 use App\Http\Controllers\InvoiceController;
 
 /*
 |--------------------------------------------------------------------------
-| Landing & Auth Redirect
+| Landing Page
 |--------------------------------------------------------------------------
 */
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
-Route::get('/chatbot', [ChatBotController::class, 'index'])->name('chatbot.index');
-Route::post('/chatbot', [ChatBotController::class, 'chat'])
-    ->name('chatbot.chat')
-    ->middleware('auth');
+/*
+|--------------------------------------------------------------------------
+| 💬 CHAT & CHATBOT ROUTES
+|--------------------------------------------------------------------------
+| Semua role (admin, penjual, pembeli) bisa chat AI atau antar-user.
+| - ChatBotController      => Chat umum AI publik
+| - UserChatController     => Pembeli
+| - PenjualChatController  => Penjual
+| - AdminChatController    => Admin
+|
+*/
+/* =================================================== 🧑 Pembeli Chat (UserChatController) =================================================== */
+Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli/chat')->name('pembeli.chat.')->group(function () {
 
-Route::get('/verify-email', function () {
-    return view('auth.verify-email');
-})->middleware(['auth'])->name('verification.notice');
+    Route::get('/{id?}', [UserChatController::class, 'index'])->name('index');
 
-// Google Auth Routes
+    Route::post('/send', [UserChatController::class, 'chat'])->name('send');
+    Route::get('/history/{userId}', [UserChatController::class, 'history'])->name('history');
+    Route::delete('/clear/{userId}', [UserChatController::class, 'clear'])->name('clear');
+});
+/* =================================================== (AKHIR Pembeli Chat) =================================================== */
+/* ===================================================
+🛍️ Penjual Chat (PenjualChatController)
+=================================================== */
+Route::middleware(['auth', 'role:penjual'])
+    ->prefix('penjual/chat')
+    ->name('penjual.chat.')
+    ->group(function () {
+        Route::get('/', [PenjualChatController::class, 'index'])->name('index');
+        Route::post('/send', [PenjualChatController::class, 'sendMessage'])->name('send');
+        Route::get('/history/{receiverId}', [PenjualChatController::class, 'history'])->name('history');
+    });
 
+/* ===================================================
+🧑‍💼 Admin Chat (AdminChatController)
+=================================================== */
+Route::middleware(['auth', 'role:admin'])
+    ->prefix('admin/chat')
+    ->name('admin.chat.')
+    ->group(function () {
+        Route::get('/', [AdminChatController::class, 'index'])->name('index');
+        Route::post('/send', [AdminChatController::class, 'chat'])->name('send');
+        Route::get('/history', [AdminChatController::class, 'history'])->name('history');
+    });
+
+/*
+|--------------------------------------------------------------------------
+| Google Authentication
+|--------------------------------------------------------------------------
+*/
 Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
 Route::get('/auth/google/role', [GoogleController::class, 'chooseRole'])->name('auth.google.role');
 Route::post('/auth/google/save-role', [GoogleController::class, 'saveRole'])->name('auth.google.saveRole');
 
-
+/*
+|--------------------------------------------------------------------------
+| Redirect After Login
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->get('/redirect-after-login', function () {
     return match (auth()->user()->role) {
         'admin' => redirect()->route('admin.dashboard'),
@@ -76,7 +123,6 @@ Route::middleware('auth')->get('/redirect-after-login', function () {
         default => abort(403),
     };
 });
-
 Route::middleware('auth')->get('/dashboard', fn() => redirect('/redirect-after-login'));
 
 /*
@@ -88,7 +134,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [DashboardAdminController::class, 'index'])->name('dashboard');
 
     Route::resource('produk', ProdukAdminController::class)->except(['create', 'edit', 'update', 'store', 'show']);
-
     Route::resource('kategori', KategoriController::class)->except(['edit', 'update']);
     Route::get('/kategori/{id}/edit', [KategoriController::class, 'edit'])->name('kategori.edit');
     Route::put('/kategori/{id}', [KategoriController::class, 'update'])->name('kategori.update');
@@ -110,8 +155,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::patch('/', 'update')->name('update');
         Route::delete('/', 'destroy')->name('destroy');
     });
-    Route::get('pendapatan', [AdminPendapatanController::class, 'index'])->name('pendapatan.index');
 
+    Route::get('pendapatan', [AdminPendapatanController::class, 'index'])->name('pendapatan.index');
     Route::resource('penjual', PenjualController::class)->only(['index', 'edit', 'update', 'destroy']);
     Route::resource('pembeli', PembeliController::class)->only(['index', 'edit', 'update', 'destroy']);
 });
@@ -135,12 +180,9 @@ Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')
 
     // Pendapatan
     Route::get('/pendapatan', [PendapatanController::class, 'index'])->name('pendapatan.index');
-    Route::get('/pendapatan-per-produk', [PendapatanController::class, 'index'])->name('pendapatan.per-produk');
     Route::get('/pendapatan/{id}/detail', [PendapatanController::class, 'show'])->name('pendapatan.detail');
-
     Route::get('/pendapatan/{id}/export-excel', [PendapatanController::class, 'exportDetailExcel'])->name('pendapatan.detail.export.excel');
     Route::get('/pendapatan/{id}/export-pdf', [PendapatanController::class, 'exportDetailPdf'])->name('pendapatan.detail.export.pdf');
-
     Route::get('/pendapatan/export/excel', [PendapatanController::class, 'exportSummaryExcel'])->name('pendapatan.export.summary.excel');
     Route::get('/pendapatan/export/pdf', [PendapatanController::class, 'exportSummaryPdf'])->name('pendapatan.export.summary.pdf');
 
@@ -207,5 +249,9 @@ Route::middleware(['auth', 'role:pembeli'])->prefix('pembeli')->name('pembeli.')
     Route::post('/rating', [RatingController::class, 'store'])->name('rating.store');
 });
 
-// Auth Routes
+/*
+|--------------------------------------------------------------------------
+| Auth Routes
+|--------------------------------------------------------------------------
+*/
 require __DIR__ . '/auth.php';
