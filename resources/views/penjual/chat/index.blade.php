@@ -7,91 +7,97 @@
 @push('style')
     <style>
         :root {
-            --wa-green: #25D366;
-            --wa-green-dark: #128C7E;
-            --wa-green-light: #DCF8C6;
-            --wa-bg: #ECE5DD;
-            --wa-sidebar: #FFFFFF;
-            --wa-header: #075E54;
-            --wa-bubble-in: #FFFFFF;
-            --wa-bubble-out: #DCF8C6;
-            --wa-text: #303030;
-            --wa-text-light: #667781;
-            --wa-border: #E9EDEF;
-        }
-
-        [data-bs-theme="dark"] {
-            --wa-bg: #0B141A;
-            --wa-sidebar: #111B21;
-            --wa-header: #202C33;
-            --wa-bubble-in: #202C33;
-            --wa-bubble-out: #005C4B;
-            --wa-text: #E9EDEF;
-            --wa-text-light: #8696A0;
-            --wa-border: #2A3942;
-            --wa-green: #00A884;
+            --dark-blue: #0a1628;
+            --medium-blue: #1a3a5f;
+            --light-blue: #2a4a7f;
+            --gold: #ffd700;
+            --gold-light: #ffed4e;
+            --gold-dark: #d4af37;
+            --wa-bg: var(--dark-blue);
+            --wa-sidebar: var(--medium-blue);
+            --wa-header: var(--light-blue);
+            --wa-bubble-in: var(--medium-blue);
+            --wa-bubble-out: var(--gold);
+            --wa-text: #e0e0e0;
+            --wa-text-light: #a0a0a0;
+            --wa-border: rgba(255, 215, 0, 0.3);
         }
 
         .chat-container {
             height: 85vh;
-            background: var(--wa-bg);
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--medium-blue) 100%);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
         }
 
         /* SIDEBAR */
         .chat-sidebar {
-            background: var(--wa-sidebar);
-            border-right: 1px solid var(--wa-border);
+            background: linear-gradient(135deg, var(--medium-blue) 0%, var(--light-blue) 100%);
+            border-right: 2px solid var(--wa-border);
+            backdrop-filter: blur(10px);
         }
 
         .sidebar-header {
-            background: var(--wa-header);
-            padding: 10px 16px;
-            color: white;
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--medium-blue) 100%);
+            padding: 15px 20px;
+            color: var(--gold);
+            border-bottom: 2px solid var(--wa-border);
         }
 
         .sidebar-title {
-            font-size: 19px;
-            font-weight: 600;
+            font-size: 1.3rem;
+            font-weight: 700;
             margin: 0;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .user-list {
             overflow-y: auto;
-            height: calc(85vh - 59px);
+            height: calc(85vh - 70px);
         }
 
         .user-item {
-            padding: 12px 16px;
+            padding: 15px 20px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
             border-bottom: 1px solid var(--wa-border);
-            background: var(--wa-sidebar);
+            background: transparent;
         }
 
         .user-item:hover {
-            background: var(--bs-secondary-bg);
+            background: rgba(255, 215, 0, 0.1);
+            transform: translateX(5px);
         }
 
         .user-item.active {
-            background: var(--bs-secondary-bg);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 237, 78, 0.1) 100%);
+            border-left: 3px solid var(--gold);
         }
 
         .chat-avatar {
-            width: 49px;
-            height: 49px;
-            font-size: 20px;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
             flex-shrink: 0;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            color: var(--dark-blue);
+            font-weight: 700;
         }
 
         .user-name {
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--wa-text);
-            margin-bottom: 2px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 4px;
         }
 
         .user-email {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--wa-text-light);
         }
 
@@ -99,54 +105,50 @@
         .chat-main {
             display: flex;
             flex-direction: column;
-            background: var(--wa-bg);
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--medium-blue) 100%);
         }
 
         .chat-header {
-            background: var(--wa-header);
-            padding: 10px 16px;
-            border-bottom: 1px solid var(--wa-border);
-            color: white;
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--medium-blue) 100%);
+            padding: 15px 20px;
+            border-bottom: 2px solid var(--wa-border);
+            color: var(--gold);
         }
 
         .chat-header-avatar {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             font-size: 16px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            color: var(--dark-blue);
+            font-weight: 700;
         }
 
         .chat-header-name {
             font-size: 16px;
-            font-weight: 500;
+            font-weight: 600;
             margin: 0;
+            color: var(--gold);
         }
 
         .chat-header-status {
-            font-size: 13px;
-            opacity: 0.8;
+            font-size: 12px;
+            color: var(--wa-text-light);
         }
 
         .chat-messages {
             flex: 1;
             overflow-y: auto;
             padding: 20px 8%;
-            background-image:
-                linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.03)),
-                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect fill="%23E4DCD4" width="100" height="100"/><path d="M0 0 L50 50 L0 100 M50 0 L100 50 L50 100" stroke="%23DACED7" stroke-width="1" fill="none" opacity="0.1"/></svg>');
-            background-size: 300px 300px;
-        }
-
-        [data-bs-theme="dark"] .chat-messages {
-            background-image:
-                linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
-                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect fill="%230B141A" width="100" height="100"/><path d="M0 0 L50 50 L0 100 M50 0 L100 50 L50 100" stroke="%23182229" stroke-width="1" fill="none" opacity="0.3"/></svg>');
+            background: linear-gradient(135deg, rgba(10, 22, 40, 0.9) 0%, rgba(26, 58, 95, 0.8) 100%);
+            backdrop-filter: blur(10px);
         }
 
         /* MESSAGE BUBBLES */
         .message-wrapper {
-            margin-bottom: 8px;
+            margin-bottom: 15px;
             display: flex;
-            gap: 8px;
+            gap: 10px;
         }
 
         .message-wrapper.mine {
@@ -155,11 +157,12 @@
 
         .message-bubble {
             max-width: 65%;
-            padding: 6px 7px 8px 9px;
-            border-radius: 7.5px;
+            padding: 12px 15px;
+            border-radius: 15px;
             position: relative;
-            box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
-            animation: slideUp 0.2s ease-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.3s ease-out;
+            backdrop-filter: blur(10px);
         }
 
         @keyframes slideUp {
@@ -175,61 +178,83 @@
         }
 
         .message-wrapper.mine .message-bubble {
-            background: var(--wa-bubble-out);
-            border-radius: 7.5px 7.5px 0 7.5px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            border-radius: 15px 15px 5px 15px;
+            color: var(--dark-blue);
         }
 
         .message-wrapper.other .message-bubble {
-            background: var(--wa-bubble-in);
-            border-radius: 7.5px 7.5px 7.5px 0;
+            background: linear-gradient(135deg, var(--medium-blue) 0%, var(--light-blue) 100%);
+            border-radius: 15px 15px 15px 5px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
         }
 
         .message-text {
-            font-size: 14.2px;
-            line-height: 19px;
-            color: var(--wa-text);
+            font-size: 14px;
+            line-height: 1.5;
+            color: inherit;
             word-wrap: break-word;
-            margin-bottom: 2px;
+            margin-bottom: 5px;
+        }
+
+        .message-wrapper.other .message-text {
+            color: var(--wa-text);
         }
 
         .message-meta {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            gap: 4px;
-            margin-top: 4px;
+            gap: 5px;
+            margin-top: 5px;
         }
 
         .message-time {
             font-size: 11px;
+            opacity: 0.7;
+        }
+
+        .message-wrapper.other .message-time {
             color: var(--wa-text-light);
         }
 
+        .message-wrapper.mine .message-time {
+            color: var(--dark-blue);
+        }
+
         .message-checkmark {
-            font-size: 16px;
-            color: #53BDEB;
+            font-size: 14px;
+            color: var(--dark-blue);
         }
 
         /* CHAT INPUT */
         .chat-input-container {
-            background: var(--wa-header);
-            padding: 5px 16px;
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--medium-blue) 100%);
+            padding: 15px 20px;
+            border-top: 2px solid var(--wa-border);
         }
 
         .chat-input-wrapper {
             display: flex;
-            gap: 8px;
+            gap: 12px;
             align-items: flex-end;
         }
 
         .input-box {
             flex: 1;
-            background: var(--wa-sidebar);
-            border-radius: 21px;
+            background: rgba(10, 22, 40, 0.6);
+            border-radius: 25px;
             display: flex;
             align-items: center;
-            padding: 8px 12px;
-            gap: 8px;
+            padding: 10px 20px;
+            gap: 12px;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .input-box:focus-within {
+            border-color: var(--gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
         }
 
         .chat-input {
@@ -238,7 +263,7 @@
             outline: none;
             background: transparent;
             color: var(--wa-text);
-            font-size: 15px;
+            font-size: 14px;
             padding: 2px 0;
         }
 
@@ -247,20 +272,28 @@
         }
 
         .send-button {
-            width: 42px;
-            height: 42px;
-            background: var(--wa-green);
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
             border: none;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
         }
 
         .send-button:hover {
-            background: var(--wa-green-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* EMPTY STATE */
@@ -271,17 +304,27 @@
             justify-content: center;
             height: 100%;
             color: var(--wa-text-light);
+            text-align: center;
         }
 
         .empty-state-icon {
-            font-size: 80px;
+            font-size: 4rem;
             margin-bottom: 20px;
-            opacity: 0.3;
+            opacity: 0.5;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .empty-state-text {
             font-size: 16px;
-            text-align: center;
+            line-height: 1.5;
+        }
+
+        .empty-state strong {
+            color: var(--gold);
+            font-weight: 600;
         }
 
         /* SCROLLBAR */
@@ -292,18 +335,143 @@
 
         .user-list::-webkit-scrollbar-track,
         .chat-messages::-webkit-scrollbar-track {
-            background: transparent;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 3px;
         }
 
         .user-list::-webkit-scrollbar-thumb,
         .chat-messages::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
             border-radius: 3px;
         }
 
-        [data-bs-theme="dark"] .user-list::-webkit-scrollbar-thumb,
-        [data-bs-theme="dark"] .chat-messages::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
+        .user-list::-webkit-scrollbar-thumb:hover,
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: var(--gold-light);
+        }
+
+        /* EMOJI BUTTON */
+        .emoji-button {
+            font-size: 20px;
+            color: var(--gold);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 5px;
+            border-radius: 50%;
+        }
+
+        .emoji-button:hover {
+            background: rgba(255, 215, 0, 0.1);
+            transform: scale(1.1);
+        }
+
+        /* TYPING INDICATOR */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 15px;
+            color: var(--wa-text-light);
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--gold);
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes typing {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .chat-container {
+                height: 80vh;
+            }
+
+            .chat-sidebar {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .user-list {
+                height: calc(80vh - 70px);
+            }
+
+            .chat-messages {
+                padding: 15px 5%;
+            }
+
+            .message-bubble {
+                max-width: 80%;
+            }
+
+            .sidebar-header,
+            .chat-header,
+            .chat-input-container {
+                padding: 12px 15px;
+            }
+        }
+
+        /* ONLINE STATUS */
+        .online-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--gold);
+            margin-left: 5px;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* MESSAGE STATUS */
+        .message-status {
+            display: flex;
+            align-items: center;
+            gap: 2px;
         }
     </style>
 
@@ -312,78 +480,98 @@
 @endpush
 
 @section('content')
-    <div class="chat-container d-flex rounded-3 overflow-hidden shadow-lg" data-bs-theme="dark">
+    <div class="container mt-4">
+        <h2 class="section-title text-center mb-4"
+            style="font-size: 2.2rem; font-weight: 700; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+            <i class="fas fa-comments me-3"></i>Chat dengan Pembeli
+        </h2>
 
-        {{-- SIDEBAR --}}
-        <div class="chat-sidebar" style="width: 400px; max-width: 40%;">
-            <div class="sidebar-header d-flex align-items-center justify-content-between">
-                <h5 class="sidebar-title">💬 Chat Pembeli</h5>
-            </div>
+        <div class="chat-container d-flex rounded-3 overflow-hidden shadow-lg">
 
-            <div class="user-list">
-                @foreach ($customers as $cust)
-                    <div class="user-item" onclick="openChat({{ $cust->id }}, '{{ e($cust->name) }}'); setActiveUser(this);">
-                        <div class="d-flex align-items-center gap-3">
-                            <div
-                                class="chat-avatar rounded-circle bg-secondary d-flex align-items-center justify-content-center fw-bold text-white">
-                                {{ strtoupper(substr($cust->name, 0, 1)) }}
-                            </div>
-                            <div class="flex-grow-1" style="min-width: 0;">
-                                <div class="user-name text-truncate">{{ $cust->name }}</div>
-                                <div class="user-email text-truncate">{{ $cust->email }}</div>
+            {{-- SIDEBAR --}}
+            <div class="chat-sidebar" style="width: 400px; max-width: 40%;">
+                <div class="sidebar-header d-flex align-items-center justify-content-between">
+                    <h5 class="sidebar-title"><i class="fas fa-users me-2"></i>Daftar Pembeli</h5>
+                    <span class="badge"
+                        style="background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); color: var(--dark-blue); font-weight: 600;">
+                        {{ $customers->count() }}
+                    </span>
+                </div>
+
+                <div class="user-list">
+                    @foreach ($customers as $cust)
+                        <div class="user-item"
+                            onclick="openChat({{ $cust->id }}, '{{ e($cust->name) }}'); setActiveUser(this);">
+                            <div class="d-flex align-items-center gap-3">
+                                <div
+                                    class="chat-avatar rounded-circle d-flex align-items-center justify-content-center fw-bold">
+                                    {{ strtoupper(substr($cust->name, 0, 1)) }}
+                                </div>
+                                <div class="flex-grow-1" style="min-width: 0;">
+                                    <div class="user-name text-truncate">
+                                        {{ $cust->name }}
+                                        <span class="online-status"></span>
+                                    </div>
+                                    <div class="user-email text-truncate">{{ $cust->email }}</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
 
-                @if($customers->isEmpty())
-                    <div class="empty-state p-4">
-                        <div class="empty-state-icon">💬</div>
-                        <div class="empty-state-text">Belum ada pembeli<br>yang melakukan chat</div>
-                    </div>
-                @endif
-            </div>
-        </div>
-
-        {{-- CHAT AREA --}}
-        <div class="chat-main flex-grow-1">
-            <div id="chatHeader" class="chat-header d-flex align-items-center gap-3">
-                <div class="d-flex align-items-center gap-3 flex-grow-1">
-                    <div class="empty-state-icon mb-0" style="font-size: 28px; opacity: 0.5;">💬</div>
-                    <div>
-                        <div class="chat-header-name">Pilih Pembeli</div>
-                        <div class="chat-header-status">Pilih chat dari daftar</div>
-                    </div>
+                    @if($customers->isEmpty())
+                        <div class="empty-state p-4">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div class="empty-state-text">
+                                <strong>Belum ada pembeli</strong><br>
+                                yang melakukan chat
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
 
-            <div id="chatMessages" class="chat-messages">
-                <div class="empty-state">
-                    <div class="empty-state-icon">💬</div>
-                    <div class="empty-state-text">
-                        <strong>WhatsApp Business</strong><br>
-                        Kirim dan terima pesan tanpa menyimpan<br>
-                        nomor telepon di ponsel Anda
+            {{-- CHAT AREA --}}
+            <div class="chat-main flex-grow-1">
+                <div id="chatHeader" class="chat-header d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-3 flex-grow-1">
+                        <div class="empty-state-icon mb-0" style="font-size: 2rem;">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div>
+                            <div class="chat-header-name">Pilih Pembeli</div>
+                            <div class="chat-header-status">Pilih chat dari daftar pembeli</div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <form id="chatForm" onsubmit="sendMessage(event)" class="chat-input-container">
-                <input type="hidden" id="receiver_id" value="">
-                <div class="chat-input-wrapper">
-                    <div class="input-box">
-                        <span style="font-size: 20px; color: var(--wa-text-light); cursor: pointer;">😊</span>
-                        <input id="messageInput" type="text" class="chat-input" placeholder="Ketik pesan"
-                            autocomplete="off">
+                <div id="chatMessages" class="chat-messages">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="empty-state-text">
+                            <strong>UMKM Indramayu Chat</strong><br>
+                            Kirim dan terima pesan dari pembeli<br>
+                            dengan aman dan terintegrasi
+                        </div>
                     </div>
-                    <button type="submit" class="send-button">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-                            <path
-                                d="M1.101 21.757L23.8 12.028 1.101 2.3l.011 7.912 13.623 1.816-13.623 1.817-.011 7.912z" />
-                        </svg>
-                    </button>
                 </div>
-            </form>
+
+                <form id="chatForm" onsubmit="sendMessage(event)" class="chat-input-container">
+                    <input type="hidden" id="receiver_id" value="">
+                    <div class="chat-input-wrapper">
+                        <div class="input-box">
+                            <input id="messageInput" type="text" class="chat-input"
+                                placeholder="Ketik pesan untuk pembeli..." autocomplete="off" disabled>
+                        </div>
+                        <button type="submit" class="send-button" disabled>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -430,12 +618,12 @@
             bubble.className = 'message-bubble';
 
             bubble.innerHTML = `
-                    <div class="message-text">${escapeHtml(chat.message)}</div>
-                    <div class="message-meta">
-                        <span class="message-time">${formatTime(chat.created_at ?? new Date())}</span>
-                        ${isMine ? '<span class="message-checkmark">✓✓</span>' : ''}
-                    </div>
-                `;
+                <div class="message-text">${escapeHtml(chat.message)}</div>
+                <div class="message-meta">
+                    <span class="message-time">${formatTime(chat.created_at ?? new Date())}</span>
+                    ${isMine ? '<span class="message-checkmark"><i class="fas fa-check-double"></i></span>' : ''}
+                </div>
+            `;
 
             wrapper.appendChild(bubble);
             return wrapper;
@@ -451,20 +639,30 @@
             currentUserName = name;
             document.getElementById('receiver_id').value = userId;
             const chatBox = document.getElementById('chatMessages');
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.querySelector('.send-button');
+
+            // Enable input and button
+            messageInput.disabled = false;
+            sendButton.disabled = false;
 
             // Update header
             const firstLetter = name.charAt(0).toUpperCase();
             document.getElementById('chatHeader').innerHTML = `
-                    <div class="d-flex align-items-center gap-3 flex-grow-1">
-                        <div class="chat-header-avatar rounded-circle bg-secondary d-flex align-items-center justify-content-center fw-bold text-white flex-shrink-0">
-                            ${firstLetter}
-                        </div>
-                        <div>
-                            <div class="chat-header-name">${escapeHtml(name)}</div>
-                            <div class="chat-header-status">online</div>
+                <div class="d-flex align-items-center gap-3 flex-grow-1">
+                    <div class="chat-header-avatar rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0">
+                        ${firstLetter}
+                    </div>
+                    <div>
+                        <div class="chat-header-name">${escapeHtml(name)}</div>
+                        <div class="chat-header-status">
+                            <span class="online-status"></span>
+                            Online
                         </div>
                     </div>
-                `;
+                </div>
+                
+            `;
 
             chatBox.innerHTML = '<div class="empty-state"><div class="empty-state-text">Memuat percakapan...</div></div>';
 
@@ -478,11 +676,20 @@
 
                 if (data.chats && data.chats.length > 0) {
                     data.chats.forEach(chat => chatBox.appendChild(createBubble(chat)));
+                    chatBox.scrollTop = chatBox.scrollHeight;
                 } else {
-                    chatBox.innerHTML = '<div class="empty-state"><div class="empty-state-text">Belum ada pesan</div></div>';
+                    chatBox.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-comment-slash"></i>
+                            </div>
+                            <div class="empty-state-text">
+                                <strong>Belum ada pesan</strong><br>
+                                Mulai percakapan dengan ${name}
+                            </div>
+                        </div>
+                    `;
                 }
-
-                chatBox.scrollTop = chatBox.scrollHeight;
 
                 if (echo) {
                     echo.private('chat.' + authUserId)
@@ -500,7 +707,14 @@
                 }
             } catch (err) {
                 console.error(err);
-                chatBox.innerHTML = '<div class="empty-state"><div class="empty-state-text" style="color: #dc3545;">Gagal memuat percakapan</div></div>';
+                chatBox.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-text" style="color: #ff6b6b;">
+                            <strong>Gagal memuat percakapan</strong><br>
+                            Silakan refresh halaman
+                        </div>
+                    </div>
+                `;
             }
         }
 
@@ -509,6 +723,7 @@
             const msgInput = document.getElementById('messageInput');
             const msg = msgInput.value.trim();
             const receiver = document.getElementById('receiver_id').value;
+            const sendButton = document.querySelector('.send-button');
 
             if (!msg || receiver === '') return;
 
@@ -526,7 +741,11 @@
             });
             chatBox.appendChild(myBubble);
             chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Clear input and disable temporarily
             msgInput.value = '';
+            sendButton.disabled = true;
+            msgInput.disabled = true;
 
             try {
                 const res = await fetch(`/penjual/chat/send`, {
@@ -543,17 +762,35 @@
                 }
             } catch (error) {
                 console.error("❌ Gagal mengirim pesan:", error);
+                // Show error message
+                const errorBubble = createBubble({
+                    sender_id: authUserId,
+                    message: '⚠️ Gagal mengirim pesan. Silakan coba lagi.',
+                    created_at: new Date().toISOString()
+                });
+                chatBox.appendChild(errorBubble);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } finally {
+                // Re-enable input and button
+                sendButton.disabled = false;
+                msgInput.disabled = false;
+                msgInput.focus();
             }
         }
 
-        // Focus input when clicking emoji
+        // Auto-focus input when chat is opened
         document.addEventListener('DOMContentLoaded', function () {
-            const emojiBtn = document.querySelector('.input-box span');
-            if (emojiBtn) {
-                emojiBtn.addEventListener('click', function () {
-                    document.getElementById('messageInput').focus();
-                });
-            }
+            const messageInput = document.getElementById('messageInput');
+            messageInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    document.querySelector('.send-button').click();
+                }
+            });
+
+            // Add loading state to send button
+            const sendButton = document.querySelector('.send-button');
+            sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
         });
     </script>
 @endsection
