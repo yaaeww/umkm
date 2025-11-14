@@ -3,7 +3,6 @@
         <div class="menu-icon bi bi-list"></div>
         <div class="header-search">
             <h4 class="text-capitalize header-title">
-                
                 @yield('title', 'Dashboard')
             </h4>
         </div>
@@ -15,16 +14,32 @@
             <div class="dropdown">
                 <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown">
                     <div class="user-avatar">
-                        <i class="bi bi-person-circle" style="color: var(--gold); font-size: 1.5rem;"></i>
+                        @if(Auth::user()->role === 'admin')
+                            <i class="bi bi-shield-fill-check" style="color: var(--gold); font-size: 1.5rem;"></i>
+                        @else
+                            <i class="bi bi-person-circle" style="color: var(--gold); font-size: 1.5rem;"></i>
+                        @endif
                     </div>
-                    <span class="user-name">{{ Auth::user()->name }}</span>
+                    <span class="user-name">
+                        {{ Auth::user()->name }}
+                        @if(Auth::user()->role === 'admin')
+                            <span class="admin-badge">Admin</span>
+                        @endif
+                    </span>
                     <i class="bi bi-chevron-down ms-1" style="color: var(--gold);"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="{{ route('penjual.profile.show') }}">
-                        <i class="bi bi-person me-2"></i> Profil Saya
-                    </a>
-                    <div class="dropdown-divider"></div>
+                    @if(Auth::user()->role !== 'admin')
+                        <a class="dropdown-item" href="{{ route('penjual.profile.show') }}">
+                            <i class="bi bi-person me-2"></i> Profil Saya
+                        </a>
+                        <div class="dropdown-divider"></div>
+                    @else
+                        <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
+                            <i class="bi bi-speedometer2 me-2"></i> Admin Dashboard
+                        </a>
+                        <div class="dropdown-divider"></div>
+                    @endif
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button class="dropdown-item text-danger" type="submit">
@@ -45,6 +60,8 @@
         --gold: #ffd700;
         --gold-light: #ffed4e;
         --gold-dark: #d4af37;
+        --admin-color: #ff6b6b;
+        --admin-light: #ff8e8e;
     }
 
     /* Header Styling - FLEX LAYOUT */
@@ -59,11 +76,11 @@
         padding: 15px 30px;
         display: flex;
         align-items: center;
-        justify-content: space-between; /* Ini yang penting */
+        justify-content: space-between;
         min-height: 80px;
         width: 100%;
         box-sizing: border-box;
-        padding-left:20%;
+        padding-left: 20%;
     }
 
     /* Header Left */
@@ -104,7 +121,6 @@
     .user-info-dropdown {
         margin-left: auto;
         flex-shrink: 0;
-
     }
 
     .user-info-dropdown .dropdown {
@@ -135,6 +151,34 @@
         color: var(--gold);
         font-weight: 600;
         font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Admin Badge */
+    .admin-badge {
+        background: linear-gradient(135deg, var(--admin-color) 0%, var(--admin-light) 100%);
+        color: white;
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+        animation: pulse-admin 2s infinite;
+    }
+
+    @keyframes pulse-admin {
+
+        0%,
+        100% {
+            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+        }
+
+        50% {
+            box-shadow: 0 2px 15px rgba(255, 107, 107, 0.5);
+        }
     }
 
     .user-avatar {
@@ -169,6 +213,7 @@
             opacity: 0;
             transform: translateY(-10px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -221,7 +266,7 @@
         .header {
             padding: 15px 25px;
         }
-        
+
         .header-title {
             font-size: 1.6rem;
         }
@@ -231,17 +276,22 @@
         .header {
             padding: 12px 20px;
         }
-        
+
         .header-title {
             font-size: 1.4rem;
         }
-        
+
         .user-name {
             font-size: 0.9rem;
         }
-        
+
         .user-info-dropdown .dropdown-toggle {
             padding: 8px 14px;
+        }
+
+        .admin-badge {
+            font-size: 0.65rem;
+            padding: 2px 6px;
         }
     }
 
@@ -250,25 +300,25 @@
             padding: 10px 15px;
             min-height: 70px;
         }
-        
+
         .header-title {
             font-size: 1.3rem;
         }
-        
+
         .menu-icon {
             font-size: 1.3rem;
             margin-right: 15px;
         }
-        
-        /* Sembunyikan nama user di mobile, tampilkan hanya icon */
+
+        /* Sembunyikan nama user dan badge admin di mobile, tampilkan hanya icon */
         .user-name {
             display: none;
         }
-        
+
         .user-info-dropdown .dropdown-toggle {
             padding: 8px 12px;
         }
-        
+
         .dropdown-menu {
             min-width: 180px;
             right: 0;
@@ -279,24 +329,24 @@
         .header {
             padding: 8px 12px;
         }
-        
+
         .header-title {
             font-size: 1.2rem;
         }
-        
+
         .menu-icon {
             font-size: 1.2rem;
             margin-right: 12px;
         }
-        
+
         .user-info-dropdown .dropdown-toggle {
             padding: 6px 10px;
         }
-        
+
         .user-avatar i {
             font-size: 1.3rem;
         }
-        
+
         .dropdown-menu {
             min-width: 160px;
         }
@@ -306,16 +356,16 @@
         .header {
             padding: 6px 10px;
         }
-        
+
         .header-title {
             font-size: 1.1rem;
         }
-        
+
         .menu-icon {
             font-size: 1.1rem;
             margin-right: 10px;
         }
-        
+
         .user-info-dropdown .dropdown-toggle {
             padding: 5px 8px;
         }
@@ -326,20 +376,20 @@
         .header {
             padding: 5px 8px;
         }
-        
+
         .header-title {
             font-size: 1rem;
         }
-        
+
         .menu-icon {
             font-size: 1rem;
             margin-right: 8px;
         }
-        
+
         .user-info-dropdown .dropdown-toggle {
             padding: 4px 6px;
         }
-        
+
         .dropdown-menu {
             min-width: 140px;
         }
@@ -355,13 +405,14 @@
             transform: translateY(-100%);
             opacity: 0;
         }
+
         to {
             transform: translateY(0);
             opacity: 1;
         }
     }
 
-    /* Sparkle Effect (opsional) */
+    /* Sparkle Effect */
     .header-sparkle {
         position: absolute;
         width: 100%;
@@ -373,10 +424,13 @@
     }
 
     @keyframes headerSparkleFloat {
-        0%, 100% {
+
+        0%,
+        100% {
             transform: translateY(0) scale(1);
             opacity: 0;
         }
+
         50% {
             transform: translateY(-10px) scale(1.2);
             opacity: 1;
@@ -436,7 +490,7 @@
             });
         }
 
-        // Sparkle animation (opsional)
+        // Sparkle animation
         function createHeaderSparkle() {
             const header = document.querySelector('.header');
             if (!header) return;
