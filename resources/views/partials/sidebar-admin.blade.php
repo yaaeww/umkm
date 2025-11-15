@@ -12,7 +12,7 @@
     .left-side-bar {
         background: linear-gradient(180deg, var(--dark-blue), var(--medium-blue));
         border-right: 1px solid rgba(210, 179, 5, 0.885);
-        box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
     }
 
     /* Brand Logo */
@@ -120,6 +120,7 @@
             opacity: 0;
             transform: translateY(-10px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -199,10 +200,13 @@
     }
 
     @keyframes sparkleFloat {
-        0%, 100% {
+
+        0%,
+        100% {
             transform: translateY(0) scale(1);
             opacity: 0;
         }
+
         50% {
             transform: translateY(-20px) scale(1.5);
             opacity: 1;
@@ -215,8 +219,15 @@
     }
 
     @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-5px); }
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-5px);
+        }
     }
 
     /* Mobile Responsive */
@@ -228,15 +239,15 @@
             z-index: 1000;
             height: 100vh;
         }
-        
+
         .left-side-bar.show {
             transform: translateX(0);
         }
-        
+
         .brand-logo img {
             width: 100px;
         }
-        
+
         .close-sidebar {
             display: block;
         }
@@ -267,12 +278,12 @@
     <div class="brand-logo">
         <a href="/">
             <div class="logo" style="margin-left: 30px;">
-                <img src="{{ asset('aset/finalisasi logo.png') }}" alt="Logo UMKM Indramayu" 
-                    style="display:block;" class="floating-logo">
+                <img src="{{ asset('aset/finalisasi logo.png') }}" alt="Logo UMKM Indramayu" style="display:block;"
+                    class="floating-logo">
             </div>
         </a>
         <div class="close-sidebar" data-toggle="left-sidebar-close">
-            <i class="ion-close-round"></i>
+            <i class="fas fa-times"></i>
         </div>
     </div>
 
@@ -281,57 +292,75 @@
             <ul id="accordion-menu">
                 <li>
                     <a href="{{ route('admin.dashboard') }}" class="dropdown-toggle no-arrow">
-                        <span class="micon bi bi-house"></span>
+                        <span class="micon"><i class="fas fa-home"></i></span>
                         <span class="mtext">Dashboard</span>
                     </a>
                 </li>
+
                 <li>
                     <a href="{{ route('admin.kategori.index') }}" class="dropdown-toggle no-arrow">
-                        <span class="micon bi bi-plus-square"></span>
-                        <span class="mtext">Tambah Kategori</span>
+                        <span class="micon"><i class="fas fa-layer-group"></i></span>
+                        <span class="mtext">Kategori</span>
                     </a>
                 </li>
+
                 <li>
                     <a href="{{ route('admin.umkm.index') }}" class="dropdown-toggle no-arrow">
-                        <span class="micon fa fa-university"></span>
+                        <span class="micon"><i class="fas fa-store"></i></span>
                         <span class="mtext">Toko</span>
                     </a>
                 </li>
+
+                <li>
+                    <a href="{{ route('admin.produk.index') }}" class="dropdown-toggle no-arrow">
+                        <span class="micon"><i class="fas fa-box-open"></i></span>
+                        <span class="mtext">Produk</span>
+                    </a>
+                </li>
+
                 <li>
                     <a href="{{ route('admin.pendapatan.index') }}" class="dropdown-toggle no-arrow">
-                        <span class="micon fa fa-money"></span>
+                        <span class="micon"><i class="fas fa-money-bill-wave"></i></span>
                         <span class="mtext">Pendapatan</span>
                     </a>
                 </li>
 
                 <li>
-                    <div class="sidebar-small-cap">Extra</div>
+                    <div class="sidebar-small-cap">Pengaturan</div>
                 </li>
+
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle" data-option="on">
-                        <span class="micon fa fa-gear"></span>
-                        <span class="mtext">Setting</span>
+                        <span class="micon"><i class="fas fa-cog"></i></span>
+                        <span class="mtext">Pengguna</span>
                     </a>
                     <ul class="submenu">
                         <li>
                             <a href="{{ route('admin.penjual.index') }}">
-                                <i class="bi bi-shop me-2"></i> Akun Penjual
+                                <i class="fas fa-user-tie me-2"></i> Akun Penjual
                             </a>
                         </li>
                         <li>
                             <a href="{{ route('admin.pembeli.index') }}">
-                                <i class="bi bi-person-badge me-2"></i> Akun Pembeli
+                                <i class="fas fa-users me-2"></i> Akun Pembeli
                             </a>
                         </li>
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="btn btn-danger mtext">
-                                    <i class="bi bi-box-arrow-left me-2"></i> Logout
-                                </button>
-                            </form>
-                        </li>
                     </ul>
+                </li>
+
+                <li>
+                    <div class="sidebar-small-cap">Akun</div>
+                </li>
+
+                <li>
+                    <form method="POST" action="{{ route('logout') }}" class="w-100">
+                        @csrf
+                        <button type="submit" class="logout-btn btn-danger w-100 d-flex align-items-right">
+                            <span class="logout-icon"><i class="fas fa-sign-out-alt"></i></span>
+                            <span class="logout-text">Logout</span>
+                        </button>
+
+                    </form>
                 </li>
             </ul>
         </div>
@@ -373,11 +402,11 @@
         // Dropdown functionality
         const dropdownToggles = document.querySelectorAll('.dropdown-toggle[data-option="on"]');
         dropdownToggles.forEach(toggle => {
-            toggle.addEventListener('click', function(e) {
+            toggle.addEventListener('click', function (e) {
                 e.preventDefault();
                 const submenu = this.nextElementSibling;
                 const isActive = this.classList.contains('active');
-                
+
                 // Close all other dropdowns
                 document.querySelectorAll('.dropdown-toggle.active').forEach(item => {
                     if (item !== this) {
@@ -397,13 +426,13 @@
         // Close sidebar on mobile
         const closeSidebar = document.querySelector('.close-sidebar');
         if (closeSidebar) {
-            closeSidebar.addEventListener('click', function() {
+            closeSidebar.addEventListener('click', function () {
                 document.querySelector('.left-side-bar').classList.remove('show');
             });
         }
 
         // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (!e.target.closest('.dropdown')) {
                 document.querySelectorAll('.dropdown-toggle.active').forEach(toggle => {
                     toggle.classList.remove('active');
@@ -416,7 +445,7 @@
         function setActiveMenu() {
             const currentUrl = window.location.href;
             const menuLinks = document.querySelectorAll('.sidebar-menu a');
-            
+
             menuLinks.forEach(link => {
                 if (link.href === currentUrl) {
                     link.classList.add('active');
@@ -434,5 +463,21 @@
         }
 
         setActiveMenu();
+
+        // Add hover effect to logout button
+        const logoutButton = document.querySelector('form[action*="logout"] button');
+        if (logoutButton) {
+            logoutButton.addEventListener('mouseenter', function () {
+                this.style.background = 'rgba(255, 215, 0, 0.08)';
+                this.style.color = 'var(--gold)';
+                this.style.paddingLeft = '28px';
+            });
+
+            logoutButton.addEventListener('mouseleave', function () {
+                this.style.background = 'none';
+                this.style.color = 'var(--text-light)';
+                this.style.paddingLeft = '22px';
+            });
+        }
     });
 </script>

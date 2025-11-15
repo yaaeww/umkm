@@ -66,7 +66,7 @@
 
     /* Header Styling - FLEX LAYOUT */
     .header {
-        background: linear-gradient(135deg, var(--dark-blue) 0%, var(--medium-blue) 100%) !important;
+        background: linear-gradient(125deg, var(--dark-blue) 0%, var(--medium-blue) 100%) !important;
         border-bottom: 2px solid var(--gold);
         box-shadow: 0 4px 20px rgba(255, 215, 0, 0.2);
         backdrop-filter: blur(10px);
@@ -77,7 +77,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        min-height: 80px;
+        min-height: 70px;
         width: 100%;
         box-sizing: border-box;
         padding-left: 20%;
@@ -131,7 +131,7 @@
         display: flex;
         align-items: center;
         text-decoration: none;
-        padding: 5px 10px;
+        padding: 0px 0px;
         border-radius: 12px;
         transition: all 0.3s ease;
         border: 1px solid rgba(255, 215, 0, 0.3);
