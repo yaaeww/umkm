@@ -16,10 +16,10 @@
         }
 
         .section-title {
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             text-align: center;
             color: var(--gold);
-    }
+        }
 
         .section-title h1,
         .section-title h2,
@@ -33,6 +33,7 @@
 
         .section-title p.lead {
             color: rgba(255, 255, 255, 0.8) !important;
+            margin-bottom: 0;
         }
 
         /* Carousel Produk Terlaris */
@@ -40,12 +41,13 @@
             overflow: hidden;
             position: relative;
             width: 100%;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
+            padding: 0 15px;
         }
 
         .carousel-track {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             animation: scrollCarousel 30s linear infinite;
             width: max-content;
         }
@@ -62,7 +64,7 @@
 
         .kategori-item {
             flex: 0 0 auto;
-            width: 220px;
+            width: 180px;
             position: relative;
             border-radius: 12px;
             overflow: hidden;
@@ -80,7 +82,7 @@
 
         .kategori-item img {
             width: 100%;
-            height: 150px;
+            height: 120px;
             object-fit: cover;
         }
 
@@ -107,6 +109,8 @@
             color: var(--dark-blue);
             font-weight: 700;
             text-align: center;
+            font-size: 0.9rem;
+            padding: 0 5px;
         }
 
         /* Kartu Kategori & Produk */
@@ -130,13 +134,13 @@
         }
 
         .card-img-top {
-            height: 200px;
+            height: 160px;
             object-fit: cover;
             transition: transform 0.4s ease;
         }
 
         .kategori-card .card-img-top {
-            height: 180px;
+            height: 150px;
         }
 
         .kategori-card:hover .card-img-top,
@@ -173,13 +177,14 @@
         .subkategori-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
-            justify-content: flex-start;
-            margin-bottom: 50px;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 40px;
         }
 
         .card-subkategori {
-            width: 250px;
+            width: 100%;
+            max-width: 280px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
@@ -200,13 +205,14 @@
         }
 
         .img-fixed {
-            height: 160px;
+            height: 140px;
             object-fit: cover;
         }
 
         .card-subkategori .card-body h5 {
             color: var(--gold);
             font-weight: 600;
+            font-size: 1rem;
         }
 
         .card-subkategori .card-body ul {
@@ -221,7 +227,7 @@
         .card-footer.bg-light {
             background: rgba(255, 255, 255, 0.05) !important;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 15px;
+            padding: 12px;
             color: white;
         }
 
@@ -229,11 +235,12 @@
             background: linear-gradient(135deg, var(--gold), var(--gold-light)) !important;
             color: var(--dark-blue) !important;
             border: none;
+            font-size: 0.75rem;
         }
 
         /* Produk Detail */
         .product-card .card-body {
-            padding: 15px;
+            padding: 12px;
             text-align: left;
             display: flex;
             flex-direction: column;
@@ -242,15 +249,18 @@
 
         .product-card .card-body h5 {
             color: var(--gold);
+            font-size: 1rem;
         }
 
         .product-card .card-body p {
             color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
         }
 
         .product-card .card-body .fs-5 {
             color: var(--gold-light) !important;
             font-weight: 700;
+            font-size: 1rem !important;
         }
 
         /* Alert Styles */
@@ -260,6 +270,7 @@
             border-radius: 12px;
             color: white;
             backdrop-filter: blur(10px);
+            margin: 0 15px 20px;
         }
 
         .alert-success {
@@ -274,44 +285,243 @@
             border-color: rgba(23, 162, 184, 0.3);
         }
 
-        /* Responsive */
-        @media (max-width: 992px) {
+        /* Responsive Styles */
+        @media (min-width: 576px) {
+            .main-content-push {
+                padding-top: 90px !important;
+            }
+
+            .section-title {
+                margin-bottom: 40px;
+            }
+
+            .carousel-container {
+                margin-bottom: 50px;
+                padding: 0;
+            }
+
+            .carousel-track {
+                gap: 20px;
+            }
+
             .kategori-item {
                 width: 200px;
+            }
+
+            .kategori-item img {
+                height: 140px;
+            }
+
+            .kategori-overlay h5 {
+                font-size: 1rem;
+            }
+
+            .card-img-top {
+                height: 180px;
+            }
+
+            .kategori-card .card-img-top {
+                height: 160px;
+            }
+
+            .subkategori-grid {
+                gap: 20px;
+                justify-content: flex-start;
             }
 
             .card-subkategori {
                 width: calc(50% - 10px);
             }
+
+            .img-fixed {
+                height: 150px;
+            }
+
+            .product-card .card-body {
+                padding: 15px;
+            }
+
+            .product-card .card-body h5 {
+                font-size: 1.1rem;
+            }
+
+            .product-card .card-body p {
+                font-size: 0.9rem;
+            }
+
+            .product-card .card-body .fs-5 {
+                font-size: 1.1rem !important;
+            }
+
+            .alert {
+                margin: 0 0 20px;
+            }
         }
 
-        @media (max-width: 768px) {
-            .subkategori-grid {
-                justify-content: center;
+        @media (min-width: 768px) {
+            .kategori-item {
+                width: 220px;
+            }
+
+            .kategori-item img {
+                height: 150px;
+            }
+
+            .card-img-top {
+                height: 200px;
+            }
+
+            .kategori-card .card-img-top {
+                height: 180px;
             }
 
             .card-subkategori {
-                width: 100%;
-                max-width: 350px;
+                width: calc(33.333% - 14px);
+            }
+
+            .img-fixed {
+                height: 160px;
+            }
+
+            .card-subkategori .card-body h5 {
+                font-size: 1.1rem;
+            }
+
+            .card-footer .badge {
+                font-size: 0.8rem;
             }
         }
 
-        @media (max-width: 576px) {
-            .kategori-item {
-                width: 150px;
+        @media (min-width: 992px) {
+            .card-subkategori {
+                width: calc(25% - 15px);
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .main-content-push {
+                padding-top: 70px !important;
+            }
+
+            .section-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .section-title h2 {
+                font-size: 1.3rem;
+            }
+
+            .section-title h3 {
+                font-size: 1.2rem;
+            }
+
+            .section-title h4 {
+                font-size: 1.1rem;
+            }
+
+            .section-title p.lead {
+                font-size: 0.9rem;
             }
 
             .carousel-track {
                 gap: 10px;
             }
 
-            .card-img-top,
-            .kategori-card .card-img-top {
-                height: 150px;
+            .kategori-item {
+                width: 150px;
             }
 
-            .main-content-push {
-                padding-top: 60px !important;
+            .kategori-item img {
+                height: 100px;
+            }
+
+            .kategori-overlay h5 {
+                font-size: 0.8rem;
+            }
+
+            .card-img-top,
+            .kategori-card .card-img-top {
+                height: 140px;
+            }
+
+            .subkategori-grid {
+                gap: 10px;
+            }
+
+            .img-fixed {
+                height: 120px;
+            }
+
+            .card-subkategori .card-body h5 {
+                font-size: 0.9rem;
+            }
+
+            .card-footer.bg-light {
+                padding: 10px;
+            }
+
+            .card-footer .badge {
+                font-size: 0.7rem;
+            }
+
+            .product-card .card-body {
+                padding: 10px;
+            }
+
+            .product-card .card-body h6 {
+                font-size: 0.9rem;
+            }
+
+            .btn-primary {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Pause animation on hover */
+        .carousel-container:hover .carousel-track {
+            animation-play-state: paused;
+        }
+
+        /* Pagination responsive */
+        .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .pagination .page-link {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--gold);
+            margin: 2px;
+        }
+
+        .pagination .page-item.active .page-link {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: var(--dark-blue);
+        }
+
+        @media (max-width: 400px) {
+            .kategori-item {
+                width: 130px;
+            }
+
+            .kategori-item img {
+                height: 90px;
+            }
+
+            .card-img-top,
+            .kategori-card .card-img-top {
+                height: 120px;
+            }
+
+            .section-title h1 {
+                font-size: 1.3rem;
+            }
+
+            .section-title h2 {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -342,7 +552,7 @@
                 </div>
             </div>
         @else
-            <div class="alert alert-warning text-center mx-3 mb-5">
+            <div class="alert alert-warning text-center">
                 <i class="fas fa-info-circle me-2"></i>Belum ada produk terlaris tersedia.
             </div>
         @endif
@@ -369,7 +579,7 @@
 
         <div class="row mb-5">
             @forelse($kategoris as $kategori)
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4">
                     <div class="card kategori-card border-0">
                         <img src="{{ $kategori->gambar ? asset('storage/kategori/' . basename($kategori->gambar)) : asset('images/default.jpg') }}"
                             class="card-img-top" alt="{{ $kategori->nama }}" loading="lazy">
@@ -451,7 +661,7 @@
                 </div>
                 <div class="row">
                     @foreach ($produks as $produk)
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+                        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-4">
                             <div class="card product-card border-0 h-100 d-flex flex-column">
                                 <a href="{{ route('pembeli.produk.show', $produk->id) }}" class="text-decoration-none">
                                     <img src="{{ $produk->gambar ? asset('storage/' . $produk->gambar) : asset('images/default.jpg') }}"
